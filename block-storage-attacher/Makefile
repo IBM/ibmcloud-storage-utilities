@@ -7,9 +7,7 @@
 # * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 # ******************************************************************************/
 
-IMAGE = registry.ng.bluemix.net/akgunjal/armada-block-volume-attacher
-#registry.ng.bluemix.net/akgunjal/armada-storage-portworx-volume-attacher
-#armada-master/armada-storage-portworx-volume-attacher
+IMAGE = ibmcloud-block-storage-attacher
 GOPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /cmd | grep -v /tests )
 GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./tests/e2e/*")
 VERSION := latest

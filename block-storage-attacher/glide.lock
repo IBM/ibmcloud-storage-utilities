@@ -1,5 +1,5 @@
-hash: 30ee551d41b101645410e73ecc742e842327bf74b371d0a3c56f763444a96277
-updated: 2018-08-30T15:44:18.519815+05:30
+hash: a3389c4fc2b53529837baf4933beb4aa59edb72ce240df1624a3320bda09a5a5
+updated: 2018-10-10T17:58:23.319533+05:30
 imports:
 - name: github.com/BurntSushi/toml
   version: bbd5bb678321a0d6e58f1099321dfa73391c1b6f
@@ -84,11 +84,6 @@ imports:
   version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
 - name: github.com/spf13/pflag
   version: 9ff6c6923cfffbcd502984b8e0c80539a94968b7
-- name: github.ibm.com/alchemy-containers/armada-opensource-lib
-  repo: git@github.ibm.com:alchemy-containers/armada-opensource-lib.git
-  version: fd1a7be252d2029a72632feef96d13856f3b78a2
-  subpackages:
-  - utils
 - name: github.ibm.com/alchemy-containers/ibmc-storage-common-resources-lib
   version: 77529872e65a19dcc8c49d036f511b5d5ffba33f
   repo: git@github.ibm.com:alchemy-containers/ibmc-storage-common-resources-lib.git

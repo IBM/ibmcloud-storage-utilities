@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	uid "github.com/satori/go.uuid"
-	"github.ibm.com/alchemy-containers/block-storage-attacher/utils/crn"
+	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/crn"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"

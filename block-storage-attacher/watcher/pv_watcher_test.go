@@ -12,12 +12,10 @@ package watcher
 
 import (
 
-	//      "errors"
-	//       "fmt"
 	//"encoding/json"
 	//"github.com/coreos/go-systemd/dbus"
-	"github.ibm.com/alchemy-containers/block-storage-attacher/utils/config"
-	"github.ibm.com/alchemy-containers/block-storage-attacher/utils/logger"
+	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
+	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/logger"
 	"go.uber.org/zap"
 	//"k8s.io/apimachinery/pkg/util/wait"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -31,12 +29,8 @@ import (
 	"k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/fake"
 	//"k8s.io/client-go/tools/cache"
-	//"strconv"
-	//"strings"
-	//"time"
 	"io/ioutil"
 	"os"
-	//"regexp"
 	"testing"
 )
 
