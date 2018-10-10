@@ -1,4 +1,4 @@
-package: github.ibm.com/alchemy-containers/armada-px-integration
+package: github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
 import:
 - package: github.ibm.com/alchemy-containers/ibmc-storage-common-resources-lib
   version: 77529872e65a19dcc8c49d036f511b5d5ffba33f
@@ -23,6 +23,6 @@ import:
   - kubernetes
 - package: k8s.io/api
   version: kubernetes-1.9.2
-- package: github.ibm.com/alchemy-containers/armada-opensource-lib
-  version: fd1a7be252d2029a72632feef96d13856f3b78a2
-  repo: git@github.ibm.com:alchemy-containers/armada-opensource-lib.git
+#- package: github.ibm.com/alchemy-containers/armada-opensource-lib
+#  version: fd1a7be252d2029a72632feef96d13856f3b78a2
+#  repo: git@github.ibm.com:alchemy-containers/armada-opensource-lib.git

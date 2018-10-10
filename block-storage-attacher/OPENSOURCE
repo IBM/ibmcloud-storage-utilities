@@ -40,4 +40,3 @@ k8s.io/api,006a217681ae70cbacdd66a5e2fca1a61a8ff28e
 k8s.io/apimachinery,68f9c3a1feb3140df59c67ced62d3a5df8e6c9c2
 k8s.io/client-go,9389c055a838d4f208b699b3c7c51b70f2368861
 k8s.io/kube-openapi,39a7bf85c140f972372c2a0d1ee40adbf0c8bfe1
-https://hub.docker.com/_/alpine,3.7

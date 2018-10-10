@@ -4,7 +4,7 @@ import (
 	"fmt"
 	//"encoding/json"
 	"github.com/coreos/go-systemd/dbus"
-	"github.ibm.com/alchemy-containers/block-storage-attacher/utils/config"
+	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
 	"go.uber.org/zap"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
