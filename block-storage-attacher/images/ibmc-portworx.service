@@ -1,0 +1,10 @@
+[Unit]
+Description=ibmc-portworx service 
+
+[Service]
+Type=simple
+Restart=no
+ExecStart=/lib/ibmc-portworx/iscsi-attach.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,286 @@
+#!/usr/bin/env python3
+#
+#  MkPVYaml :  Generate PV yaml files for iSCSI external vols on IKS
+#
+#  Goal:  Autogenerate the "pv.yaml" files needed for worker nodes,
+#         as documented here: https://github.com/akgunjal/block-volume-attacher
+#
+#  Requirements:
+#        Ensure the following environment variables are set:
+#          SL_API_KEY
+#          SL_USERNAME
+#          SL_API_KEY
+#        Make sure to do "bx login"
+#
+#  Input file:
+#        Assumes an input descriptor file named "yamlgen.yaml" of the following format:
+#
+#                 cluster:  jeffpx1                #  name of IKS cluster
+#                 type:  endurance                 #  performance | endurance
+#                 offering: storage_as_a_service   #  storage_as_a_service | enterprise | performance
+#                 # performance:
+#                 # - iops:  100                   #   INTEGER between 100 and 1000 in multiples of 100
+#                 endurance:
+#                     - tier:  0.25                #   [0.25|2|4|10]
+#                 size:  [ 30 ]                    #   Array of disk capacity sizes (ToDo)
+#
+#  Output:
+#         In a perfect world, this will create a set of "pv.yaml" files as input to the block-attach daemonset.
+#
+#  ToDo:
+#         - Doesn't currently allow an "array" of disks (i.e. "size" can only be len(1))
+#         - Only tested "storage_as_a_service" offering
+#
+# 
+
+import os
+import time
+import sys, traceback
+import json
+import urllib.request
+from os.path import expanduser
+import SoftLayer
+from pprint import pprint as pp
+from yaml import load, dump
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
+Paraml = "./yamlgen.yaml"     # Name of input parameter file
+
+#
+# Load the input parameter file
+#
+def load_cfg():
+   global doc
+   with open(Paraml, 'r') as f:
+        doc = load(f)
+
+# 
+# Run sanity checks on the input param file before proceeding
+#
+def check_cfg():
+    # Sanity:  Must have 'type' and 'size' and ('performance' or 'endurance')
+    
+    if not ('type' in doc and 'size' in doc and 'cluster'):
+          raise Exception("Must have 'cluster', 'type' and 'size'")
+    
+    if doc['type'] == 'performance' and not 'performance' in doc:
+          raise Exception("'performance' type but no 'performance' clause")
+    
+    if doc['type'] == 'endurance' and not 'endurance' in doc:
+          raise Exception("'endurance' type but no 'endurance' clause")
+    
+    if 'performance' in doc and 'endurance' in doc:
+          raise Exception("Must specify 'performance' OR 'endurance'")
+    
+
+# 
+# Get the 'id's and 'ips' of the IKS workers.
+# The worker 'id's correspond to the VirtualServer "instance" hostnames
+#
+def get_instances(cluster):
+    instances = []
+    home = expanduser("~")
+    bmxconfig = home + "/.bluemix/config.json"
+    
+    with open(bmxconfig) as f:
+        data = json.load(f)
+    
+    token= data['IAMToken']
+    headers={'Content-Type': 'application/json', 'X-Region' : doc['region'], 'Authorization' : token }
+    
+    try:
+        request = urllib.request.Request(url="https://containers.bluemix.net/v1/clusters/" + cluster + "/workers" , headers=headers)
+        f = urllib.request.urlopen(request)
+        response = f.read().decode('utf-8')
+        print(response)
+        #contents = json.load(f)
+        contents = json.loads(response)
+    except:
+        print ("Unable to get cluster workers.  Are you logged in (\"bx login\")?  Does " + cluster + " actually exist?  Are your credentials set?")
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        traceback.print_exception(exc_type, exc_value, exc_traceback,
+                              limit=2, file=sys.stdout)
+        #traceback.print_tb(err.__traceback__)
+        sys.exit(-1)
+    
+    for row in contents:
+        inst = {}
+        inst['hostname'] = row['id']
+        inst['id'] = row['id']
+        inst['ip'] = row['privateIP']
+        inst['location'] = row['location']
+        instances.append (inst)
+    return instances
+
+#
+# Return unique ID for IP Address
+# (required for authorize_host)
+#
+def get_ip_id (ipaddr):
+    result = Nmgr.ip_lookup(ipaddr)
+    return result['id']
+            
+
+# 
+# Wait for volume to be created, based on "orderId"
+#
+def wait4_vol(orderId):
+        while True:
+             result = BSmgr.list_block_volumes(mask='billingItem.orderItem.order')
+             for i in result:
+                  if 'billingItem' in i: 
+                        if i['billingItem']['orderItem']['order']['id'] == orderId:
+                              return (i['id'])
+             print ("            No volume yet ... for orderID : ", orderId)
+             time.sleep(8)
+
+#
+# Authorize access to volume (volId) from hostIP
+# Loop on exceptions, waiting if needed for volume to be ready
+#
+def authorize_host_vol(volId, hostIP):
+        ip_id = get_ip_id (hostIP)
+        ip_ids = [ ip_id ]
+        while True:
+            try:
+                 print ("            Granting access to volume: %s for HostIP: %s" % (volId, hostIP))
+                 access = BSmgr.authorize_host_to_volume(volume_id=volId, ip_address_ids=ip_ids)
+                 return access
+            except:
+                 print ("            Vol %s is not yet ready ..." % volId)
+                 time.sleep (10)
+
+#
+# Retrieve volume access info for a given volId
+#
+def get_volume_access (volid):
+      lba = BSmgr.get_block_volume_access_list(volid)
+      return (lba['allowedIpAddresses'][0]['allowedHost']['name'],
+             lba['allowedIpAddresses'][0]['allowedHost']['credential']['username'],
+             lba['allowedIpAddresses'][0]['allowedHost']['credential']['password'],
+             lba['allowedIpAddresses'][0]['ipAddress'])
+
+#
+# Retrieve volume details for a given volId
+#
+def get_volume_details (volid):
+      lv = BSmgr.get_block_volume_details(volid)
+      return (lv['serviceResourceBackendIpAddress'],
+             lv['lunId'],
+             lv['capacityGb'])
+
+#
+# Generate the yaml file, needed to attach a given volume to a given worker
+#
+def mkpvyaml(pv, outfile):
+
+      for i in range(len(pv['vols'])):
+          print ("""
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: %s-pv%s
+  annotations:
+    ibm.io/iqn: "%s"
+    ibm.io/username: "%s"
+    ibm.io/password: "%s"
+    ibm.io/targetip: "%s"
+    ibm.io/lunid: "%s"
+    ibm.io/nodeip: "%s"
+    ibm.io/volID: "%s"
+spec:
+  capacity:
+    storage: %sGi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /
+  storageClassName: ibmc-block-attacher
+
+""" % (pv['hostname'], i+1, pv['vols'][i]['iqn'], pv['vols'][i]['username'], pv['vols'][i]['password'],
+       pv['vols'][i]['targetip'], pv['vols'][i]['lunid'], pv['vols'][i]['nodeip'], pv['vols'][i]['volId'], pv['vols'][i]['capacity']), file=outfile)
+
+###  --------------------------------------------------------------------------------
+
+load_cfg()
+check_cfg()
+client = SoftLayer.Client()
+global BSmgr, Nmgr
+BSmgr = SoftLayer.BlockStorageManager(client)
+Nmgr  = SoftLayer.managers.network.NetworkManager(client)
+
+
+#
+# Need API to list instances, given an IKS clusterID
+# In the meantime, list instanceIDs for worker nodes explicitly
+#
+
+pp (doc)
+instances =  get_instances(doc['cluster'])
+for i in instances:
+     print (i['hostname'], i['ip'])
+
+     #
+     #  For each disk ...
+     #
+     i.update ({'vols': []})
+     for j in doc['size']:
+        vol = {}
+        vol.update ({ 'size' : j })
+        if doc['type'] == 'performance':
+           iops = doc['performance'][0]['iops']
+           service_offering = "performance"
+           tier = ""
+        else:
+           tier = doc['endurance'][0]['tier'] 
+           service_offering = "enterprise"
+           iops = ""
+           print("Creating Vol of size", j , "with type: ", doc['type'] )
+        try:
+            iops_param =  iops if doc['type'] == 'performance' else None
+            # 
+            # order the volume
+            #
+            print ("            Ordering block storage of size: %s for host: %s" % (j, i['hostname']))
+            result = BSmgr.order_block_volume(storage_type=doc['type'], 
+                       location=i['location'], 
+                       size=j, 
+                       tier_level=tier, 
+                       iops=iops_param,
+                       os_type='LINUX', 
+                       service_offering=doc['offering']) 
+            print ("            ORDER ID = ", result['orderId'])
+            vol.update ( {'orderId': result['orderId']} )
+            i['vols'].append(vol)            
+        except:
+            raise
+
+# pp (instances)
+#
+# For all the worker instances ...
+#
+for i in instances:
+    for j in i['vols']: 
+        volId = wait4_vol(j['orderId'])
+        print ("            Order ID = ", j['orderId'], "has created VolId = ", volId)
+
+        access_info = authorize_host_vol (volId, i['ip'])
+        iqn, username, password, nodeip = get_volume_access (volId)
+        targetip, lunid, capacity = get_volume_details (volId) 
+        j.update ({'volId': volId, 'iqn': iqn, 'username': username, 'password': password, 
+                   'nodeip': nodeip, 'targetip': targetip, 'lunid': lunid,
+                   'capacity': capacity})
+
+OutFile = "pv-" + doc['cluster'] + ".yaml"
+OutF = open (OutFile, "w")
+
+# pp (instances)
+for i in instances:
+    mkpvyaml(i, OutF)
+
+OutF.close()
+print ("Output file created as : ", OutFile)
