@@ -1,0 +1,24 @@
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kube-dal10-crbe5dba7ec8b64c78b7b8a235e560d0a5-w1-pv1
+  annotations:
+    ibm.io/volID: "iqn.2018-08.com.ibm:ibm02su1186049-i116658091"
+    ibm.io/iqn: "IBM02SU1186049-I116658091"
+    ibm.io/username: "Keplpjmy9kUkC3cX"
+    ibm.io/password: "161.26.98.65"
+    ibm.io/targetip: "12"
+    ibm.io/lunid: "10.94.81.179"
+    ibm.io/nodeip: "49312881"
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /
+  storageClassName: ibmc-block-attacher
+
+

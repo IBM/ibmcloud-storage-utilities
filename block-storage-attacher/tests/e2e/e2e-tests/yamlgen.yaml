@@ -1,0 +1,9 @@
+cluster:     ibmc-blockvolume-e2e-test      #  name of IKS cluster:  muraliportworx           #  name of IKS cluster
+region:   us-east           #  cluster:     mycluster      #  name of IKS cluster region
+type:  endurance          #  performance | endurance
+offering: storage_as_a_service   #  storage_as_a_service | enterprise | performance
+# performance:
+#    - iops:  100          #   INTEGER between 100 and 1000 in multiples of 100
+endurance:    
+  - tier:  0.25              #   [0.25|2|4|10]
+size:  [ 20 ]
