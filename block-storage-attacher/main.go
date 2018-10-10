@@ -13,8 +13,8 @@ package main
 import (
 	"flag"
 	cfg "github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
-	"github.ibm.com/alchemy-containers/block-storage-attacher/utils/logger"
-	"github.ibm.com/alchemy-containers/block-storage-attacher/watcher"
+	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/logger"
+	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/watcher"
 	"go.uber.org/zap"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
