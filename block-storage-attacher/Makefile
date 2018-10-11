@@ -11,7 +11,6 @@ IMAGE = ibmcloud-block-storage-attacher
 GOPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /cmd | grep -v /tests )
 GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./tests/e2e/*")
 VERSION := latest
-SYSTEMUTIL_DIR=vendor/github.ibm.com/alchemy-containers/ibmc-storage-common-resources-lib
 
 .PHONY: all
 all: deps fmt vet buildgo test buildimage
@@ -49,9 +48,7 @@ coverage:
 
 
 .PHONY: build-driver-image
-buildimage:
-	$(MAKE) -C $(SYSTEMUTIL_DIR) build-systemutil
-	cp $(SYSTEMUTIL_DIR)/systemutil images/
+buildimage: build-systemutil
 	docker build -t $(IMAGE):$(VERSION) -f Dockerfile .
 #	cd images/ ;\
 #	docker build -t $(IMAGE):$(VERSION) -f Dockerfile .
@@ -62,4 +59,15 @@ buildimage:
 #        --build-arg jenkins_build_number=${BUILD_NUMBER} \
 #				--build-arg this_build_id=https://travis.ibm.com/${TRAVIS_REPO_SLUG}/builds/${TRAVIS_BUILD_ID} \
 #	 -t $(IMAGE):$(VERSION) -f ./images/Dockerfile .
+
+
+.PHONY: build-systemutil
+build-systemutil:
+	#Build and copy executables
+	docker build \
+		-t common-lib-builder --pull -f Dockerfile.builder .
+	docker run common-lib-builder /bin/true
+	docker cp `docker ps -q -n=1`:/go/bin/systemutil ./systemutil
+	chmod 755 ./systemutil
+	mv systemutil images/
 

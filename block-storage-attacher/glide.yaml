@@ -1,11 +1,11 @@
 package: github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
 import:
-- package: github.ibm.com/alchemy-containers/ibmc-storage-common-resources-lib
-  version: 77529872e65a19dcc8c49d036f511b5d5ffba33f
-  repo: git@github.ibm.com:alchemy-containers/ibmc-storage-common-resources-lib.git
-  subpackages:
-  - interfaces
-  - utils/zones
+#- package: github.ibm.com/alchemy-containers/ibmc-storage-common-resources-lib
+#  version: 77529872e65a19dcc8c49d036f511b5d5ffba33f
+#  repo: git@github.ibm.com:alchemy-containers/ibmc-storage-common-resources-lib.git
+#  subpackages:
+#  - interfaces
+#  - utils/zones
 - package: github.com/BurntSushi/toml
   version: v0.2.0
 - package: go.uber.org/zap
