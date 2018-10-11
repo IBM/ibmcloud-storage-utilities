@@ -1,5 +1,5 @@
-hash: a3389c4fc2b53529837baf4933beb4aa59edb72ce240df1624a3320bda09a5a5
-updated: 2018-10-10T17:58:23.319533+05:30
+hash: 5fc1e58ab81ad42e2334ff5174057614b8a8d25a7b054a4cf8b2347a0d8bc962
+updated: 2018-10-11T11:13:15.411335+05:30
 imports:
 - name: github.com/BurntSushi/toml
   version: bbd5bb678321a0d6e58f1099321dfa73391c1b6f
@@ -84,12 +84,6 @@ imports:
   version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
 - name: github.com/spf13/pflag
   version: 9ff6c6923cfffbcd502984b8e0c80539a94968b7
-- name: github.ibm.com/alchemy-containers/ibmc-storage-common-resources-lib
-  version: 77529872e65a19dcc8c49d036f511b5d5ffba33f
-  repo: git@github.ibm.com:alchemy-containers/ibmc-storage-common-resources-lib.git
-  subpackages:
-  - interfaces
-  - utils/zones
 - name: go.uber.org/atomic
   version: 1ea20fb1cbb1cc08cbd0d913a96dead89aa18289
 - name: go.uber.org/zap
