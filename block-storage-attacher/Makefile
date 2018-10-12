@@ -1,4 +1,3 @@
-
 #/*******************************************************************************
 # * Licensed Materials - Property of IBM
 # * IBM Cloud Container Service, 5737-D43
