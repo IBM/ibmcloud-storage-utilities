@@ -18,10 +18,10 @@ Follow the instructions in the helm documentation to [install the helm client](h
 When you set up the helm server in your cluster, you can use the helm chart provided in this repository to install the IBM Cloud Block Storage Attacher. 
 
 1. Note the cluster name or ID where you want to install the IBM Cloud Block Storage Attacher.
-   <pre>bx cs clusters</pre>
+   <pre>ibmcloud ks clusters</pre>
 2. Set the cluster as the context for this session.
    - Get the command to set the environment variable and download the Kubernetes configuration files.
-     <pre>bx cs cluster-config &lt;cluster_name_or_id&gt;</pre>
+     <pre>ibmcloud ks cluster-config --cluster &lt;cluster_name_or_id&gt;</pre>
    - Copy and paste the command that is displayed in your terminal to set the KUBECONFIG environment variable.
      <pre>export KUBECONFIG=/Users/&lt;user_name&gt;/.bluemix/plugins/container-service/clusters/&lt;cluster_name&gt;/kube-config-prod-dal10-<cluster_name>.yml</pre>
 3. Initialize helm to set up a helm server in your cluster.
