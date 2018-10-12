@@ -1,0 +1,8 @@
+apiVersion: v1
+description: A Helm chart for installing ibmcloud block storage attacher
+icon: https://resource-catalog.bluemix.net/static/images/uploaded/icons/block-storage.png
+maintainers:
+- email: akgunjal@in.ibm.com samin@us.ibm.com
+  name: IBM Cloud, Bluemix container storage team
+name: ibmcloud-block-storage-attacher
+version: "1.0"
