@@ -6,6 +6,11 @@
 # * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 # ******************************************************************************/
 
+.PHONY: block-storage-attacher/deps
+block-storage-attacher/deps:
+	cd block-storage-attacher; \
+	make deps
+
 .PHONY: block-storage-attacher
 block-storage-attacher:
 	cd block-storage-attacher; \
