@@ -32,10 +32,10 @@ fmt:
 vet:
 	go vet ${GOPACKAGES}
 
-
 .PHONY: buildgo
 buildgo:
 	GOOS=linux GOARCH=amd64 go build
+
 .PHONY: test
 test:
 	#$(GOPATH)/bin/gotestcover -v -race -coverprofile=cover.out ${GOPACKAGES}
@@ -46,7 +46,7 @@ coverage:
 	go tool cover -html=cover.out -o=cover.html
 
 
-.PHONY: build-driver-image
+.PHONY: buildimage
 buildimage: build-systemutil
 	docker build -t $(IMAGE):$(VERSION) -f Dockerfile .
 #	cd images/ ;\
