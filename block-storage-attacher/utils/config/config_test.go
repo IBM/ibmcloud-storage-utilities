@@ -11,8 +11,8 @@
 package config
 
 import (
-	"github.com/stretchr/testify/assert"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/logger"
+	"github.com/stretchr/testify/assert"
 	"os"
 	"path/filepath"
 	"testing"
