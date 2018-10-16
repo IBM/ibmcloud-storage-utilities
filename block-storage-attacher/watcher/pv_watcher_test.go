@@ -64,8 +64,6 @@ func TestAttachVolume(t *testing.T) {
 }
 
 func TestUpdatePersistentVolume(t *testing.T) {
-	nlgr, _ := logger.GetZapLogger()
-	lgr = *nlgr
 
 	var volume config.Volume
 
