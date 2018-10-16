@@ -64,6 +64,8 @@ func TestAttachVolume(t *testing.T) {
 }
 
 func TestUpdatePersistentVolume(t *testing.T) {
+	nlgr, _ := logger.GetZapLogger()
+	lgr = *nlgr
 
 	var volume config.Volume
 
@@ -225,23 +227,30 @@ func getNewLogger() zap.Logger {
 }
 
 func createOutPathsFile() {
-	os.Mkdir("/host", 0777)
-	os.Mkdir("/host/lib", 0777)
-	os.Mkdir("/host/lib/ibmc-portworx", 0777)
+	serviceDir := "/tmp/host/lib/ibmc-portworx"
+	os.Setenv("service_dir", serviceDir)
+	os.MkdirAll(serviceDir, 0777)
+	//	os.Mkdir("/host", 0777)
+	//	os.Mkdir("/host/lib", 0777)
+	//	os.Mkdir("/host/lib/ibmc-portworx", 0777)
 
 	data := []byte("3600a09803830445455244c4a38752d30 10:0:0:2")
-	os.Create("/host/lib/ibmc-portworx/out_paths")
-	ioutil.WriteFile("/host/lib/ibmc-portworx/out_paths", data, 0666)
+	out_paths := serviceDir + "/out_paths"
+	os.Create(out_paths)
+	ioutil.WriteFile(out_paths, data, 0666)
 }
 func createMultiPathsFile() {
-
-	os.Mkdir("/host", 0777)
-	os.Mkdir("/host/lib", 0777)
-	os.Mkdir("/host/lib/ibmc-portworx", 0777)
+	serviceDir := "/tmp/host/lib/ibmc-portworx"
+	os.Setenv("service_dir", serviceDir)
+	os.MkdirAll(serviceDir, 0777)
+	//	os.Mkdir("/host", 0777)
+	//	os.Mkdir("/host/lib", 0777)
+	//	os.Mkdir("/host/lib/ibmc-portworx", 0777)
 
 	data := []byte("3600a09803830445455244c4a38752d30 dm-0  3600a09803830445455244c4a38752d30")
-	os.Create("/host/lib/ibmc-portworx/out_multipaths")
-	ioutil.WriteFile("/host/lib/ibmc-portworx/out_multipaths", data, 0666)
+	out_multipaths := serviceDir + "/out_multipaths"
+	os.Create(out_multipaths)
+	ioutil.WriteFile(out_multipaths, data, 0666)
 }
 func createConfigFile() {
 	os.Mkdir("/host", 0777)
