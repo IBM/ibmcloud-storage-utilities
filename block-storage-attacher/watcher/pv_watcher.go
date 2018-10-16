@@ -200,8 +200,12 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) {
 }
 
 func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) {
-	pathsFile := "/host/lib/ibmc-portworx/out_paths"
-	mpathsFile := "/host/lib/ibmc-portworx/out_multipaths"
+	folder := "/host/lib/ibmc-portworx"
+	if val := os.Getenv("service_dir"); val != "" {
+		folder = os.Getenv("service_dir")
+	}
+	pathsFile := folder + "/out_paths"       //"/host/lib/ibmc-portworx/out_paths"
+	mpathsFile := folder + "/out_multipaths" //"/host/lib/ibmc-portworx/out_multipaths"
 	var fileExists bool
 	var mpath string
 	var devicepath string

@@ -164,7 +164,7 @@ func TestGetServiceCRNStructCNameError(t *testing.T) {
 	valueAsByteArray := []byte(CRNCnameProp)
 	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err := GetServiceCRNStruct(testPathDirectory)
-	assert.Nil(t, err)
+	assert.Error(t, err)
 	cleanupConfigMapMount(fullPath)
 }
 
@@ -181,7 +181,7 @@ func TestGetServiceCRNStructCVersionError(t *testing.T) {
 	valueAsByteArray = []byte(CRNVersionProp)
 	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err = GetServiceCRNStruct(testPathDirectory)
-	assert.Nil(t, err)
+	assert.Error(t, err)
 	cleanupConfigMapMount(fullPath)
 }
 
@@ -205,7 +205,7 @@ func TestGetServiceCRNStructCTypeError(t *testing.T) {
 	valueAsByteArray = []byte(CRNCtypeProp)
 	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err = GetServiceCRNStruct(testPathDirectory)
-	assert.Nil(t, err)
+	assert.Error(t, err)
 	cleanupConfigMapMount(fullPath)
 }
 
@@ -216,7 +216,7 @@ func TestGetServiceCRNStructVersionError(t *testing.T) {
 	valueAsByteArray := []byte(CRNCnameProp)
 	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err := GetServiceCRNStruct(testPathDirectory)
-	assert.Nil(t, err)
+	assert.Error(t, err)
 }
 
 func TestGetServiceCRNStructCRegionError(t *testing.T) {
@@ -246,7 +246,7 @@ func TestGetServiceCRNStructCRegionError(t *testing.T) {
 	valueAsByteArray = []byte(CRNRegionProp)
 	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err = GetServiceCRNStruct(testPathDirectory)
-	assert.Nil(t, err)
+	assert.Error(t, err)
 	cleanupConfigMapMount(fullPath)
 }
 
@@ -291,7 +291,7 @@ func TestGetServiceCRNStructCServiceNameError(t *testing.T) {
 	valueAsByteArray = []byte(CRNServiceNameProp)
 	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err = GetServiceCRNStruct(testPathDirectory)
-	assert.Nil(t, err)
+	assert.Error(t, err)
 	cleanupConfigMapMount(fullPath)
 }
 

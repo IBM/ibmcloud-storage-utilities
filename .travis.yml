@@ -21,7 +21,7 @@ before_install:
   - sudo apt-get install bc
 
 before_script:
-  - make deps
+  - make block-storage-attacher/deps
   - go get github.com/pierrre/gotestcover
 
 script:
