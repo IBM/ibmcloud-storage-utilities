@@ -161,3 +161,8 @@ class IKS_vols:
                  print ("    ip_ids = ", ip_ids)
                  time.sleep (10)
 
+    def delete_vol(self, volId):
+        try:
+            result = self._BSmgr.cancel_block_volume (volId, reason='No longer needed', immediate=True)
+        except:
+            print ("delete_vol: Skipping volId: ", volId)

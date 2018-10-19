@@ -17,7 +17,7 @@ offering: storage_as_a_service   #  storage_as_a_service | enterprise | performa
 #    - iops:  40000          #   INTEGER between 100 and 1000 in multiples of 100
 endurance:
   - tier:  2              #   [0.25|2|4|10]
-size:  [ 20 ]
+size:  [ 20 ]             #  Number and size of disks (in GB).  
 ```
 
 The `cluster` and `region` parameters correspond to the IKS cluster and region.
@@ -26,7 +26,7 @@ with the following clause corresponding to one or the other.
 Lastly the `size` parameter determines the number and sizes of the remote volumes
 to be created per worker node.
 If `size` were given as `size: [ 100, 200 ]`,
-then 2 block devices would be created *per worker node*.
+then 2 block devices would be created *per worker node*, sized 100GB and 200GB respectively.
 
 The name of this input configuration file must be `yamlgen.yaml`.
 
