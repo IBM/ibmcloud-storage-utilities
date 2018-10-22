@@ -1,7 +1,7 @@
 FROM ubuntu:18.10
 
 RUN apt-get update
-RUN apt-get install -y python3.6 python3-pip git jq apt-transport-https curl
+RUN apt-get install -y python3.6 python3-pip git jq apt-transport-https curl wget gzip tar
 RUN pip3 install SoftLayer pyyaml 
 RUN pip3 install --upgrade "urllib3==1.22" 
 RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
