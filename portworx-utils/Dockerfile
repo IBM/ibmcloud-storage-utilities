@@ -11,10 +11,11 @@ RUN apt-get install -y kubectl
 
 ENV PYTHONUNBUFFERED=1
 
-COPY ./mkpvyaml /
+COPY ./mkpvyaml.py /
 COPY ./px_iks_utils.py /
 COPY ./docker-entrypoint.sh /
 
 RUN chmod +x /docker-entrypoint.sh
+RUN chmod +x /mkpvyaml.py
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]

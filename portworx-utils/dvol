@@ -1,4 +1,7 @@
 #!/usr/bin/env python3.6
+#
+# dvol:  Delete one or more volumes from IKS/Softlayer
+#
 
 from px_iks_utils import IKS_vols
 import sys

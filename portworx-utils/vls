@@ -1,8 +1,9 @@
 #!/usr/bin/env python3.6
+#
+# vls:  Volume list, and correlate with IKS cluster workers, if any
+#
 
 import os
-import SoftLayer
-from pprint import pprint as pp
 from px_iks_utils import IKS_clusters, IKS_vols
 
 IAMToken = os.popen("cat ~/.bluemix/config.json | jq .IAMToken").read().rstrip().strip('\"')
