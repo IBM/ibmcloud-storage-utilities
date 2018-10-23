@@ -11,6 +11,12 @@ GOPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /cmd | grep -v /te
 GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./tests/e2e/*")
 VERSION := latest
 
+GIT_COMMIT_SHA="$(shell git rev-parse HEAD 2>/dev/null)"
+GIT_REMOTE_URL="$(shell git config --get remote.origin.url 2>/dev/null)"
+BUILD_DATE="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")"
+# Jenkins vars. Set to `unknown` if the variable is not yet defined
+BUILD_NUMBER?=unknown
+
 .PHONY: all
 all: deps fmt vet buildgo test buildimage
 
@@ -48,16 +54,13 @@ coverage:
 
 .PHONY: buildimage
 buildimage: build-systemutil
-	docker build -t $(IMAGE):$(VERSION) -f Dockerfile .
-#	cd images/ ;\
+	docker build	\
+        --build-arg git_commit_id=${GIT_COMMIT_SHA} \
+        --build-arg git_remote_url=${GIT_REMOTE_URL} \
+        --build-arg build_date=${BUILD_DATE} \
+        --build-arg jenkins_build_number=${BUILD_NUMBER} \
+	-t $(IMAGE):$(VERSION) -f Dockerfile .
 #	docker build -t $(IMAGE):$(VERSION) -f Dockerfile .
-#        --build-arg git_commit_id=${GIT_COMMIT_SHA} \
-#        --build-arg git_remote_url=${GIT_REMOTE_URL} \
-#        --build-arg build_date=${BUILD_DATE} \
-#        --build-arg jenkins_build_id=${BUILD_ID} \
-#        --build-arg jenkins_build_number=${BUILD_NUMBER} \
-#				--build-arg this_build_id=https://travis.ibm.com/${TRAVIS_REPO_SLUG}/builds/${TRAVIS_BUILD_ID} \
-#	 -t $(IMAGE):$(VERSION) -f ./images/Dockerfile .
 
 
 .PHONY: build-systemutil
