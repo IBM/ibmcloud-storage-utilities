@@ -50,7 +50,7 @@ Note the volume mapping
 Caveats:  May also need to log in to SoftLayer via `bx sl init`
 
 ```
-docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e KUBECONFIG=$KUBECONFIG -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME mkpvyaml
+docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME mkpvyaml
 ```
 
 The `/data` directory should map to whereever the configuration file `yamlgen.yaml` is located.
