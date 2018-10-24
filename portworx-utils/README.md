@@ -47,6 +47,13 @@ Note the volume mapping
 * Assumes that you have logged in to bluemix CLI
 * Assumes that you have SL_API_KEY and SL_USERNAME
 
+<br>SL_USERNAME is a SoftLayer user name. Go to [https://control.bluemix.net/account/user/profile](https://control.bluemix.net/account/user/profile), 
+scroll down, and check API Username.
+<br>SL_API_KEY is a SoftLayer API Key. Go to [https://control.bluemix.net/account/user/profile](https://control.bluemix.net/account/user/profile), 
+scroll down, and check Authentication Key.
+<br>BM_API_KEY – An API key for IBM Cloud services. If you don’t have one already, go to 
+[https://console.bluemix.net/iam/#/apikeys](https://console.bluemix.net/iam/#/apikeys) and create a new key.
+
 Caveats:  May also need to log in to SoftLayer via `bx sl init`
 
 ```
