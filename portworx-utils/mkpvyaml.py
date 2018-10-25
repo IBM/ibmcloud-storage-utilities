@@ -100,7 +100,7 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: /
-  storageClassName: pxclass
+  storageClassName: ibmc-block-attacher
 
 """ %
               (pv['id'], i + 1, pv['vols'][i]['iqn'],
