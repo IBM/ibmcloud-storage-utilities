@@ -92,7 +92,7 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         bx cs init --host  $ARMADA_API_ENDPOINT
 	setKubeConfig $PVG_CLUSTER_CRUISER
         export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
-        sed -i '/certificate-authority: ca-mon01-ibmc-blockvolume-e2e-test.pem/c\    certificate-authority: \/root/.bluemix/plugins/container-service/clusters/ibmc-blockvolume-e2e-test/ca-mon01-ibmc-blockvolume-e2e-test.pem' $KUBECONFIG
+        addFullPathToCertsInKubeConfig
 	cat $KUBECONFIG
         echo "Bluemix COnfig"
         cat ~/.bluemix/config.json

@@ -12,13 +12,13 @@
 package e2e
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"bufio"
 	"bytes"
-	"fmt"
-	"github.ibm.com/alchemy-containers/block-storage-attacher/tests/e2e/framework"
 	"errors"
+	"fmt"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"github.ibm.com/alchemy-containers/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/pkg/api/v1"
 	"os"
@@ -33,11 +33,11 @@ var (
 	clusterName   = ""
 	pvfilepath    = ""
 	pv            *v1.PersistentVolume
-	e2epath       = "src/github.ibm.com/alchemy-containers/block-storage-attacher/tests/e2e/e2e-tests/"
+	e2epath       = "src/github.ibm.com/alchemy-containers/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
 	pvscriptpath  = ""
 	ymlscriptpath = ""
 	ymlgenpath    = ""
-        c clientset.Interface
+	c             clientset.Interface
 )
 var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 	f := framework.NewDefaultFramework("block-volume-attach")
@@ -100,7 +100,11 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				Expect(err).NotTo(HaveOccurred())
 				attachStatus, err := getAttchStatus()
 				Expect(err).NotTo(HaveOccurred())
-				Expect(pv.ObjectMeta.Annotations["ibm.io/dm"]).To(ContainElement("/dev/dm-"))
+				devicePath := pv.ObjectMeta.Annotations["ibm.io/dm"]
+				if !strings.Contains(devicePath, "/dev/dm-") {
+					err := errors.New("Device path is not attached")
+					Expect(err).NotTo(HaveOccurred())
+				}
 				Expect(attachStatus).To(Equal("attached"))
 			}
 
@@ -115,7 +119,9 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			By("Volume Deletion  ")
 			volumeid = pv.ObjectMeta.Annotations["ibm.io/volID"]
 			volidarg := fmt.Sprintf("%s", volumeid)
-			cmd = exec.Command(pvscriptpath, volidarg, "voldelete")
+			nodeip := pv.ObjectMeta.Annotations["ibm.io/nodeip"]
+			nodeiparg := fmt.Sprintf("%s", nodeip)
+			cmd = exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg)
 			var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
@@ -148,7 +154,7 @@ func getAttchStatus() (string, error) {
 	for start := time.Now(); time.Since(start) < (15 * time.Minute); {
 		pv, _ = c.Core().PersistentVolumes().Get(pvname)
 		attachStatus = pv.ObjectMeta.Annotations["ibm.io/attachstatus"]
-                time.Sleep(1 * time.Minute)
+		time.Sleep(1 * time.Minute)
 		if attachStatus == "attached" || attachStatus == "failed" {
 			return attachStatus, nil
 		}

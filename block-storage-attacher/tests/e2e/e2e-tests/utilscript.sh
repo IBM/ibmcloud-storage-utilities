@@ -22,6 +22,8 @@ if [ "$2" = "pvcreate" ]
 elif [ "$2" = "voldelete" ]
 then
     export VOL_ID=$1
+    export NOD_IP=$3
+    bx sl block access-revoke -p $NOD_IP $VOL_ID
     bx sl  block volume-cancel -f --immediate $VOL_ID
 else
     echo "Wrong arguments"

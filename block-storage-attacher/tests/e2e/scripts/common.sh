@@ -466,16 +466,17 @@ function install_blockvolume_plugin {
 	check_pod_state "tiller-deploy"
 
 	# INSTALL/UPGRADE HELM CHART
-	helm_values_override="--set image.repository=$IMAGE_REGISTRY/$USER_NAMESPACE/$PLUGIN_IMAGE --set image.pluginBuild=$PLUGIN_BUILD"
+	helm_values_override="--set image.repository=$IMAGE_REGISTRY/$USER_NAMESPACE/$PLUGIN_IMAGE --set image.build=$PLUGIN_BUILD"
 	helm_install_cmd="helm install $helm_values_override $HELM_CHART"
 
 	# CHECK FOR UPGRADE
-#	echo "Checking for existing helm chart ibmcloud-blockvolume-storage-plugin on cluster .."
-#	helm_release=$(helm ls | grep DEPLOYED | awk "/ibmcloud-block-storage-plugin/"'{print $1}')
-#	if [   "$helm_release" != "" ]; then
-#	  echo "Existing release $helm_release found for chart ibmcloud-block-storage-plugin"
-#	  helm_install_cmd="helm upgrade --force --recreate-pods $helm_values_override $helm_release $HELM_CHART"
-#	fi
+
+        echo "Checking for existing helm chart ibmcloud-blockvolume-storage-attacher on cluster .."
+        helm_release=$(helm ls | grep DEPLOYED | awk "/ibmcloud-block-storage-attacher/"'{print $1}')
+        if [   "$helm_release" != "" ]; then
+          echo "Existing release $helm_release found for chart ibmcloud-blockvolume-attacher"
+          helm_install_cmd="helm upgrade --force --recreate-pods $helm_values_override $helm_release $HELM_CHART"
+        fi
 
 	# DO HELM INSTALLATION
 	echo "Executing: $helm_install_cmd"

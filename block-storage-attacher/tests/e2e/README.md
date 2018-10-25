@@ -99,7 +99,7 @@
 10. Now, run the following commands to perform the e2e test execution.
 	
 	```
-	cd $GOPATH/src/github.ibm.com/alchemy-containers/block-storage-attacher/tests/e2e
+	cd $GOPATH/src/github.ibm.com/alchemy-containers/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e
 	export PVG_PHASE=armada-prestage
 	sed -i "s/PVG_PHASE/"$PVG_PHASE"/g" common/constants.go
 	export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
