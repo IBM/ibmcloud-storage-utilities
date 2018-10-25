@@ -201,7 +201,6 @@ class IKS_vols:
             except:
                 print("Vol %s is not yet ready (ipAddr : %s )" %
                       (volId, ipAddr))
-                print("    ip_ids = ", ip_ids)
                 time.sleep(10)
 
     def delete_vol(self, volId):
