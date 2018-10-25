@@ -23,7 +23,7 @@ RUN chmod 775 /home/armada-storage/systemutil
 RUN chmod 775 /home/armada-storage/run.sh
 RUN chmod 775 /home/armada-storage/iscsi-attach.sh
 
-COPY block-storage-attacher /home/armada-storage
+ADD block-storage-attacher /home/armada-storage
 RUN chmod +x /home/armada-storage/block-storage-attacher
 
 CMD ./home/armada-storage/run.sh

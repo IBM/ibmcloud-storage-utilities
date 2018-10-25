@@ -21,7 +21,7 @@ BUILD_NUMBER?=unknown
 all: deps fmt vet buildgo test buildimage
 
 .PHONY: driver
-driver: deps buildgo buildimage
+driver: deps buildimage
 
 .PHONY: deps
 deps:
@@ -40,11 +40,10 @@ vet:
 
 .PHONY: buildgo
 buildgo:
-	GOOS=linux GOARCH=amd64 go build
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
 
 .PHONY: test
 test:
-	#$(GOPATH)/bin/gotestcover -v -race -coverprofile=cover.out ${GOPACKAGES}
 	$(GOPATH)/bin/gotestcover -v -race -coverprofile=cover.out ${GOPACKAGES}
 
 .PHONY: coverage
@@ -60,16 +59,15 @@ buildimage: build-systemutil
         --build-arg build_date=${BUILD_DATE} \
         --build-arg jenkins_build_number=${BUILD_NUMBER} \
 	-t $(IMAGE):$(VERSION) -f Dockerfile .
-#	docker build -t $(IMAGE):$(VERSION) -f Dockerfile .
 
 
 .PHONY: build-systemutil
 build-systemutil:
-	#Build and copy executables
-	docker build \
-		-t common-lib-builder --pull -f Dockerfile.builder .
+	#Build executables like block-attacher and system util GO binaries
+	docker build -t common-lib-builder --pull -f Dockerfile.builder .
 	docker run common-lib-builder /bin/true
 	docker cp `docker ps -q -n=1`:/go/bin/systemutil ./systemutil
+	docker cp `docker ps -q -n=1`:/go/bin/block-storage-attacher ./block-storage-attacher
 	chmod 755 ./systemutil
 	mv systemutil images/
 
