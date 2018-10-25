@@ -40,21 +40,21 @@ To build this from scratch, clone this repo and run:
 docker build -t mkpvyaml .
 ```
 
-## Run
+## Run `mkpvyaml`
 To run, Here's your docker command
 Note the volume mapping
 * Assumes that `yamlgen.yaml` is in the current working directory.
 * Assumes that you have logged in to bluemix CLI
 * Assumes that you have SL_API_KEY and SL_USERNAME
 
-<br>SL_USERNAME is a SoftLayer user name. Go to [https://control.bluemix.net/account/user/profile](https://control.bluemix.net/account/user/profile), 
+<br>*SL_USERNAME* is a SoftLayer user name. Go to [https://control.bluemix.net/account/user/profile](https://control.bluemix.net/account/user/profile), 
 scroll down, and check API Username.
-<br>SL_API_KEY is a SoftLayer API Key. Go to [https://control.bluemix.net/account/user/profile](https://control.bluemix.net/account/user/profile), 
+<br>*SL_API_KEY* is a SoftLayer API Key. Go to [https://control.bluemix.net/account/user/profile](https://control.bluemix.net/account/user/profile), 
 scroll down, and check Authentication Key.
-<br>BM_API_KEY – An API key for IBM Cloud services. If you don’t have one already, go to 
+<br>*BM_API_KEY* – An API key for IBM Cloud services. If you don’t have one already, go to 
 [https://console.bluemix.net/iam/#/apikeys](https://console.bluemix.net/iam/#/apikeys) and create a new key.
 
-Caveats:  May also need to log in to SoftLayer via `bx sl init`
+Caveats:  May also need to log in to SoftLayer via `bx sl init` or via [https://control.softlayer.com](https://control.softlayer.com)
 
 ```
 docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME mkpvyaml
@@ -62,3 +62,18 @@ docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -
 
 The `/data` directory should map to whereever the configuration file `yamlgen.yaml` is located.
 The output file will be generated in the same directory.
+
+## Run `vls`
+The same container can be used to list any/all volumes you have access to.
+
+```
+docker run --rm -v `pwd`:/data -v /root/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME mkpvyaml vls
+```
+
+## Run `dvol`
+The same container can be used to selectively delete one or more volumes.
+
+```
+docker run --rm -v `pwd`:/data -v /root/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME mkpvyaml dvol 54137315 54137317 54137321
+```
+
