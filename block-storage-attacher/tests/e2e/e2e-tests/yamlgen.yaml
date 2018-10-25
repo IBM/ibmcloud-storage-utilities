@@ -1,5 +1,5 @@
 cluster:     ibmc-blockvolume-e2e-test      #  name of IKS cluster:  muraliportworx           #  name of IKS cluster
-region:   us-east           #  cluster:     mycluster      #  name of IKS cluster region
+region: us-east           #  cluster:     mycluster      #  name of IKS cluster region
 type:  endurance          #  performance | endurance
 offering: storage_as_a_service   #  storage_as_a_service | enterprise | performance
 # performance:

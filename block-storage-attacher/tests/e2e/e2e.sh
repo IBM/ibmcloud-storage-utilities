@@ -9,6 +9,13 @@ set +a
 # check mandatory variables
 [ -z "$GOPATH" ] && echo "Need GOPATH for plugin build and test executions(e.g export GOPATH=\path\to)" && exit 1
 
+E2E_PATH="src/github.ibm.com/alchemy-containers/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
+E2E_PATH="$GOPATH/$E2E_PATH"
+MKPVYAML="mkpvyaml"
+YAMLPATH="yamlgen.yaml"
+MKPVYAML="$E2E_PATH$MKPVYAML"
+YAMLPATH="$E2E_PATH$YAMLPATH"
+
 # Load common functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/scripts
 . $SCRIPT_DIR/common.sh
@@ -96,6 +103,8 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
 	cat $KUBECONFIG
         echo "Bluemix COnfig"
         cat ~/.bluemix/config.json
+        sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
+        sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
 	make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test
 	echo "E2E test binary was created successfully"
 fi
