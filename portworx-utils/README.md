@@ -71,13 +71,13 @@ The output file will be generated in the same directory.
 The same container can be used to list any/all volumes you have access to.
 
 ```
-docker run --rm -v `pwd`:/data -v /root/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME mkpvyaml vls
+docker run --rm -v `pwd`:/data -v /root/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME portworx/iks-mkpvyaml vls
 ```
 
 ## Run `dvol`
 The same container can be used to selectively delete one or more volumes.
 
 ```
-docker run --rm -v `pwd`:/data -v /root/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME mkpvyaml dvol 54137315 54137317 54137321
+docker run --rm -v `pwd`:/data -v /root/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME portworx/iks-mkpvyaml dvol 54137315 54137317 54137321
 ```
 
