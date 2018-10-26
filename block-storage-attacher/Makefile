@@ -1,11 +1,3 @@
-#/*******************************************************************************
-# * Licensed Materials - Property of IBM
-# * IBM Cloud Container Service, 5737-D43
-# * (C) Copyright IBM Corp. 2017, 2018 All Rights Reserved.
-# * US Government Users Restricted Rights - Use, duplication or
-# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
-# ******************************************************************************/
-
 IMAGE = ibmcloud-block-storage-attacher
 GOPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /cmd | grep -v /tests )
 GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./tests/e2e/*")

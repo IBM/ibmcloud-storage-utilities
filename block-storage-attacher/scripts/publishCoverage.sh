@@ -1,13 +1,5 @@
 #!/bin/bash
 
-#/******************************************************************************
-# * Licensed Materials - Property of IBM
-# * IBM Cloud Container Service, 5737-D43
-# * (C) Copyright IBM Corp. 2017, 2018 All Rights Reserved.
-# * US Government Users Restricted Rights - Use, duplication or
-# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
-# *****************************************************************************/
-
 if [ "$TRAVIS_GO_VERSION" == "tip" ]; then
 	echo "Coverage information is not required for tip version."
 	exit 0
