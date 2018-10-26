@@ -16,6 +16,11 @@ cache:
 
 sudo: true
 
+# safelist
+branches:
+  only:
+  - master
+
 before_install:
   - sudo sudo curl https://glide.sh/get | sh
   - sudo apt-get install bc
