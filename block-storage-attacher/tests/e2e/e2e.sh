@@ -9,7 +9,7 @@ set +a
 # check mandatory variables
 [ -z "$GOPATH" ] && echo "Need GOPATH for plugin build and test executions(e.g export GOPATH=\path\to)" && exit 1
 
-E2E_PATH="src/github.ibm.com/alchemy-containers/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
+E2E_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
 E2E_PATH="$GOPATH/$E2E_PATH"
 MKPVYAML="mkpvyaml"
 YAMLPATH="yamlgen.yaml"

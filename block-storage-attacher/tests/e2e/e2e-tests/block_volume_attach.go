@@ -18,7 +18,7 @@ import (
 	"fmt"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.ibm.com/alchemy-containers/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
+	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/pkg/api/v1"
 	"os"
@@ -33,7 +33,7 @@ var (
 	clusterName   = ""
 	pvfilepath    = ""
 	pv            *v1.PersistentVolume
-	e2epath       = "src/github.ibm.com/alchemy-containers/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
+	e2epath       = "src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
 	pvscriptpath  = ""
 	ymlscriptpath = ""
 	ymlgenpath    = ""
