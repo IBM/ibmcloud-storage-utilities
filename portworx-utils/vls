@@ -6,7 +6,8 @@
 import os
 from px_iks_utils import IKS_clusters, IKS_vols
 
-IAMToken = os.popen("cat ~/.bluemix/config.json | jq .IAMToken").read().rstrip().strip('\"')
+IAMToken = os.getenv("IAMTOKEN")
+
 clusters = IKS_clusters(IAMToken=IAMToken).list()
 hosts = {}
 for c in clusters:

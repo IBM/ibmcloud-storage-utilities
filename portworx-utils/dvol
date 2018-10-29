@@ -3,8 +3,8 @@
 # dvol:  Delete one or more volumes from IKS/Softlayer
 #
 
-from px_iks_utils import IKS_vols
 import sys
+from px_iks_utils import IKS_vols
 
 if len(sys.argv) < 2:
     print ("Usage: ", sys.argv[0], "  volId [...]")

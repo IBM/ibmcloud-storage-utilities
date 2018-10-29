@@ -8,5 +8,15 @@ if [ -z $IAMTOKEN ]; then
 fi
 
 
-./mkpvyaml.py
+if [ $# -eq 0 ]
+then
+   ./mkpvyaml.py
+elif [ "$1" = "vls" ]
+then
+   ./vls
+elif [ "$1" = "dvol" ]
+then
+    shift
+    ./dvol $*
+fi
 
