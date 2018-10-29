@@ -151,7 +151,7 @@ class IKS_vols:
                 "Authentication Problem.  Are SL_API_KEY and SL_USERNAME set?")
 
     def order_vol(self, storage_type, location, size,
-                  tier_level, iops, service_offering):
+                  tier_level, iops, hourly_billing_flag, service_offering):
         try:
             result = self._BSmgr.order_block_volume(
                                    storage_type=storage_type,
@@ -160,6 +160,7 @@ class IKS_vols:
                                    tier_level=tier_level,
                                    iops=iops,
                                    os_type='LINUX',
+                                   hourly_billing_flag=hourly_billing_flag,
                                    service_offering=service_offering)
             return (result['orderId'])
         except RuntimeError:

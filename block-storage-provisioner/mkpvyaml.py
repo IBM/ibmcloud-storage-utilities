@@ -93,6 +93,7 @@ metadata:
     ibm.io/targetip: "%s"
     ibm.io/lunid: "%s"
     ibm.io/nodeip: "%s"
+    ibm.io/volID: "%s"
 spec:
   capacity:
     storage: %sGi
@@ -107,7 +108,55 @@ spec:
                pv['vols'][i]['username'], pv['vols'][i]['password'],
                pv['vols'][i]['targetip'],
                pv['vols'][i]['lunid'], pv['vols'][i]['nodeip'],
-               pv['vols'][i]['capacity']), file=OutputFile)
+               pv['vols'][i]['volId'], pv['vols'][i]['capacity']), file=OutputFile)
+
+#
+# dvol:  Delete one or more volumes from IKS/Softlayer
+#
+
+def delete_vol(vols):
+    if len(vols) < 1:
+        print ("Usage: dvol volId [...]")
+        sys.exit(1)
+    
+    s = len(vols)
+    i = 0
+    while (i < s):
+        print ("Deleting VolID: ", vols[i])
+        IKS_vols().delete_vol (vols[i])
+        i = i + 1
+
+
+#
+# list_vols:  Volume list, and correlate with IKS cluster workers, if any
+#
+
+def list_vols(IAMToken):
+    clusters = IKS_clusters(IAMToken=IAMToken).list()
+    hosts = {}
+    for c in clusters:
+        for w in c['workers']:
+            hosts[w['privateIP']] = { 'region': c['region'], 'cluster' : c['name'], 'worker' : w['id'] , 'location': w['location']}
+    
+    
+    volIDs = IKS_vols().listall()
+    print ("VolID             Size            HostIPaddr           Region          Cluster             Worker                                                       Location")
+    for vid in volIDs:
+         vol = IKS_vols().get_vol (vid)
+         if vol.acls:
+             for a in vol.acls:  
+                 ip = a['hostIP']
+                 if ip in hosts:
+                     print ("%s          %s            %s          %s         %s            %s              %s" %
+                       (vid, vol.detail['capacityGb'], ip, hosts[ip]['region'], hosts[ip]['cluster'], hosts[ip]['worker'], hosts[ip]['location']))
+                 else:
+                     print ("%s          %s            %s          %s            %s           %s" %
+                       (vid, vol.detail['capacityGb'], ip, "", "", ""))
+         else:
+               print ("%s          %s            %s          %s            %s           %s" %
+                   (vid, vol.detail['capacityGb'], "", "", "", ""))
+
+   
 
 # --------------------------------------------------------------------------------
 #
@@ -124,9 +173,13 @@ check_cfg(doc)
 check_env()
 IAMToken = os.getenv("IAMTOKEN")
 
-# print ("Cluster = ", doc['cluster'])
-# print ("Region = ", doc['region'])
-# print ("IAMToken = ", IAMToken)
+if len(sys.argv) >= 2 and sys.argv[1] == "dvol":
+    delete_vol(sys.argv[2:])
+    sys.exit(0)
+
+if len(sys.argv) == 2 and sys.argv[1] == "vls":
+    list_vols(IAMToken)
+    sys.exit(0)
 
 #
 # Only going to be one cluster
@@ -168,6 +221,7 @@ for w in c['workers']:
                            size=j,
                            tier_level=tier,
                            iops=iops_param,
+                           hourly_billing_flag=doc['hourly_billing_flag'],
                            service_offering=service_offering)
             print("ORDER ID = ", orderId)
             vol.update({'orderId': orderId})

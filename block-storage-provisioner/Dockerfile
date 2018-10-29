@@ -13,13 +13,9 @@ ENV PYTHONUNBUFFERED=1
 
 COPY ./mkpvyaml.py /
 COPY ./px_iks_utils.py /
-COPY ./vls /
-COPY ./dvol /
 COPY ./docker-entrypoint.sh /
 
 RUN chmod +x /docker-entrypoint.sh
 RUN chmod +x /mkpvyaml.py
-RUN chmod +x /vls
-RUN chmod +x /dvol
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
