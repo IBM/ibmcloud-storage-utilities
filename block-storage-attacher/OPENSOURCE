@@ -26,8 +26,6 @@ github.com/PuerkitoBio/purell,8a290539e2e8629dbc4e6bad948158f790ec31f4
 github.com/PuerkitoBio/urlesc,5bd2802263f21d8788851d5305584c82a5c75d7e
 github.com/satori/go.uuid,f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
 github.com/spf13/pflag,9ff6c6923cfffbcd502984b8e0c80539a94968b7
-github.ibm.com/alchemy-containers/armada-opensource-lib,fd1a7be252d2029a72632feef96d13856f3b78a2
-github.ibm.com/alchemy-containers/ibmc-storage-common-resources-lib,77529872e65a19dcc8c49d036f511b5d5ffba33f
 go.uber.org/atomic,1ea20fb1cbb1cc08cbd0d913a96dead89aa18289
 go.uber.org/zap,a2773be06b9ac7c318a3a105b5c310af5730c6b4
 golang.org/x/crypto,81e90905daefcd6fd217b62423c0908922eadb30

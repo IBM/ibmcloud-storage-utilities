@@ -17,6 +17,3 @@ import:
   - kubernetes
 - package: k8s.io/api
   version: kubernetes-1.9.2
-#- package: github.ibm.com/alchemy-containers/armada-opensource-lib
-#  version: fd1a7be252d2029a72632feef96d13856f3b78a2
-#  repo: git@github.ibm.com:alchemy-containers/armada-opensource-lib.git
