@@ -9,12 +9,12 @@ set +a
 # check mandatory variables
 [ -z "$GOPATH" ] && echo "Need GOPATH for plugin build and test executions(e.g export GOPATH=\path\to)" && exit 1
 
-E2E_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
-E2E_PATH="$GOPATH/$E2E_PATH"
+SCRIPTS_FOLDER_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/"
+SCRIPTS_FOLDER_PATH="$GOPATH/$SCRIPTS_FOLDER_PATH"
 MKPVYAML="mkpvyaml"
 YAMLPATH="yamlgen.yaml"
-MKPVYAML="$E2E_PATH$MKPVYAML"
-YAMLPATH="$E2E_PATH$YAMLPATH"
+MKPVYAML="$SCRIPTS_FOLDER_PATH$MKPVYAML"
+YAMLPATH="$SCRIPTS_FOLDER_PATH$YAMLPATH"
 
 # Load common functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/scripts
