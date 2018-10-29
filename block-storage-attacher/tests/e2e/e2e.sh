@@ -9,6 +9,13 @@ set +a
 # check mandatory variables
 [ -z "$GOPATH" ] && echo "Need GOPATH for plugin build and test executions(e.g export GOPATH=\path\to)" && exit 1
 
+SCRIPTS_FOLDER_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/"
+SCRIPTS_FOLDER_PATH="$GOPATH/$SCRIPTS_FOLDER_PATH"
+MKPVYAML="mkpvyaml"
+YAMLPATH="yamlgen.yaml"
+MKPVYAML="$SCRIPTS_FOLDER_PATH$MKPVYAML"
+YAMLPATH="$SCRIPTS_FOLDER_PATH$YAMLPATH"
+
 # Load common functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/scripts
 . $SCRIPT_DIR/common.sh
@@ -92,10 +99,12 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         bx cs init --host  $ARMADA_API_ENDPOINT
 	setKubeConfig $PVG_CLUSTER_CRUISER
         export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
-        sed -i '/certificate-authority: ca-mon01-ibmc-blockvolume-e2e-test.pem/c\    certificate-authority: \/root/.bluemix/plugins/container-service/clusters/ibmc-blockvolume-e2e-test/ca-mon01-ibmc-blockvolume-e2e-test.pem' $KUBECONFIG
+        addFullPathToCertsInKubeConfig
 	cat $KUBECONFIG
         echo "Bluemix COnfig"
         cat ~/.bluemix/config.json
+        sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
+        sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
 	make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test
 	echo "E2E test binary was created successfully"
 fi

@@ -12,9 +12,9 @@
 package e2e
 
 import (
+	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.ibm.com/alchemy-containers/block-storage-attacher/tests/e2e/framework"
 	"testing"
 )
 

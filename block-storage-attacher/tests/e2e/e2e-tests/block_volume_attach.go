@@ -12,13 +12,13 @@
 package e2e
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"bufio"
 	"bytes"
-	"fmt"
-	"github.ibm.com/alchemy-containers/block-storage-attacher/tests/e2e/framework"
 	"errors"
+	"fmt"
+	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/pkg/api/v1"
 	"os"
@@ -33,11 +33,12 @@ var (
 	clusterName   = ""
 	pvfilepath    = ""
 	pv            *v1.PersistentVolume
-	e2epath       = "src/github.ibm.com/alchemy-containers/block-storage-attacher/tests/e2e/e2e-tests/"
+	e2epath       = "src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
+	scriptspath   = "src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/"
 	pvscriptpath  = ""
 	ymlscriptpath = ""
 	ymlgenpath    = ""
-        c clientset.Interface
+	c             clientset.Interface
 )
 var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 	f := framework.NewDefaultFramework("block-volume-attach")
@@ -48,8 +49,8 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 		c = f.ClientSet
 		ns = f.Namespace.Name
 		pvscriptpath = e2epath + "utilscript.sh"
-		ymlscriptpath = e2epath + "mkpvyaml"
-		ymlgenpath = e2epath + "yamlgen.yaml"
+		ymlscriptpath = scriptspath + "mkpvyaml"
+		ymlgenpath = scriptspath + "yamlgen.yaml"
 	})
 
 	framework.KubeDescribe("Block_Volume_Attach E2E ", func() {
@@ -58,7 +59,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			gopath := os.Getenv("GOPATH")
 			clusterName, err := getCluster(gopath + "/" + ymlgenpath)
 			Expect(err).NotTo(HaveOccurred())
-			pvfilepath = gopath + "/" + e2epath + "pv-" + clusterName + ".yaml"
+			pvfilepath = gopath + "/" + scriptspath + "pv-" + clusterName + ".yaml"
 			filestatus, err := fileExists(pvfilepath)
 			if filestatus == true {
 				os.Remove(pvfilepath)
@@ -100,7 +101,11 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				Expect(err).NotTo(HaveOccurred())
 				attachStatus, err := getAttchStatus()
 				Expect(err).NotTo(HaveOccurred())
-				Expect(pv.ObjectMeta.Annotations["ibm.io/dm"]).To(ContainElement("/dev/dm-"))
+				devicePath := pv.ObjectMeta.Annotations["ibm.io/dm"]
+				if !strings.Contains(devicePath, "/dev/dm-") {
+					err := errors.New("Device path is not attached")
+					Expect(err).NotTo(HaveOccurred())
+				}
 				Expect(attachStatus).To(Equal("attached"))
 			}
 
@@ -115,7 +120,9 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			By("Volume Deletion  ")
 			volumeid = pv.ObjectMeta.Annotations["ibm.io/volID"]
 			volidarg := fmt.Sprintf("%s", volumeid)
-			cmd = exec.Command(pvscriptpath, volidarg, "voldelete")
+			nodeip := pv.ObjectMeta.Annotations["ibm.io/nodeip"]
+			nodeiparg := fmt.Sprintf("%s", nodeip)
+			cmd = exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg)
 			var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
@@ -148,7 +155,7 @@ func getAttchStatus() (string, error) {
 	for start := time.Now(); time.Since(start) < (15 * time.Minute); {
 		pv, _ = c.Core().PersistentVolumes().Get(pvname)
 		attachStatus = pv.ObjectMeta.Annotations["ibm.io/attachstatus"]
-                time.Sleep(1 * time.Minute)
+		time.Sleep(1 * time.Minute)
 		if attachStatus == "attached" || attachStatus == "failed" {
 			return attachStatus, nil
 		}
