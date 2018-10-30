@@ -37,7 +37,7 @@ imports:
   - log
   - swagger
 - name: github.com/fsnotify/fsnotify
-  version: ccc981bf80385c528a65fbfdd49bf2d8da22aa23
+  version: 7d7316ed6e1ed2de075aab8dfc76de5d158d66e1
 - name: github.com/ghodss/yaml
   version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
 - name: github.com/go-openapi/jsonpointer
@@ -84,7 +84,7 @@ imports:
 - name: github.com/kr/fs
   version: 2788f0dbd16903de03cb8186e5c7d97b69ad387b
 - name: github.com/magiconair/properties
-  version: c2353362d570a7bfa228149c62842019201cfb71
+  version: b3b15ef068fd0b17ddf408a23669f20811d194d2
 - name: github.com/mailru/easyjson
   version: d5b7844b561a7bc640052f1b935f7b800330d7e0
   subpackages:
@@ -126,7 +126,7 @@ imports:
   - matchers/support/goraph/util
   - types
 - name: github.com/opencontainers/runc
-  version: f3ce8221ea760f51b5403a9892a69ace43845c2c
+  version: 4815f67a5fae118f8c74178ac14b94f10a3f0b76
   subpackages:
   - libcontainer/selinux
 - name: github.com/pborman/uuid
@@ -138,7 +138,7 @@ imports:
 - name: github.com/pkg/errors
   version: bfd5150e4e41705ded2129ec33379de1cb90b513
 - name: github.com/pkg/sftp
-  version: 4d0e916071f68db74f8a73926335f809396d6b42
+  version: 7aa3e486569d7333a1fbed548e18493bfbe06d55
 - name: github.com/PuerkitoBio/purell
   version: 8a290539e2e8629dbc4e6bad948158f790ec31f4
 - name: github.com/PuerkitoBio/urlesc
@@ -149,15 +149,15 @@ imports:
   - mem
   - sftp
 - name: github.com/spf13/cast
-  version: 8c9545af88b134710ab1cd196795e7f2388358d7
+  version: ce135a4ebeee6cfe9a26c93ee0d37825f26113c7
 - name: github.com/spf13/jwalterweatherman
-  version: 94f6ae3ed3bceceafa716478c5fbf8d29ca601a1
+  version: fa7ca7e836cf3a8bb4ebf799f472c12d7e903d66
 - name: github.com/spf13/pflag
   version: 5ccb023bc27df288a957c5e994cd44fd19619465
 - name: github.com/spf13/viper
-  version: 62edee319679b6ceaec16de03b966102d2dea709
+  version: 7538d73b4eb9511d85a9f1dfef202eeb8ac260f4
 - name: github.com/uber-go/atomic
-  version: 8dc6146f7569370a472715e178d8ae31172ee6da
+  version: 3b8db5e93c4c02efbc313e17b2e796b0914a01fb
 - name: github.com/uber-go/zap
   version: a5783ee4b216a927da8f839c45cfbf9d694e1467
 - name: github.com/ugorji/go
@@ -167,8 +167,6 @@ imports:
 - name: golang.org/x/crypto
   version: 1f22c0103821b9390939b6776727195525381532
   subpackages:
-  - curve25519
-  - ssh
   - ssh/terminal
 - name: golang.org/x/net
   version: e90d6d0afc4c315a0d87a568ae68577cc15149a0
