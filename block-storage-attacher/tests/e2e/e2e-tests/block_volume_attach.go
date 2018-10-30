@@ -59,7 +59,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			gopath := os.Getenv("GOPATH")
 			clusterName, err := getCluster(gopath + "/" + ymlgenpath)
 			Expect(err).NotTo(HaveOccurred())
-			pvfilepath = gopath + "/" + scriptspath + "pv-" + clusterName + ".yaml"
+			pvfilepath = gopath + "/" + e2epath + "pv-" + clusterName + ".yaml"
 			filestatus, err := fileExists(pvfilepath)
 			if filestatus == true {
 				os.Remove(pvfilepath)
