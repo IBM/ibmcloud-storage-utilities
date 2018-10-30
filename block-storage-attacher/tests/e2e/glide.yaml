@@ -1,4 +1,4 @@
-package: github.ibm.com/alchemy-containers/armada-storage-e2e
+package: github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e
 
 import:
 - package: github.com/opencontainers/runc/libcontainer/selinux
