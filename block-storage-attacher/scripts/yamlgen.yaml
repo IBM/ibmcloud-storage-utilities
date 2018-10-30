@@ -1,7 +1,4 @@
-#
-# Can only specify 'performance' OR 'endurance' and associated clause
-#
-cluster:  mycluster           #  name of IKS cluster
+cluster:  ibmc-blockvolume-e2e-test           #  name of IKS cluster
 region:   us-east           #  cluster region
 type:  endurance          #  performance | endurance
 offering: storage_as_a_service   #  storage_as_a_service | enterprise | performance
