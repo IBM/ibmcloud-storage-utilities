@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/opencontainers/runc/libcontainer/selinux"
-	"github.ibm.com/alchemy-containers/armada-storage-e2e/framework"
+	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/pkg/api"
 	"k8s.io/client-go/pkg/api/resource"
