@@ -47,7 +47,10 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-Paraml = "./yamlgen.yaml"     # Name of input parameter file
+gopath = os.environ.get('GOPATH')
+genfilepath = "/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/yamlgen.yaml"
+yamlpath = gopath + genfilepath
+Paraml = yamlpath     # Name of input parameter file
 
 #
 # Load the input parameter file

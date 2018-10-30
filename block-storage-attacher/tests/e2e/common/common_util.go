@@ -14,8 +14,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/opencontainers/runc/libcontainer/selinux"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
+	"github.com/opencontainers/runc/libcontainer/selinux"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/pkg/api"
 	"k8s.io/client-go/pkg/api/resource"
