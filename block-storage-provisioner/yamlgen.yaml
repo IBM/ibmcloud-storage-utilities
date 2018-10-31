@@ -1,0 +1,14 @@
+#
+# Can only specify 'performance' OR 'endurance' and associated clause
+#
+cluster:  jeffdev   #  name of IKS cluster
+region:   us-east       #  cluster region
+type:  endurance          #  performance | endurance
+offering: storage_as_a_service   #  storage_as_a_service | enterprise | performance
+hourly_billing_flag: False
+# hourly_billing_flag: True
+# performance:
+#    - iops:  40000          #   INTEGER between 100 and 1000 in multiples of 100
+endurance:
+  - tier:  2              #   [0.25|2|4|10]
+size:  [ 20 ]
