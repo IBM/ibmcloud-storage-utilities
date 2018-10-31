@@ -208,5 +208,6 @@ class IKS_vols:
         try:
             result = self._BSmgr.cancel_block_volume(
                 volId, reason='No longer needed', immediate=True)
+            print(result)
         except RuntimeError:
             print("delete_vol: Skipping volId: ", volId)
