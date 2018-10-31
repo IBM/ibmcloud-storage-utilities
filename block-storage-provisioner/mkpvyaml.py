@@ -222,7 +222,7 @@ for w in c['workers']:
                            tier_level=tier,
                            iops=iops_param,
                            hourly_billing_flag=doc['hourly_billing_flag'],
-                           service_offering=service_offering)
+                           service_offering=doc['offering'])
             print("ORDER ID = ", orderId)
             vol.update({'orderId': orderId})
             w['vols'].append(vol)
