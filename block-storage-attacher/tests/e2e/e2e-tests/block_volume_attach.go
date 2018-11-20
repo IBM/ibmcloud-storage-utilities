@@ -38,6 +38,7 @@ var (
 	pvscriptpath  = ""
 	ymlscriptpath = ""
 	ymlgenpath    = ""
+	expvname      = ""
 	c             clientset.Interface
 )
 var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
@@ -79,13 +80,19 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 
 			By("Static PV  Creation")
 			if filestatus == true {
+				expvname, _ := getPVName(pvfilepath)
+				fmt.Printf("expvname:\n%s\n", expvname)
 				pvscriptpath = gopath + "/" + pvscriptpath
 				filepatharg := fmt.Sprintf("%s", pvfilepath)
+				expv, err := c.Core().PersistentVolumes().Get(expvname)
+				if err == nil {
+					cleanUP(expvname, expv)
+				}
 				cmd := exec.Command(pvscriptpath, filepatharg, "pvcreate")
 				var stdout, stderr bytes.Buffer
 				cmd.Stdout = &stdout
 				cmd.Stderr = &stderr
-				err := cmd.Run()
+				err = cmd.Run()
 				Expect(err).NotTo(HaveOccurred())
 				outStr, _ := string(stdout.Bytes()), string(stderr.Bytes())
 				if strings.Contains(outStr, "/") {
@@ -96,10 +103,12 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 					pvstring := strings.Split(outStr, " ")
 					pvname = strings.Trim(pvstring[1], "\"")
 				}
-
 				pv, err = c.Core().PersistentVolumes().Get(pvname)
 				Expect(err).NotTo(HaveOccurred())
 				attachStatus, err := getAttchStatus()
+				if err != nil {
+					cleanUP(expvname, expv)
+				}
 				Expect(err).NotTo(HaveOccurred())
 				devicePath := pv.ObjectMeta.Annotations["ibm.io/dm"]
 				if !strings.Contains(devicePath, "/dev/dm-") {
@@ -192,4 +201,40 @@ func getCluster(filename string) (string, error) {
 
 	}
 	return clustername, nil
+}
+
+func getPVName(filename string) (string, error) {
+
+	var line = ""
+	var pvname = ""
+
+	file, err := os.Open(filename)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line = scanner.Text()
+		fmt.Printf("line:\n%s\n", line)
+		if strings.Contains(line, ":") {
+			value := strings.Split(line, ":")
+			if strings.TrimSpace(value[0]) == "name" {
+				pvname = strings.TrimSpace(value[1])
+				break
+			}
+
+		}
+	}
+	return pvname, nil
+}
+
+func cleanUP(expvname string, pvobj *v1.PersistentVolume) {
+	volumeid = pvobj.ObjectMeta.Annotations["ibm.io/volID"]
+	volidarg := fmt.Sprintf("%s", volumeid)
+	nodeip := pvobj.ObjectMeta.Annotations["ibm.io/nodeip"]
+	nodeiparg := fmt.Sprintf("%s", nodeip)
+	exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg)
+	c.Core().PersistentVolumes().Delete(expvname, nil)
+
 }
