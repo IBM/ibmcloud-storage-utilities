@@ -204,8 +204,27 @@ class IKS_vols:
                       (volId, ipAddr))
                 time.sleep(10)
 
+    def deauthorize_host_vol(self, volId, ipAddr):
+        ip_id = self.get_ip_id(ipAddr)
+        ip_ids = [ip_id]
+        while True:
+            try:
+                print("Revoking access to volume: %s for HostIP: %s" %
+                      (volId, ipAddr))
+                access = self._BSmgr.deauthorize_host_to_volume(
+                    volume_id=volId, ip_address_ids=ip_ids)
+                return access
+            except:
+                print("Vol %s is not yet revoked for (ipAddr : %s )" %
+                      (volId, ipAddr))
+
     def delete_vol(self, volId):
         try:
+            volume = self.get_vol(volId)
+            if volume.acls:
+                for a in volume.acls:
+                    ip = a['hostIP']
+                    access_info = self.deauthorize_host_vol(volId, ip)
             result = self._BSmgr.cancel_block_volume(
                 volId, reason='No longer needed', immediate=True)
             print(result)
