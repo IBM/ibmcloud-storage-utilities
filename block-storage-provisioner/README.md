@@ -37,7 +37,7 @@ is detailed at [https://github.com/IBM/ibmcloud-storage-utilities/tree/master/bl
 ## Build
 To build this from scratch, clone this repo and run:
 ```
-docker build -t mkpvyaml .
+make all
 ```
 
 ## Run `mkpvyaml`
