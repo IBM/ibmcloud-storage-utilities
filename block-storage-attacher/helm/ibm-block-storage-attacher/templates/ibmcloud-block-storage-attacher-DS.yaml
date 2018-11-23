@@ -9,13 +9,23 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      release: {{ .Release.Name }}
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
         app: {{ template "name" . }}
+        chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
         release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+      annotations:
+        productID: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        productName: {{ .Chart.Name }}
+        productVersion: {{ .Chart.Version }}
     spec:
       affinity:
         nodeAffinity:
@@ -51,6 +61,15 @@ spec:
             name: host-lib
           - mountPath: /host/var/log
             name: host-var-log
+        livenessProbe:
+            exec:
+              command:
+              - ls
+              - /host/lib/ibmc-portworx/iscsi-attach.sh
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 5
+            failureThreshold: 3
       serviceAccountName: {{ .Chart.Name }}
       volumes:
         - name: sysd-run
