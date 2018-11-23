@@ -1,0 +1,35 @@
+## Metadata for ibm-block-storage-attacher configuration
+
+# Image configuration metadata
+image:
+  __metadata:
+    label: "Attacher Driver image information"
+    description: "Specify the image URL to run."
+  repository:
+    __metadata:
+      label: "Attacher image repository"
+      description: "The image URL for attacher image"
+      type: "string"
+      immutable: false
+      required: true
+  build:
+    __metadata:
+      label: "Attacher image Tag"
+      description: "The tag is part of the ibmcloud-block-storage-attacher image"
+      type: "string"
+      immutable: false
+      required: true
+  pullPolicy:
+    __metadata:
+      label: "Block attacher image pull policy"
+      description: "Always, Never, or IfNotPresent. Defaults to Always"
+      type: "string"
+      immutable: false
+      required: true
+      options:
+      - label: "Always"
+        value: "Always"
+      - label: "Never"
+        value: "Never"
+      - label: "IfNotPresent"
+        value: "IfNotPresent"
