@@ -1,4 +1,3 @@
-replicaCount: 1
 image:
   repository: registry.bluemix.net/ibm/ibmcloud-block-storage-attacher
   build: latest

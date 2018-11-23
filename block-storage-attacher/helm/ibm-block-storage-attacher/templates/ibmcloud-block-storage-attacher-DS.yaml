@@ -51,7 +51,7 @@ spec:
             name: host-lib
           - mountPath: /host/var/log
             name: host-var-log
-      serviceAccountName: ibmcloud-block-storage-attacher
+      serviceAccountName: {{ .Chart.Name }}
       volumes:
         - name: sysd-run
           hostPath:

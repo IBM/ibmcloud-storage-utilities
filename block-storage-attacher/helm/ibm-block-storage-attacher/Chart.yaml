@@ -1,0 +1,19 @@
+apiVersion: v1
+description: A Helm chart for installing ibmcloud block storage attacher
+icon: https://resource-catalog.bluemix.net/static/images/uploaded/icons/block-storage.png
+keywords:
+- IKS
+- amd64
+- Storage
+- Beta
+maintainers:
+- name: akgunjal
+  email: akgunjal@in.ibm.com
+- name: samin
+  email: samin@us.ibm.com
+- name: sikhlaqu
+  email: sikhlaqu@in.ibm.com
+name: ibm-block-storage-attacher
+version: 1.0.0
+tillerVersion: ">=2.10.0"
+kubeVersion: ">=1.10"
