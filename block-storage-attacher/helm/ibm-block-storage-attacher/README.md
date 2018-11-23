@@ -145,7 +145,7 @@ If you want to upgrade your existing IBM Cloud Block Storage Attacher chart to l
 
    Example output:
    ```
-   <helm_chart_name>	1       	Wed Aug  1 14:55:15 2018	DEPLOYED	ibm-block-storage-attacher-1.0	default
+   <helm_chart_name>	1       	Wed Aug  1 14:55:15 2018	DEPLOYED	ibm-block-storage-attacher-1.0.0	default
    ```
 
 2. Upgrade the IBM Cloud Block Storage Attacher to latest.
@@ -160,7 +160,7 @@ If you do not want to use IBM Cloud Block Storage for your cluster, you can unin
    
    Example output: 
    ```
-   <helm_chart_name>	1       	Wed Aug  1 14:55:15 2018	DEPLOYED	ibm-block-storage-attacher-1.0	default
+   <helm_chart_name>	1       	Wed Aug  1 14:55:15 2018	DEPLOYED	ibm-block-storage-attacher-1.0.0	default
    ```
    
 2. Delete the IBM Cloud Block Storage Attacher by removing the helm chart. 
