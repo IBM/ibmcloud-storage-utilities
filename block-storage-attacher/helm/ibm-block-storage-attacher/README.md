@@ -27,6 +27,9 @@ The DaemonSet contains attacher driver which invokes the linux service on the wo
 ## Resources Required
 ibm-block-storage-attacher uses Kubernetes v1.10 or higher.
 
+## PodSecurityPolicy Requirements
+The driver daemonset POD needs the multiple hostpath volumes to install binaries. By default IKS uses "ibm-privileged-psp", which comes by default as part of the cluster creation.
+
 ## Installing the Chart
 The helm installation consists of two parts, the helm client (helm) and the helm server (tiller). When helm is correctly set up on your cluster, you can install the IBM Cloud Block Storage Attacher and start attaching block storage on the node of your cluster.
 
