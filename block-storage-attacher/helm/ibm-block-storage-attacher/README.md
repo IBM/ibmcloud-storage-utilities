@@ -72,18 +72,15 @@ When you set up the helm server in your cluster, you can use the helm chart prov
 ## Installing the IBM Cloud Block Storage Attacher on your cluster
 Now that the helm server is up and running in your cluster, install the IBM Cloud Block Storage Attacher to attach the block storage on the nodes.
 
-1. Clone the GitHub repository where the helm chart is stored.
-   <pre>git clone https://github.com/IBM/ibmcloud-storage-utilities.git</pre>
-                          OR
-   <pre>git clone git@github.com:IBM/ibmcloud-storage-utilities.git</pre>
-2. Navigate to the installation directory.
-   <pre>cd ibmcloud-storage-utilities/block-storage-attacher/helm</pre>
-3. Install the IBM Cloud Block Storage Attacher. Replace `<helm_chart_name>` with a name for your helm chart. When you install the attacher, pre-defined storage classes are added to your cluster.
-   <pre>helm install ibm-block-storage-attacher/ --name &lt;helm_chart_name&gt;</pre>
+1. Add the IBM Cloud Helm repository `ibm` to your Helm instance.
+   <pre>helm repo add ibm https://registry.bluemix.net/helm/ibm</pre>
+   <pre>helm repo update</pre>
+2. Install the IBM Cloud Block Storage Attacher. When you install the attacher, pre-defined storage classes are added to your cluster.
+   <pre>helm install --name ibm-block-storage-attacher ibm/ibm-block-storage-attacher</pre>
    
    Example output: 
    ```
-   NAME:   elevated-rodent
+   NAME:   <helm_chart-name>
    LAST DEPLOYED: Wed Aug  1 14:55:15 2018
    NAMESPACE: default
    STATUS: DEPLOYED
@@ -110,7 +107,7 @@ Now that the helm server is up and running in your cluster, install the IBM Clou
    ibm-block-storage-attacher       1        1        0      1           0          <none>         2s
    ```
 
-4. Verify that the attacher was installed correctly. 
+3. Verify that the attacher was installed correctly. 
    <pre>kubectl get pod -n kube-system -o wide | grep attacher</pre>
    
    Example output: 
@@ -119,14 +116,14 @@ Now that the helm server is up and running in your cluster, install the IBM Clou
    ```
    The installation is successful when you see one or more `ibm-block-storage-attacher` pods. The number of `ibm-block-storage-attacher` pods equals the number of worker nodes in your cluster. All pods must be in a **Running** state.
    
-5. Verify that the storage classes for block storage attacher were added to your cluster.
+4. Verify that the storage classes for block storage attacher were added to your cluster.
    <pre>kubectl get storageclasses | grep attacher</pre>
    
    Example output: 
    ```
    ibmc-block-attacher        ibm.io/ibmc-blockattacher
    ```
-6. Repeat the steps for all clusters where you want to attach block storage for your cluster nodes.
+5. Repeat the steps for all clusters where you want to attach block storage for your cluster nodes.
 
 ## Configuration
 The helm chart has the following Values that can be overriden using the install --set parameter. For example:
