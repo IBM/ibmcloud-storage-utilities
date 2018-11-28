@@ -462,7 +462,7 @@ function install_blockvolume_plugin {
     echo "Installing helm chart ibmcloud-blockvolume-attacher-plugin .."
 	# INSTALL HELM TILLER (Attempt again, if already installed)
 	echo "Initialize tiller AND Wait till running"
-	helm init --upgrade
+	helm init --force-upgrade
 	check_pod_state "tiller-deploy"
 
 	# INSTALL/UPGRADE HELM CHART
