@@ -459,7 +459,7 @@ function install_blockvolume_plugin {
         echo "helm chart not found. Hence exiting"
         exit 1
     fi
-    echo "Installing helm chart ibmcloud-blockvolume-attacher-plugin .."
+    echo "Installing helm chart ibm-block-storage-attacher .."
 	# INSTALL HELM TILLER (Attempt again, if already installed)
 	echo "Initialize tiller AND Wait till running"
 	helm init --force-upgrade
@@ -471,10 +471,10 @@ function install_blockvolume_plugin {
 
 	# CHECK FOR UPGRADE
 
-        echo "Checking for existing helm chart ibmcloud-blockvolume-storage-attacher on cluster .."
-        helm_release=$(helm ls | grep DEPLOYED | awk "/ibmcloud-block-storage-attacher/"'{print $1}')
+        echo "Checking for existing helm chart ibm-block-storage-attacher on cluster .."
+        helm_release=$(helm ls | grep DEPLOYED | awk "/ibm-block-storage-attacher/"'{print $1}')
         if [   "$helm_release" != "" ]; then
-          echo "Existing release $helm_release found for chart ibmcloud-blockvolume-attacher"
+          echo "Existing release $helm_release found for chart ibm-block-storage-attacher"
           helm_install_cmd="helm upgrade --force --recreate-pods $helm_values_override $helm_release $HELM_CHART"
         fi
 
