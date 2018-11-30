@@ -10,11 +10,17 @@ set +a
 [ -z "$GOPATH" ] && echo "Need GOPATH for plugin build and test executions(e.g export GOPATH=\path\to)" && exit 1
 
 SCRIPTS_FOLDER_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/"
+E2EPATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
 SCRIPTS_FOLDER_PATH="$GOPATH/$SCRIPTS_FOLDER_PATH"
+E2E_PATH="$GOPATH/$E2EPATH"
 MKPVYAML="mkpvyaml"
 YAMLPATH="yamlgen.yaml"
 MKPVYAML="$SCRIPTS_FOLDER_PATH$MKPVYAML"
 YAMLPATH="$SCRIPTS_FOLDER_PATH$YAMLPATH"
+
+
+CLUSTERDETAILS="Region:$ARMADA_REGION \n Cluster Location:$PVG_CLUSTER_LOCATION \n Kube-Version:$PVG_CLUSTER_KUBE_VERSION \n"
+echo -e "$CLUSTERDETAILS" > $E2E_PATH/setupDetails.txt
 
 # Load common functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/scripts
@@ -66,6 +72,8 @@ if [[ -z "$cluster_id" && "$TEST_CLUSTER_CREATE" != "never" ]]; then
 	echo "Cluster creation is successful and ready to use"
 fi
 
+        echo "BlockVolumeAttacher-Volume-Test: Cluster-Creation: PASS" > $E2E_PATH/e2eTests.txt
+
 # Setup the kube configs, user can also opt to skip this during dev-test
 if [[ $TEST_CLUSTER_CONFIG_DOWNLOAD == "true" ]]; then
 	setKubeConfig $PVG_CLUSTER_CRUISER
@@ -83,7 +91,10 @@ echo "Kubeclient has been configured successfully to access the cluster"
 if [[ $TEST_HELM_INSTALL == "true" ]]; then
 	install_blockvolume_plugin
 	check_pod_state "ibm-block-storage-attacher" 
+	#check_daemonset_state "ibmcloud-block-storage-driver"
 fi
+
+echo "BlockVolumeAttacher-Volume-Test: Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
 
 # Build binary (if configured), Otherwise conf must have the binary file location
 if [[ $TEST_CODE_BUILD == "true" ]]; then
@@ -104,9 +115,15 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         cat ~/.bluemix/config.json
         sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
         sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
-	make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test
+	make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
 	echo "E2E test binary was created successfully"
 fi
+
+echo "--- Cluster Details ---" >  $E2E_PATH/setupDetails.txt
+echo "$CLUSTERDETAILS" >> $E2E_PATH/setupDetails.txt
+echo "${PLUGINDETAILS}" >> $E2E_PATH/setupDetails.txt
+echo "$CLUSTER_ID" >> $E2E_PATH/setupDetails.txt
+
 
 echo "Starting ibmcloud block storage plugin e2e tests "
 # Call the go binary
