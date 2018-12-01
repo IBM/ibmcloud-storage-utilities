@@ -39,6 +39,7 @@ var (
 	ymlscriptpath = ""
 	ymlgenpath    = ""
 	expvname      = ""
+	testfilepath  = ""
 	c             clientset.Interface
 )
 var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
@@ -52,14 +53,25 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 		pvscriptpath = e2epath + "utilscript.sh"
 		ymlscriptpath = scriptspath + "mkpvyaml"
 		ymlgenpath = scriptspath + "yamlgen.yaml"
+		testfilepath = e2epath + "e2eTests.txt"
+
 	})
 
 	framework.KubeDescribe("Block_Volume_Attach E2E ", func() {
 		It("Block Volume attach E2e Testcases", func() {
 			By("Volume Creation")
 			gopath := os.Getenv("GOPATH")
+			testfilepath = gopath + "/" + testfilepath
+			fpointer, err := os.OpenFile(testfilepath, os.O_APPEND|os.O_WRONLY, 0644)
+			if err != nil {
+				panic(err)
+			}
+			defer fpointer.Close()
 			clusterName, err := getCluster(gopath + "/" + ymlgenpath)
 			Expect(err).NotTo(HaveOccurred())
+			if _, err = fpointer.WriteString("BlockVolumeAttacher-Volume-Test: Getting Cluster Details: PASS\n"); err != nil {
+				panic(err)
+			}
 			pvfilepath = gopath + "/" + e2epath + "pv-" + clusterName + ".yaml"
 			filestatus, err := fileExists(pvfilepath)
 			if filestatus == true {
@@ -75,6 +87,9 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 
 			filestatus, err = fileExists(pvfilepath)
 			Expect(err).NotTo(HaveOccurred())
+			if _, err = fpointer.WriteString("BlockVolumeAttacher-Volume-Test:  Volume Creaiton: PASS\n"); err != nil {
+				panic(err)
+			}
 
 			/* Static PV Creation */
 
@@ -94,6 +109,9 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				cmd.Stderr = &stderr
 				err = cmd.Run()
 				Expect(err).NotTo(HaveOccurred())
+				if _, err = fpointer.WriteString("BlockVolumeAttacher-Volume-Test:  PV Creation: PASS\n"); err != nil {
+					panic(err)
+				}
 				outStr, _ := string(stdout.Bytes()), string(stderr.Bytes())
 				if strings.Contains(outStr, "/") {
 					pvstring := strings.Split(outStr, "/")
@@ -116,6 +134,9 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 					Expect(err).NotTo(HaveOccurred())
 				}
 				Expect(attachStatus).To(Equal("attached"))
+				if _, err = fpointer.WriteString("BlockVolumeAttacher-Volume-Test:  Device Attach: PASS\n"); err != nil {
+					panic(err)
+				}
 			}
 
 			/* Stativ PV  Deletion */
@@ -123,6 +144,9 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			By("Static PV Deletion ")
 			err = c.Core().PersistentVolumes().Delete(pvname, nil)
 			Expect(err).NotTo(HaveOccurred())
+			if _, err = fpointer.WriteString("BlockVolumeAttacher-Volume-Test:  PV Deletion: PASS\n"); err != nil {
+				panic(err)
+			}
 
 			/* Volume deletion */
 
@@ -137,6 +161,9 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			cmd.Stderr = &stderr
 			err = cmd.Run()
 			Expect(err).NotTo(HaveOccurred())
+			if _, err = fpointer.WriteString("BlockVolumeAttacher-Volume-Test:  VOlume Deletion: PASS\n"); err != nil {
+				panic(err)
+			}
 			outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
 			fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
 
