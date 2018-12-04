@@ -2,19 +2,18 @@
 # Helm chart to install IBM Cloud Block Storage Attacher
 
 ## Introduction
-IBM Cloud Block Storage is persistent, high performance iSCSI storage that you can mount to the apps that run in your cluster. To attach the block storage onto any desired node of your cluster, you must install the IBM Cloud Block Storage Attacher by using a helm chart. This helm chart also includes the creation of pre-defined storage class to define that the block storage device has to be attached on the node. 
+IBM Cloud Block Storage is persistent, high performance iSCSI storage that you can mount to apps that run in your Kubernetes cluster. To attach raw, unformatted, and unmounted block storage to a worker node in your cluster, install the IBM Cloud Block Storage Attacher by using a Helm chart. 
 
-For more information about IBM Cloud Block Storage, see [Getting started with Block Storage](https://console.bluemix.net/docs/infrastructure/BlockStorage/index.html#getting-started-with-block-storage).
+For more information about IBM Cloud Block Storage, see [Getting started with Block Storage](https://cloud.ibm.com/docs/infrastructure/BlockStorage/index.html#getting-started-with-block-storage).
 
 ## Chart Details
-The deployment of this chart contains Storage class, Attacher driver DaemonSet and the RBAC roles for the attacher driver.
-
-The Storage class deployment is required to enable the attacher driver to perform attach or detach of volumes.
-
-The DaemonSet contains attacher driver which invokes the linux service on the worker node to attach or detach the volumes. Ensure it run on each node.
+The IBM Cloud Block Storage Attacher Helm chart creates the following resources in your cluster: 
+- 1 Pod on every worker node in your cluster as part of a daemon set that includes the IBM Cloud Block Storage Attacher driver. The pod invokes the Linux service on the worker node to attach or detach a volume.
+- RBAC roles for the driver of the IBM Cloud Block Storage Attacher to assign the required permissions within the cluster.
+- 1 storage class that you later use to attach the block storage device to your worker node.
 
 ## Prerequisites
-*   If you do not have one yet, [create a standard cluster](https://console.bluemix.net/docs/containers/cs_clusters.html#clusters_cli). 
+*   If you do not have one yet, [create a standard cluster](https://cloud.ibm.com/docs/containers/cs_clusters.html#clusters_cli). 
 *   Kubernetes version 1.10 or later.
 *   Helm version 2.10 or later.
 *   The following CLIs and plugins.
@@ -24,20 +23,20 @@ The DaemonSet contains attacher driver which invokes the linux service on the wo
     *  Kubernetes (`kubectl`)
     *  Helm (`helm`)
 
-## Resources Required
-ibm-block-storage-attacher uses Kubernetes v1.10 or higher.
-
 ## PodSecurityPolicy Requirements
-The driver daemonset POD needs the multiple hostpath volumes to install binaries. By default IKS uses "ibm-privileged-psp", which comes by default as part of the cluster creation.
+The IBM Cloud Block Storage Attacher daemon set pod that includes the IBM Cloud Block Storage Attacher driver requires multiple `hostpath` volumes to install binaries. By default, IBM Cloud Kubernetes Service comes with the `ibm-privileged-psp` pod security policy that allows the IBM Cloud Block Storage Attacher daemon set to execute the required actions. If you use custom pod security policies, make sure that your pod security policy allows the IBM Cloud Block Storage Attacher pod to use `hostpath` volumes. 
 
-## Installing the Chart
-The helm installation consists of two parts, the helm client (helm) and the helm server (tiller). When helm is correctly set up on your cluster, you can install the IBM Cloud Block Storage Attacher and start attaching block storage on the node of your cluster.
+## Limitations
+* The IBM Cloud Block Storage Attacher can run on an amd64 architecture only.
 
-### Installing the helm client on your local machine
-Follow the instructions in the helm documentation to [install the helm client](https://docs.helm.sh/using_helm/#installing-helm) on your local machine. The helm client is needed to execute helm commands against your helm server in your cluster. 
+## Setting up Helm 
+The Helm installation consists of two parts, the Helm client (helm) and the Helm server (tiller). When Helm is correctly set up on your cluster, you can install the IBM Cloud Block Storage Attacher and start attaching block storage to the worker nodes in your cluster.
 
-### Installing the helm server on your cluster
-When you set up the helm server in your cluster, you can use the helm chart provided in this repository to install the IBM Cloud Block Storage Attacher. 
+### Installing the Helm client on your local machine
+Follow the instructions in the Helm documentation to [install the Helm client](https://docs.helm.sh/using_helm/#installing-helm) on your local machine. The Helm client is needed to execute Helm commands against your Helm server in your cluster. 
+
+### Installing the Helm server in your cluster
+When you set up the Helm server in your cluster, you can use the Helm chart provided in this repository to install the IBM Cloud Block Storage Attacher. 
 
 1. Note the cluster name or ID where you want to install the IBM Cloud Block Storage Attacher.
    <pre>ibmcloud ks clusters</pre>
@@ -46,7 +45,7 @@ When you set up the helm server in your cluster, you can use the helm chart prov
      <pre>ibmcloud ks cluster-config --cluster &lt;cluster_name_or_id&gt;</pre>
    - Copy and paste the command that is displayed in your terminal to set the KUBECONFIG environment variable.
      <pre>export KUBECONFIG=/Users/&lt;user_name&gt;/.bluemix/plugins/container-service/clusters/&lt;cluster_name&gt;/kube-config-prod-dal10-<cluster_name>.yml</pre>
-3. Initialize helm to set up a helm server in your cluster.
+3. Initialize Helm to set up a Helm server in your cluster.
    <pre>helm init</pre>
    
    Example output: 
@@ -69,13 +68,13 @@ When you set up the helm server in your cluster, you can use the helm chart prov
 
 4. Repeat the steps for all clusters where you want to install the IBM Cloud Block Storage Attacher.
    
-## Installing the IBM Cloud Block Storage Attacher on your cluster
-Now that the helm server is up and running in your cluster, install the IBM Cloud Block Storage Attacher to attach the block storage on the nodes.
+## Installing the IBM Cloud Block Storage Attacher in your cluster
+Now that the Helm server is up and running in your cluster, install the IBM Cloud Block Storage Attacher to attach the block storage on the nodes.
 
-1. Add the IBM Cloud Helm repository `ibm` to your Helm instance.
+1. Add the IBM Cloud Helm repository `ibm` to your Helm instance and get the latest version of all Helm charts.
    <pre>helm repo add ibm https://registry.bluemix.net/helm/ibm</pre>
    <pre>helm repo update</pre>
-2. Install the IBM Cloud Block Storage Attacher. When you install the attacher, pre-defined storage classes are added to your cluster.
+2. Install the IBM Cloud Block Storage Attacher. When you install the attacher, a daemon set, RBAC roles, and pre-defined storage classes are created in your cluster.
    <pre>helm install --name ibm-block-storage-attacher ibm/ibm-block-storage-attacher</pre>
    
    Example output: 
@@ -107,7 +106,7 @@ Now that the helm server is up and running in your cluster, install the IBM Clou
    ibm-block-storage-attacher       1        1        0      1           0          <none>         2s
    ```
 
-3. Verify that the attacher was installed correctly. 
+3. Verify that the IBM Cloud Block Storage Attacher is installed correctly. 
    <pre>kubectl get pod -n kube-system -o wide | grep attacher</pre>
    
    Example output: 
@@ -116,17 +115,19 @@ Now that the helm server is up and running in your cluster, install the IBM Clou
    ```
    The installation is successful when you see one or more `ibm-block-storage-attacher` pods. The number of `ibm-block-storage-attacher` pods equals the number of worker nodes in your cluster. All pods must be in a **Running** state.
    
-4. Verify that the storage classes for block storage attacher were added to your cluster.
+4. Verify that the storage class for the IBM Cloud Block Storage Attacher is added to your cluster.
    <pre>kubectl get storageclasses | grep attacher</pre>
    
    Example output: 
    ```
    ibmc-block-attacher        ibm.io/ibmc-blockattacher
    ```
-5. Repeat the steps for all clusters where you want to attach block storage for your cluster nodes.
+5. Repeat the steps for all clusters where you want to attach block storage to your worker nodes.
 
-## Configuration
-The helm chart has the following Values that can be overriden using the install --set parameter. For example:
+## Custom configuration settings
+The Helm chart has the following Values that can be overriden using the `helm install --set` parameter. 
+
+Example:
 ```
 helm install --set image.repository=registry.stage1.ng.bluemix.net/ibm/ibmcloud-block-storage-attacher ibm/ibm-block-storage-attacher
 ```
@@ -137,7 +138,7 @@ helm install --set image.repository=registry.stage1.ng.bluemix.net/ibm/ibmcloud-
 | image.pullPolicy       | Image Pull Policy                       | Always                                                   |
 
 ## Updating the IBM Cloud Block Storage Attacher on your cluster
-If you want to upgrade your existing IBM Cloud Block Storage Attacher chart to latest version, you can do it as below.
+If you want to upgrade your existing IBM Cloud Block Storage Attacher chart to the latest version, you can update the Helm chart. 
 
 1. Find the installation name of your helm chart.
 
@@ -152,9 +153,9 @@ If you want to upgrade your existing IBM Cloud Block Storage Attacher chart to l
    <pre>helm upgrade --force --recreate-pods &lt;helm_chart_name&gt; ibm-block-storage-attacher</pre>
 
 ## Removing the IBM Cloud Block Storage Attacher from your cluster
-If you do not want to use IBM Cloud Block Storage for your cluster, you can uninstall the helm chart. 
+If you do not want to use IBM Cloud Block Storage for your cluster, you can uninstall the Helm chart. 
 
-1. Find the installation name of your helm chart. 
+1. Find the installation name of your Helm chart. 
 
    <pre>helm ls | grep ibm-block-storage-attacher</pre>
    
@@ -163,8 +164,8 @@ If you do not want to use IBM Cloud Block Storage for your cluster, you can unin
    <helm_chart_name>	1       	Wed Aug  1 14:55:15 2018	DEPLOYED	ibm-block-storage-attacher-1.0.0	default
    ```
    
-2. Delete the IBM Cloud Block Storage Attacher by removing the helm chart. 
+2. Delete the IBM Cloud Block Storage Attacher by removing the Helm chart. 
    <pre>helm delete &lt;helm_chart_name&gt; --purge</pre>
 
-## Limitations
-* This Chart can run only on amd64 architecture type.
+## What's next?
+Now that you installed the IBM Cloud Block Storage Attacher, you can start to [automatically add block storage](https://cloud.ibm.com/docs/containers/cs_storage_utilities.html#attach_block) and [attach the block storage](https://cloud.ibm.com/docs/containers/cs_storage_utilities.html#automatic_block) to all your worker nodes. 
