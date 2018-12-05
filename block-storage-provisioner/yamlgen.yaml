@@ -1,8 +1,8 @@
 #
 # Can only specify 'performance' OR 'endurance' and associated clause
 #
-cluster: jeffdev   #  name of IKS cluster
-region:  us-east       #  cluster region
+cluster: mycluster  #  name of IKS cluster
+region:  us-south       #  cluster region
 type: endurance          #  performance | endurance
 offering: storage_as_a_service   #  storage_as_a_service | enterprise | performance
 hourly_billing_flag: True
