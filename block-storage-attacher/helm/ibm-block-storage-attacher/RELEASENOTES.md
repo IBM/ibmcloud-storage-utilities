@@ -27,9 +27,9 @@ Please refer v1.0.0 changelog section.
 
 | Chart | Date | Kubernetes Required | Breaking Changes | Details                    |
 | ----- | ---------- | ------------ | ---------------- | --------------------------- |
-| 1.0.0 | 2018-11-30 | >=1.10       | None             | Initial chart version       |
+| 1.0.0 | 2018-12-05 | >=1.10       | None             | Initial chart version       |
 
-## [v1.0.0] - 2018-11-30
+## [v1.0.0] - 2018-12-05
 This is the initial release.
 
 ### Changelog
