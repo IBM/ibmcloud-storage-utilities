@@ -31,3 +31,10 @@ before_script:
 
 script:
   - make block-storage-attacher
+
+after_success:
+  - ./scripts/calculateCoverage.sh || travis_terminate 1;
+  - ./scripts/publishCoverage.sh || travis_terminate 1;
+after_failure:
+  - ./scripts/handleFailure.sh
+
