@@ -22,6 +22,7 @@ branches:
   - master
 
 before_install:
+  - git config --global url."https://$GHE_USER:$GHE_TOKEN@github.com/".insteadOf "https://github.com/"
   - sudo sudo curl https://glide.sh/get | sh
   - sudo apt-get install bc
 
