@@ -32,6 +32,7 @@ before_script:
 
 script:
   - make block-storage-attacher
+  - make coverage
 
 after_success:
   - ${TRAVIS_HOME}/gopath/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/calculateCoverage.sh || travis_terminate 1;
