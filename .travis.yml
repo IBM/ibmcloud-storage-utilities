@@ -35,7 +35,7 @@ script:
 
 after_success:
   - ${TRAVIS_HOME}/gopath/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/calculateCoverage.sh || travis_terminate 1;
-  - ${TRAVIS_HOME}/gopath/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/scripts/publishCoverage.sh || travis_terminate 1;
+  - ${TRAVIS_HOME}/gopath/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/publishCoverage.sh || travis_terminate 1;
 after_failure:
-  - ./scripts/handleFailure.sh
+  - ${TRAVIS_HOME}/gopath/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/handleFailure.sh
 
