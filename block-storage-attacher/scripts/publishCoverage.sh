@@ -22,15 +22,15 @@ git config user.name "travis"
 git config user.email "travis"
 
 if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/coverage" ]; then
-	mkdir "$TRAVIS_BUILD_DIR/gh-pages/coverage"
+	mkdir -p "$TRAVIS_BUILD_DIR/gh-pages/coverage"
 fi
 
 if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH" ]; then
-	mkdir "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH"
+	mkdir -p "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH"
 fi
 
 if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT" ]; then
-	mkdir "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT"
+	mkdir -p "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT"
 fi
 
 # Compute overall coverage percentage
