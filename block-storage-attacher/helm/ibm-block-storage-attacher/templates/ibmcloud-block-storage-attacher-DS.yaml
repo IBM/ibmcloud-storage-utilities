@@ -65,7 +65,7 @@ spec:
             exec:
               command:
               - ls
-              - /host/lib/ibmc-portworx/iscsi-attach.sh
+              - /host/lib/ibmc-block-attacher/iscsi-attach.sh
             initialDelaySeconds: 30
             periodSeconds: 60
             timeoutSeconds: 5

@@ -40,8 +40,8 @@ const (
 	STATUS_ATTACHING = "attaching"
 	STATUS_ATTACHED  = "attached"
 	STATUS_FAILED    = "failed"
-	PX_CONF          = "/host/etc/iscsi-portworx-volume.conf"
-	PX_SERVICE       = "ibmc-portworx.service"
+	BLOCK_CONF          = "/host/etc/iscsi-block-volume.conf"
+	ATTACHER_SERVICE       = "ibmc-block-attacher.service"
 )
 
 var clientset kubernetes.Interface
@@ -107,8 +107,8 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) {
 	}
 	var input []byte
 	var err error
-	if input, err = ioutil.ReadFile(PX_CONF); err != nil {
-		lgr.Error("Could not read iscsi-portworx-volume.conf file")
+	if input, err = ioutil.ReadFile(BLOCK_CONF); err != nil {
+		lgr.Error("Could not read iscsi-block-volume.conf file")
 		return
 	} else {
 		lines := strings.Split(string(input), "\n")
@@ -133,8 +133,8 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) {
 		modifiedlines := []string{}
 		modifiedlines = append(modifiedlines, lines...)
 		output := strings.Join(modifiedlines, "\n")
-		if err = ioutil.WriteFile(PX_CONF, []byte(output), 0644); err != nil {
-			lgr.Error("Could not write to iscsi-portworx-volume.conf file")
+		if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0644); err != nil {
+			lgr.Error("Could not write to iscsi-block-volume.conf file")
 			return
 		}
 	}
@@ -167,14 +167,14 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) {
 		return
 	}
 
-	// Restart ibmc-portworx service so volume can be attached
+	// Restart ibmc-block-attacher service so volume can be attached
 	dbConn, connErr := dbus.New()
 	if connErr != nil {
 		lgr.Error("Error: Unable to connect!", zap.Error(connErr))
 		return
 	}
 	reschan := make(chan string)
-	_, restartErr := dbConn.RestartUnit(PX_SERVICE, "fail", reschan)
+	_, restartErr := dbConn.RestartUnit(ATTACHER_SERVICE, "fail", reschan)
 	if restartErr != nil {
 		lgr.Error("Error: Unable to restart target", zap.Error(restartErr))
 		return
@@ -190,12 +190,12 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) {
 }
 
 func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) {
-	folder := "/host/lib/ibmc-portworx"
+	folder := "/host/lib/ibmc-block-attacher"
 	if val := os.Getenv("service_dir"); val != "" {
 		folder = os.Getenv("service_dir")
 	}
-	pathsFile := folder + "/out_paths"       //"/host/lib/ibmc-portworx/out_paths"
-	mpathsFile := folder + "/out_multipaths" //"/host/lib/ibmc-portworx/out_multipaths"
+	pathsFile := folder + "/out_paths"
+	mpathsFile := folder + "/out_multipaths"
 	var fileExists bool
 	var mpath string
 	var devicepath string
@@ -403,8 +403,8 @@ func ModifyDetachConfig(pv *v1.PersistentVolume) {
 	dev_path := strings.Split(pv.Annotations[DMPATH], "/")
 	var input []byte
 	var err error
-	if input, err = ioutil.ReadFile(PX_CONF); err != nil {
-		lgr.Error("Could not read iscsi-portworx-volume.conf file")
+	if input, err = ioutil.ReadFile(BLOCK_CONF); err != nil {
+		lgr.Error("Could not read iscsi-block-volume.conf file")
 		return
 	} else {
 		lines := strings.Split(string(input), "\n")
@@ -421,20 +421,20 @@ func ModifyDetachConfig(pv *v1.PersistentVolume) {
 		modifiedlines := []string{}
 		modifiedlines = append(modifiedlines, lines...)
 		output := strings.Join(modifiedlines, "\n")
-		if err = ioutil.WriteFile(PX_CONF, []byte(output), 0644); err != nil {
-			lgr.Error("Could not write to iscsi-portworx-volume.conf file")
+		if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0644); err != nil {
+			lgr.Error("Could not write to iscsi-block-volume.conf file")
 			return
 		}
 	}
 
-	// Restart ibmc-portworx service so volume can be attached
+	// Restart ibmc-block-attacher service so volume can be attached
 	dbConn, connErr := dbus.New()
 	if connErr != nil {
 		lgr.Error("Error: Unable to connect!", zap.Error(connErr))
 		return
 	}
 	reschan := make(chan string)
-	_, restartErr := dbConn.RestartUnit(PX_SERVICE, "fail", reschan)
+	_, restartErr := dbConn.RestartUnit(ATTACHER_SERVICE, "fail", reschan)
 	if restartErr != nil {
 		lgr.Error("Error: Unable to restart target", zap.Error(restartErr))
 		return

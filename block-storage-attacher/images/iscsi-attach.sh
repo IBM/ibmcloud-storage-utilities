@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #set -ex
-source /etc/iscsi-portworx-volume.conf
+source /etc/iscsi-block-volume.conf
 
-LOG=/var/log/ibmc-portworx-service.log
+LOG=/var/log/ibmc-block-attacher-service.log
 INITIATOR=/etc/iscsi/initiatorname.iscsi
 ISCSI_CONF=/etc/iscsi/iscsid.conf
 #ISCSIADM=/sbin/iscsiadm
@@ -132,8 +132,8 @@ then
     exit 1
   fi
 
-  echo "`multipathd show paths format "%w %i"`" > /lib/ibmc-portworx/out_paths
-  echo "`multipathd show multipaths`" > /lib/ibmc-portworx/out_multipaths
+  echo "`multipathd show paths format "%w %i"`" > /lib/ibmc-block-attacher/out_paths
+  echo "`multipathd show multipaths`" > /lib/ibmc-block-attacher/out_multipaths
   exit $rc
 elif [ "$op" = "detach" ];
 then

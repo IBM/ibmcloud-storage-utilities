@@ -1,0 +1,10 @@
+[Unit]
+Description=ibmc-block-attacher service 
+
+[Service]
+Type=simple
+Restart=no
+ExecStart=/lib/ibmc-block-attacher/iscsi-attach.sh
+
+[Install]
+WantedBy=multi-user.target
