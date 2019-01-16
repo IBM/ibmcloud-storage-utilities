@@ -16,8 +16,8 @@ RUN mkdir -p /home/armada-storage/
 RUN mkdir -p /host
 ADD images/systemutil /home/armada-storage
 ADD images/iscsi-attach.sh /home/armada-storage
-ADD images/iscsi-portworx-volume.conf /home/armada-storage
-ADD images/ibmc-portworx.service /home/armada-storage
+ADD images/iscsi-block-volume.conf /home/armada-storage
+ADD images/ibmc-block-attacher.service /home/armada-storage
 ADD images/run.sh /home/armada-storage
 RUN chmod 775 /home/armada-storage/systemutil
 RUN chmod 775 /home/armada-storage/run.sh

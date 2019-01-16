@@ -141,7 +141,7 @@ func TestValidate(t *testing.T) {
 
 	err := Validate(pv)
 	assert.NotNil(t, err)
-	os.RemoveAll("/host/etc/iscsi-portworx-volume.conf")
+	os.RemoveAll("/host/etc/iscsi-block-volume.conf")
 
 }
 
@@ -154,7 +154,7 @@ func newVolumeType(name string) *v1.PersistentVolume {
 	labels["path"] = "/IBM_12345/data01"
 	labels["CapacityGb"] = "20"
 	labels["Iops"] = "4"
-	annotations := map[string]string{"ibm.io/iqn": "iqn.2018-04.com.ibm:ibm02su1186049-i71967875", "ibm.io/username": "testusername", "ibm.io/password": "testpassword", "ibm.io/targetip": "1.1.1.2", "ibm.io/lunid": "2", "ibm.io/nodeip": "9.2.3.4", "ibm.io/dm": "/dev/dm-0", "ibm.io/mpath": "/host/lib/ibmc-portworx/out_multipaths"}
+	annotations := map[string]string{"ibm.io/iqn": "iqn.2018-04.com.ibm:ibm02su1186049-i71967875", "ibm.io/username": "testusername", "ibm.io/password": "testpassword", "ibm.io/targetip": "1.1.1.2", "ibm.io/lunid": "2", "ibm.io/nodeip": "9.2.3.4", "ibm.io/dm": "/dev/dm-0", "ibm.io/mpath": "/host/lib/ibmc-block-attacher/out_multipaths"}
 
 	return newVolume(name, v1.VolumeReleased, v1.PersistentVolumeReclaimDelete, labels, annotations)
 }
@@ -215,12 +215,9 @@ func getNewLogger() zap.Logger {
 }
 
 func createOutPathsFile() {
-	serviceDir := "/tmp/host/lib/ibmc-portworx"
+	serviceDir := "/tmp/host/lib/ibmc-block-attacher"
 	os.Setenv("service_dir", serviceDir)
 	os.MkdirAll(serviceDir, 0777)
-	//	os.Mkdir("/host", 0777)
-	//	os.Mkdir("/host/lib", 0777)
-	//	os.Mkdir("/host/lib/ibmc-portworx", 0777)
 
 	data := []byte("3600a09803830445455244c4a38752d30 10:0:0:2")
 	out_paths := serviceDir + "/out_paths"
@@ -228,12 +225,9 @@ func createOutPathsFile() {
 	ioutil.WriteFile(out_paths, data, 0666)
 }
 func createMultiPathsFile() {
-	serviceDir := "/tmp/host/lib/ibmc-portworx"
+	serviceDir := "/tmp/host/lib/ibmc-block-attacher"
 	os.Setenv("service_dir", serviceDir)
 	os.MkdirAll(serviceDir, 0777)
-	//	os.Mkdir("/host", 0777)
-	//	os.Mkdir("/host/lib", 0777)
-	//	os.Mkdir("/host/lib/ibmc-portworx", 0777)
 
 	data := []byte("3600a09803830445455244c4a38752d30 dm-0  3600a09803830445455244c4a38752d30")
 	out_multipaths := serviceDir + "/out_multipaths"
@@ -244,16 +238,13 @@ func createConfigFile() {
 	os.Mkdir("/host", 0777)
 	os.Mkdir("/host/etc", 0777)
 
-	data := []byte("iqn=iqn.2018-04.com.ibm:ibm02su1186049-i71967875\nusername=testusername\npassword=testpassword\ntarget_ip=1.1.1.2\nlunid=2\nnode_ip=9.2.3.4\nop=detach\ndm=dm-0\nmpath=/host/lib/ibmc-portworx/out_multipaths")
-	os.Create("/host/etc/iscsi-portworx-volume.conf")
-	ioutil.WriteFile("/host/etc/iscsi-portworx-volume.conf", data, 0666)
+	data := []byte("iqn=iqn.2018-04.com.ibm:ibm02su1186049-i71967875\nusername=testusername\npassword=testpassword\ntarget_ip=1.1.1.2\nlunid=2\nnode_ip=9.2.3.4\nop=detach\ndm=dm-0\nmpath=/host/lib/ibmc-block-attacher/out_multipaths")
+	os.Create("/host/etc/iscsi-block-volume.conf")
+	ioutil.WriteFile("/host/etc/iscsi-block-volume.conf", data, 0666)
 }
 func createConfigFileWithError() {
 	os.Mkdir("/host", 0644)
 	os.Mkdir("/host/etc", 0644)
-
-	//   data := []byte("iqn=iqn.2018-04.com.ibm:ibm02su1186049-i71967875\nusername=testusername\npassword=testpassword\ntarget_ip=1.1.1.2\nlunid=2\nnode_ip=9.2.3.4\nop=detach\ndm=dm-0\nmpath=/host/lib/ibmc-portworx/out_multipaths")
-	os.Create("/host/etc/iscsi-portworx-volume.conf")
-	os.Chmod("/host/etc/iscsi-portworx-volume.conf", 0400)
-	// ioutil.WriteFile("/host/etc/iscsi-portworx-volume.conf", data, 0000)
+	os.Create("/host/etc/iscsi-block-volume.conf")
+	os.Chmod("/host/etc/iscsi-block-volume.conf", 0400)
 }

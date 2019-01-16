@@ -1,6 +1,5 @@
 # Create and Attach Remote Block Storage
-`mkpvyaml` is intended to automate the provisioning of remote block storage
-for Portworx running on IBM IKS.
+`mkpvyaml` is intended to automate the provisioning and attaching of remote block storage for IBM IKS.
 
 Creation of remote block storage devices is driven by a configuration file
 names `yamlgen.yaml` of the following form:
@@ -42,8 +41,6 @@ make all
 
 ## Run `mkpvyaml`
 
-`mkpvyaml` is available on dockerhub, via the image `portworx/iks-mkpvyaml`
-
 A sample `docker run` command is given below.
 
 Note the volume mapping:
@@ -61,7 +58,7 @@ scroll down, and check Authentication Key.
 Caveats:  May also need to log in to SoftLayer via `bx sl init` or via [https://control.softlayer.com](https://control.softlayer.com)
 
 ```
-docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME portworx/iks-mkpvyaml
+docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME ibmcloud-block-storage-provisioner
 ```
 
 The `/data` directory should map to whereever the configuration file `yamlgen.yaml` is located.
@@ -71,13 +68,13 @@ The output file will be generated in the same directory.
 The same container can be used to list any/all volumes you have access to.
 
 ```
-docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME portworx/iks-mkpvyaml vls
+docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME ibmcloud-block-storage-provisioner vls
 ```
 
 ## Run `dvol`
 The same container can be used to selectively delete one or more volumes.
 
 ```
-docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME portworx/iks-mkpvyaml dvol 54137315 54137317 54137321
+docker run --rm -v `pwd`:/data -v ~/.bluemix:/config -e SL_API_KEY=$SL_API_KEY -e SL_USERNAME=$SL_USERNAME ibmcloud-block-storage-provisioner dvol 54137315 54137317 54137321
 ```
 
