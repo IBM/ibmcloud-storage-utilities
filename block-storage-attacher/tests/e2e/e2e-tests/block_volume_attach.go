@@ -202,7 +202,11 @@ func getAttchStatus() (string, error) {
 		attachStatus = pv.ObjectMeta.Annotations["ibm.io/attachstatus"]
 		time.Sleep(1 * time.Minute)
 		if attachStatus == "attached" || attachStatus == "failed" {
-			return attachStatus, nil
+                        if attachStatus == "failed" {
+                           return attachStatus, err
+                        } else {
+			   return attachStatus, nil
+                        }
 		}
 	}
 	return attachStatus, err

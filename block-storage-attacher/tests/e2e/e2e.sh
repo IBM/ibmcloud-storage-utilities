@@ -116,7 +116,6 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
         sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
 	make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
-	echo "E2E test binary was created successfully"
 fi
 
 echo "--- Cluster Details ---" >  $E2E_PATH/setupDetails.txt
@@ -125,9 +124,5 @@ echo "${PLUGINDETAILS}" >> $E2E_PATH/setupDetails.txt
 echo "$CLUSTER_ID" >> $E2E_PATH/setupDetails.txt
 
 
-echo "Starting ibmcloud block storage plugin e2e tests "
-# Call the go binary
-#$E2E_TEST_BINARY -kubeconfig $KUBECONFIG
 echo "Finished ibmcloud block storage plugin e2e tests"
 
-exit 0
