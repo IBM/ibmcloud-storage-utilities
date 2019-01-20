@@ -109,13 +109,14 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         bx cs init --host  $ARMADA_API_ENDPOINT
 	setKubeConfig $PVG_CLUSTER_CRUISER
         export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
-        addFullPathToCertsInKubeConfig
+        #addFullPathToCertsInKubeConfig
 	cat $KUBECONFIG
         echo "Bluemix COnfig"
         cat ~/.bluemix/config.json
-        sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
-        sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
+        #sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
+        #sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
 	make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
+        exitStatus=$?
 fi
 
 echo "--- Cluster Details ---" >  $E2E_PATH/setupDetails.txt
@@ -125,4 +126,4 @@ echo "$CLUSTER_ID" >> $E2E_PATH/setupDetails.txt
 
 
 echo "Finished ibmcloud block storage plugin e2e tests"
-
+exit $exitStatus
