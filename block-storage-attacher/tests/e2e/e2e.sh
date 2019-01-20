@@ -1,5 +1,4 @@
-#!/bin/sh
-
+#!/bin/bash
 # Load e2e config file
 set -a
 set -xe
