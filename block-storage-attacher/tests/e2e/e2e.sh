@@ -126,4 +126,6 @@ echo "$CLUSTER_ID" >> $E2E_PATH/setupDetails.txt
 
 
 echo "Finished ibmcloud block storage plugin e2e tests"
+echo "In e2e script Make existStatus = $exitStatus"
 exit $exitStatus
+
