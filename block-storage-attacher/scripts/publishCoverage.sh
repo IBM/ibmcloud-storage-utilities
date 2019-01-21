@@ -21,24 +21,24 @@ git clone -b gh-pages https://$GHE_USER:$GHE_TOKEN@github.com/$TRAVIS_REPO_SLUG.
 git config user.name "travis"
 git config user.email "travis"
 
-if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/coverage" ]; then
-	mkdir -p "$TRAVIS_BUILD_DIR/gh-pages/coverage"
+if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage" ]; then
+	mkdir -p "$TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage"
 fi
 
-if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH" ]; then
-	mkdir -p "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH"
+if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_BRANCH" ]; then
+	mkdir -p "$TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_BRANCH"
 fi
 
-if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT" ]; then
-	mkdir -p "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT"
+if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_COMMIT" ]; then
+	mkdir -p "$TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_COMMIT"
 fi
 
 
 # Compute overall coverage percentage
-OLD_COVERAGE=$(cat $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
-cp $TRAVIS_BUILD_DIR/block-storage-attacher/cover.html $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH
-cp $TRAVIS_BUILD_DIR/block-storage-attacher/cover.html $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT
-NEW_COVERAGE=$(cat $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
+OLD_COVERAGE=$(cat $TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_BRANCH/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
+cp $TRAVIS_BUILD_DIR/block-storage-attacher/cover.html $TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_BRANCH
+cp $TRAVIS_BUILD_DIR/block-storage-attacher/cover.html $TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_COMMIT
+NEW_COVERAGE=$(cat $TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_BRANCH/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
 
 if (( $(echo "$NEW_COVERAGE > $GREEN_THRESHOLD" | bc -l) )); then
 	BADGE_COLOR="green"
@@ -47,17 +47,17 @@ elif (( $(echo "$NEW_COVERAGE > $YELLOW_THRESHOLD" | bc -l) )); then
 fi
 
 # Generate badge for coverage
-curl https://img.shields.io/badge/Coverage-$NEW_COVERAGE-$BADGE_COLOR.svg > $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/badge.svg
+curl https://img.shields.io/badge/Coverage-$NEW_COVERAGE-$BADGE_COLOR.svg > $TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_BRANCH/badge.svg
 
 COMMIT_RANGE=(${TRAVIS_COMMIT_RANGE//.../ })
 
 # Generate result message for log and PR
 if (( $(echo "$OLD_COVERAGE > $NEW_COVERAGE" | bc -l) )); then
-	RESULT_MESSAGE=":red_circle: Coverage decreased from [$OLD_COVERAGE%](https://pages.github.com/$TRAVIS_REPO_SLUG/coverage/${COMMIT_RANGE[0]}/cover.html) to [$NEW_COVERAGE%](https://pages.github.com/$TRAVIS_REPO_SLUG/coverage/${COMMIT_RANGE[1]}/cover.html)"
+	RESULT_MESSAGE=":red_circle: Coverage decreased from [$OLD_COVERAGE%](https://pages.github.com/$TRAVIS_REPO_SLUG/block-storage-attacher/coverage/${COMMIT_RANGE[0]}/cover.html) to [$NEW_COVERAGE%](https://pages.github.com/$TRAVIS_REPO_SLUG/block-storage-attacher/coverage/${COMMIT_RANGE[1]}/cover.html)"
 elif (( $(echo "$OLD_COVERAGE == $NEW_COVERAGE" | bc -l) )); then
-	RESULT_MESSAGE=":thumbsup: Coverage remained same at [$NEW_COVERAGE%](https://pages.github.com/$TRAVIS_REPO_SLUG/coverage/${COMMIT_RANGE[1]}/cover.html)"
+	RESULT_MESSAGE=":thumbsup: Coverage remained same at [$NEW_COVERAGE%](https://pages.github.com/$TRAVIS_REPO_SLUG/block-storage-attacher/coverage/${COMMIT_RANGE[1]}/cover.html)"
 else
-	RESULT_MESSAGE=":thumbsup: Coverage increased from [$OLD_COVERAGE%](https://pages.github.com/$TRAVIS_REPO_SLUG/coverage/${COMMIT_RANGE[0]}/cover.html) to [$NEW_COVERAGE%](https://pages.github.com/$TRAVIS_REPO_SLUG/coverage/${COMMIT_RANGE[1]}/cover.html)"
+	RESULT_MESSAGE=":thumbsup: Coverage increased from [$OLD_COVERAGE%](https://pages.github.com/$TRAVIS_REPO_SLUG/block-storage-attacher/coverage/${COMMIT_RANGE[0]}/cover.html) to [$NEW_COVERAGE%](https://pages.github.com/$TRAVIS_REPO_SLUG/block-storage-attacher/coverage/${COMMIT_RANGE[1]}/cover.html)"
 fi
 
 # Update gh-pages branch or PR
