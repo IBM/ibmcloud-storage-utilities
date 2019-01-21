@@ -68,5 +68,5 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 	git push origin
 else
         # Updates PR with coverage
-        curl -i -H "Authorization: token $GHE_API_TOKEN" https://github.ibm.com/api/v3/repos/$TRAVIS_REPO_SLUG/issues/$TRAVIS_PULL_REQUEST/comments --data '{"body": "'"$RESULT_MESSAGE"'"}'
+        curl -i -H "Authorization: token $GHE_API_TOKEN" https://github.com/api/v3/repos/$TRAVIS_REPO_SLUG/issues/$TRAVIS_PULL_REQUEST/comments --data '{"body": "'"$RESULT_MESSAGE"'"}'
 fi
