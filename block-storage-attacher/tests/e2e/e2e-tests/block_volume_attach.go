@@ -201,9 +201,11 @@ func getAttchStatus() (string, error) {
 		pv, _ = c.Core().PersistentVolumes().Get(pvname)
 		attachStatus = pv.ObjectMeta.Annotations["ibm.io/attachstatus"]
 		time.Sleep(1 * time.Minute)
-		if attachStatus == "attached" || attachStatus == "failed" {
-			return attachStatus, nil
-		}
+                if attachStatus == "failed" {
+                       return attachStatus, err
+                } else if attachStatus == "attached" {
+			   return attachStatus, nil
+                }
 	}
 	return attachStatus, err
 }

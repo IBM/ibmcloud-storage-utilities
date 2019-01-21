@@ -40,8 +40,8 @@ const (
 	STATUS_ATTACHING = "attaching"
 	STATUS_ATTACHED  = "attached"
 	STATUS_FAILED    = "failed"
-	BLOCK_CONF          = "/host/etc/iscsi-block-volume.conf"
-	ATTACHER_SERVICE       = "ibmc-block-attacher.service"
+	BLOCK_CONF       = "/host/etc/iscsi-block-volume.conf"
+	ATTACHER_SERVICE = "ibmc-block-attacher.service"
 )
 
 var clientset kubernetes.Interface
