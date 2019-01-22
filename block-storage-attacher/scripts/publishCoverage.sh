@@ -11,24 +11,13 @@ cd $TRAVIS_BUILD_DIR/gh-pages
 OLD_COVERAGE=0
 NEW_COVERAGE=0
 RESULT_MESSAGE=""
-GHE_USER="mumutyal"
-GHE_TOKEN="8a9385e549c7931f1911813aa7359b989009f880"
 
 BADGE_COLOR=red
 GREEN_THRESHOLD=85
 YELLOW_THRESHOLD=50
 
 # clone and prepare gh-pages branch
-curl -H "Authorization: token $GHE_TOKEN" https://github.com/IBM/ibmcloud-storage-utilities.git
 git clone -b gh-pages https://$GHE_USER:$GHE_TOKEN@github.com/$TRAVIS_REPO_SLUG.git .
-
-echo "GHE_USER = $GHE_USER"
-echo "GHE_TOKEN = $GHE_TOKEN"
-
-git remote rm origin
-git remote add origin https://$GHE_TOKEN:$GHE_TOKEN@github.com/IBM/ibmcloud-storage-utilities.git
-
-
 git config user.name "travis"
 git config user.email "travis"
 
