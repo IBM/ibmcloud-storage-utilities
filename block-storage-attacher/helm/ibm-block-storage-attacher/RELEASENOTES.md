@@ -2,7 +2,7 @@
 
 This chart has below new features added
 
-- Attach and detach the block storage volumes on the worker nodes
+- Update the GO lang version of block attacher image to 1.11.4
 
 
 # Breaking Changes
@@ -11,7 +11,7 @@ None
 
 # Fixes
 
-Please refer v1.0.0 changelog section.
+Please refer v1.0.1 changelog section.
 
 
 # Documentation
@@ -27,7 +27,14 @@ Please refer v1.0.0 changelog section.
 
 | Chart | Date | Kubernetes Required | Breaking Changes | Details                    |
 | ----- | ---------- | ------------ | ---------------- | --------------------------- |
+| 1.0.1 | 2019-01-23 | >=1.10       | None             | Refer Changelog v1.0.1      |
 | 1.0.0 | 2018-12-05 | >=1.10       | None             | Initial chart version       |
+
+## [v1.0.1] - 2019-01-23
+This is a bug fix release.
+
+### Changelog
+- Update the GO lang version of block attacher image to 1.11.4
 
 ## [v1.0.0] - 2018-12-05
 This is the initial release.
