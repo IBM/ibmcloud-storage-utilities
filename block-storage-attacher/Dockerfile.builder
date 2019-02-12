@@ -1,4 +1,4 @@
-FROM golang:1.11.4
+FROM golang:1.11.5
 
 WORKDIR /go/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
 ADD . /go/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
