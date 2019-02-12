@@ -92,6 +92,11 @@ if [[ $TEST_HELM_INSTALL == "true" ]]; then
 	check_pod_state "ibm-block-storage-attacher" 
 	#check_daemonset_state "ibmcloud-block-storage-driver"
 fi
+if [[ $PORTWORX_HELM_INSTALL == "true" ]]; then
+        install_portworx_plugin
+        check_portworx_pod_state "portworx"
+fi
+       
 
 echo "BlockVolumeAttacher-Volume-Test: Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
 

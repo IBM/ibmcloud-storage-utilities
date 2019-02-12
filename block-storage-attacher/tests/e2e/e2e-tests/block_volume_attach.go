@@ -16,6 +16,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	commontest "github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/common"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -28,21 +29,27 @@ import (
 )
 
 var (
-	volumeid      = ""
-	pvname        = ""
-	clusterName   = ""
-	pvfilepath    = ""
-	pv            *v1.PersistentVolume
-	e2epath       = "src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
-	scriptspath   = "src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/"
-	pvscriptpath  = ""
-	ymlscriptpath = ""
-	ymlgenpath    = ""
-	expvname      = ""
-	testfilepath  = ""
-	c             clientset.Interface
-	fpointer      *os.File
-	perr          error
+	volumeid          = ""
+	pvname            = ""
+	pvcname           = ""
+	clusterName       = ""
+	pvfilepath        = ""
+	pv                *v1.PersistentVolume
+	e2epath           = "src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
+	scriptspath       = "src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/"
+	pvscriptpath      = ""
+	ymlscriptpath     = ""
+	ymlgenpath        = ""
+	expvname          = ""
+	testfilepath      = ""
+	portworxpvcpath   = ""
+	portworxscpath    = ""
+	portworxclassname = ""
+	expv              *v1.PersistentVolume
+	c                 clientset.Interface
+	ns                string
+	fpointer          *os.File
+	perr              error
 )
 var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 	f := framework.NewDefaultFramework("block-volume-attach")
@@ -50,10 +57,14 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 
 	BeforeEach(func() {
 		c = f.ClientSet
+		ns = f.Namespace.Name
 		pvscriptpath = e2epath + "utilscript.sh"
 		ymlscriptpath = scriptspath + "mkpvyaml"
 		ymlgenpath = scriptspath + "yamlgen.yaml"
 		testfilepath = e2epath + "e2eTests.txt"
+		portworxpvcpath = e2epath + "portworx_pvc.yaml"
+		portworxscpath = e2epath + "portworx_storageclass.yaml"
+		portworxclassname = "portworx-sc"
 
 	})
 
@@ -103,7 +114,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				fmt.Printf("expvname:\n%s\n", expvname)
 				pvscriptpath = gopath + "/" + pvscriptpath
 				filepatharg := fmt.Sprintf("%s", pvfilepath)
-				expv, err := c.Core().PersistentVolumes().Get(expvname)
+				expv, err = c.Core().PersistentVolumes().Get(expvname)
 				if err == nil {
 					cleanUP(expvname, expv)
 				}
@@ -131,7 +142,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				Expect(err).NotTo(HaveOccurred())
 				attachStatus, err := getAttchStatus()
 				if err != nil {
-					cleanUP(expvname, expv)
+					cleanUP(pvname, pv)
 				}
 				Expect(err).NotTo(HaveOccurred())
 				devicePath := pv.ObjectMeta.Annotations["ibm.io/dm"]
@@ -143,6 +154,69 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				Expect(attachStatus).To(Equal("attached"))
 				logResult("BlockVolumeAttacher-Volume-Test: Attach: PASS\n")
 			}
+
+			/* Port Worx PVC creation */
+			portworxpvcpath = gopath + "/" + portworxpvcpath
+			portworxscpath = gopath + "/" + portworxscpath
+			filestatus, err = fileExists(portworxpvcpath)
+			if err != nil {
+				cleanUP(pvname, pv)
+				logResult("BlockVolumeAttacher-Volume-Test: PVC Creaiton: FAIL\n")
+			} else {
+				logResult("BlockVolumeAttacher-Volume-Test: PVC Creaiton: PASS\n")
+			}
+			Expect(err).NotTo(HaveOccurred())
+
+			/* PVC Creation */
+
+			By("PVC  Creation")
+			if filestatus == true {
+				filepatharg := fmt.Sprintf("%s", portworxpvcpath)
+				filepatharg2 := fmt.Sprintf("%s", portworxscpath)
+				cmd := exec.Command(pvscriptpath, filepatharg, "portworxpvcreate", filepatharg2)
+				var stdout, stderr bytes.Buffer
+				cmd.Stdout = &stdout
+				cmd.Stderr = &stderr
+				err = cmd.Run()
+				if err != nil {
+					cleanUP(pvname, pv)
+					logResult("BlockVolumeAttacher-Volume-Test: Portworx Installtion: FAIL\n")
+				} else {
+					logResult("BlockVolumeAttacher-Volume-Test: Portworx installtion: PASS\n")
+				}
+				Expect(err).NotTo(HaveOccurred())
+			}
+			framework.KubeDescribe("Test mount point: Create mount point, read, write...", func() {
+				//It("PRESTAGE: Test mount point: Create mount point, read, write... [Serial]", func() {
+				By("Creating a claim with a dynamic provisioning annotation")
+				claim := commontest.NewClaim(ns, "portworx-sc", "2Gi")
+				defer func() {
+					c.Core().PersistentVolumeClaims(ns).Delete(claim.Name, nil)
+				}()
+				claim, err := c.Core().PersistentVolumeClaims(ns).Create(claim)
+				if err != nil {
+					cleanUP(pvname, pv)
+					logResult("BlockVolumeAttacher-Volume-Test: Portworx PVC creation: FAIL\n")
+				} else {
+					logResult("BlockVolumeAttacher-Volume-Test: Portworx PVC creation: PASS\n")
+				}
+				Expect(err).NotTo(HaveOccurred())
+
+				//pv := commontest.TestCreate(c, claim)
+				commontest.TestWrite(c, claim)
+				commontest.TestRead(c, claim)
+				//commontest.TestDelete(c, claim, pv)
+				// })
+			})
+
+			/* Portworx deleteion */
+
+			filepatharg := fmt.Sprintf("%s", portworxclassname)
+			cmd = exec.Command(pvscriptpath, filepatharg, "portworxdelete")
+			var stdout, stderr bytes.Buffer
+			cmd.Stdout = &stdout
+			cmd.Stderr = &stderr
+			err = cmd.Run()
 
 			/* Stativ PV  Deletion */
 
@@ -163,7 +237,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			nodeip := pv.ObjectMeta.Annotations["ibm.io/nodeip"]
 			nodeiparg := fmt.Sprintf("%s", nodeip)
 			cmd = exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg)
-			var stdout, stderr bytes.Buffer
+			//var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
 			err = cmd.Run()
@@ -201,11 +275,11 @@ func getAttchStatus() (string, error) {
 		pv, _ = c.Core().PersistentVolumes().Get(pvname)
 		attachStatus = pv.ObjectMeta.Annotations["ibm.io/attachstatus"]
 		time.Sleep(1 * time.Minute)
-                if attachStatus == "failed" {
-                       return attachStatus, err
-                } else if attachStatus == "attached" {
-			   return attachStatus, nil
-                }
+		if attachStatus == "failed" {
+			return attachStatus, err
+		} else if attachStatus == "attached" {
+			return attachStatus, nil
+		}
 	}
 	return attachStatus, err
 }
