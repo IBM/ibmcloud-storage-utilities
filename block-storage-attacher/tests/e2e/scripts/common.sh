@@ -526,7 +526,7 @@ function install_portworx_plugin {
 	
         # INSTALL/UPGRADE HELM CHART
 	helm_values_override="--set etcdEndPoint=$ETCD_SET1;$ETCD_SET2,clusterName=$(uuidgen),etcd.credentials=$ETCDCREDS,usedrivesAndPartitions=true,usefileSystemDrive=true"
-	#helm_install_cmd="helm install $helm_values_override $PORTWROX_HELM_CHART --name portworx"
+	#helm_install_cmd="helm install $helm_values_override $PORTWORX_HELM_CHART --name portworx"
 	helm_install_cmd="helm install  $PORTWROX_HELM_CHART --name portworx"
         
 	# CHECK FOR UPGRADE

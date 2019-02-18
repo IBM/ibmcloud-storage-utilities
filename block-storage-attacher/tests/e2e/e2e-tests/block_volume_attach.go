@@ -42,7 +42,6 @@ var (
 	ymlgenpath        = ""
 	expvname          = ""
 	testfilepath      = ""
-	portworxpvcpath   = ""
 	portworxscpath    = ""
 	portworxclassname = ""
 	expv              *v1.PersistentVolume
@@ -62,7 +61,6 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 		ymlscriptpath = scriptspath + "mkpvyaml"
 		ymlgenpath = scriptspath + "yamlgen.yaml"
 		testfilepath = e2epath + "e2eTests.txt"
-		portworxpvcpath = e2epath + "portworx_pvc.yaml"
 		portworxscpath = e2epath + "portworx_storageclass.yaml"
 		portworxclassname = "portworx-sc"
 
@@ -156,9 +154,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			}
 
 			/* Port Worx PVC creation */
-			portworxpvcpath = gopath + "/" + portworxpvcpath
 			portworxscpath = gopath + "/" + portworxscpath
-			filestatus, err = fileExists(portworxpvcpath)
 			if err != nil {
 				cleanUP(pvname, pv)
 				logResult("BlockVolumeAttacher-Volume-Test: PVC Creaiton: FAIL\n")
@@ -171,12 +167,11 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 
 			By("PVC  Creation")
 			if filestatus == true {
-				filepatharg := fmt.Sprintf("%s", portworxpvcpath)
 				filepatharg2 := fmt.Sprintf("%s", portworxscpath)
-				cmd := exec.Command(pvscriptpath, filepatharg, "portworxpvcreate", filepatharg2)
-				var stdout, stderr bytes.Buffer
-				cmd.Stdout = &stdout
-				cmd.Stderr = &stderr
+				cmd := exec.Command(pvscriptpath, filepatharg2, "portworxpvcreate")
+				//var stdout, stderr bytes.Buffer
+				//cmd.Stdout = &stdout
+				//cmd.Stderr = &stderr
 				err = cmd.Run()
 				if err != nil {
 					cleanUP(pvname, pv)

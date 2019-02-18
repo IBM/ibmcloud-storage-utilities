@@ -1,0 +1,244 @@
+gofmt -s -w -l `find . -type f -name "*.go" | grep -v vendor` || exit 1
+
+go test ./e2e-tests -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -ginkgo.failFast true --kubeconfig=/root/.bluemix/plugins/container-service/clusters/ibmc-blockvolume-e2e-test/kube-config-mon01-ibmc-blockvolume-e2e-test.yml -timeout 90m
+=== RUN   TestE2e
+Running Suite: Block Volume attach  e2e test suite
+==================================================
+Random Seed: [1m1550488127[0m - Will randomize all specs
+Will run [1m1[0m of [1m1[0m specs
+
+[0m[k8s.io] [Feature:Block_Volume_Attach_E2E][0m [90m[k8s.io] Block_Volume_Attach E2E [0m 
+  [1mBlock Volume attach E2e Testcases[0m
+  [37m/root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/block_volume_attach.go:70[0m
+[BeforeEach] [k8s.io] [Feature:Block_Volume_Attach_E2E]
+  /root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework/framework.go:97
+[1mSTEP[0m: Creating a kubernetes client
+Feb 18 06:08:47.166: INFO: >>> kubeConfig: /root/.bluemix/plugins/container-service/clusters/ibmc-blockvolume-e2e-test/kube-config-mon01-ibmc-blockvolume-e2e-test.yml
+
+Feb 18 06:08:47.167: INFO: TestContext.KubeAPIContentType:  application/vnd.kubernetes.protobuf
+Feb 18 06:08:47.559: INFO: TestContext.Host:  https://c4.mon01.containers.cloud.ibm.com:21175
+[1mSTEP[0m: Building a namespace api object
+[1mSTEP[0m: Got the namespace object
+[1mSTEP[0m: Namespace api object created
+[BeforeEach] [k8s.io] [Feature:Block_Volume_Attach_E2E]
+  /root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/block_volume_attach.go:57
+[It] Block Volume attach E2e Testcases
+  /root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/block_volume_attach.go:70
+[1mSTEP[0m: Volume Creation
+Value[0], Valu[1]:
+cluster
+ ibmc-blockvolume-e2e-test           #  name of IKS cluster
+Value[0], Valu[1]:
+ ibmc-blockvolume-e2e-test           
+  name of IKS cluster
+cluster:
+ibmc-blockvolume-e2e-test
+[1mSTEP[0m: Volume Creation1
+{'cluster': 'ibmc-blockvolume-e2e-test',
+ 'endurance': [{'tier': 0.25}],
+ 'offering': 'storage_as_a_service',
+ 'region': 'us-east',
+ 'size': [20],
+ 'type': 'endurance'}
+[{"privateVlan":"2257395","publicVlan":"2257393","privateIP":"10.182.132.35","publicIP":"169.45.41.249","machineType":"u2c.2x4.encrypted","location":"mon01","id":"kube-mon01-cr937b08c518b6402d8ec7872e68111f72-w1","state":"normal","status":"Ready","errorMessage":"","isolation":"public","kubeVersion":"1.12.5_1538","targetVersion":"1.12.5_1538","reasonForDelete":"","versionEOS":"","masterVersionEOS":"","trustedStatus":"unsupported","poolid":"937b08c518b6402d8ec7872e68111f72-1c4d84c","poolName":"default"}]
+kube-mon01-cr937b08c518b6402d8ec7872e68111f72-w1 10.182.132.35
+Creating Vol of size 20 with type:  endurance
+            Ordering block storage of size: 20 for host: kube-mon01-cr937b08c518b6402d8ec7872e68111f72-w1
+            ORDER ID =  34524823
+            No volume yet ... for orderID :  34524823
+            No volume yet ... for orderID :  34524823
+            No volume yet ... for orderID :  34524823
+            No volume yet ... for orderID :  34524823
+            Order ID =  34524823 has created VolId =  65163067
+            Granting access to volume: 65163067 for HostIP: 10.182.132.35
+Output file created as :  pv-ibmc-blockvolume-e2e-test.yaml
+[1mSTEP[0m: Static PV  Creation
+line:
+
+line:
+---
+line:
+apiVersion: v1
+line:
+kind: PersistentVolume
+line:
+metadata:
+line:
+  name: kube-mon01-cr937b08c518b6402d8ec7872e68111f72-w1-pv1
+expvname:
+kube-mon01-cr937b08c518b6402d8ec7872e68111f72-w1-pv1
+[1mSTEP[0m: PVC  Creation
+[AfterEach] [k8s.io] [Feature:Block_Volume_Attach_E2E]
+  /root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework/framework.go:98
+[1mSTEP[0m: Collecting events from namespace "blockattacher-e2e-ns".
+[1mSTEP[0m: Found 0 events.
+Feb 18 06:12:57.394: INFO: POD                                                            NODE           PHASE      GRACE  CONDITIONS
+Feb 18 06:12:57.394: INFO: 7zv3r268kdspe50dcy250de7mmax5r19-vnbg4                         10.182.132.35  Succeeded         [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:08:50 -0500 EST PodCompleted } {Ready False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 19:08:55 -0500 EST PodCompleted } {ContainersReady False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 19:08:55 -0500 EST PodCompleted } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:08:50 -0500 EST  }]
+Feb 18 06:12:57.394: INFO: ibm-cloud-provider-ip-169-45-46-94-6866d9cc9f-jwcxv            10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:42:20 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:42:24 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:42:24 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:42:20 -0500 EST  }]
+Feb 18 06:12:57.394: INFO: ibm-cloud-provider-ip-169-45-46-94-6866d9cc9f-vcbs5                           Pending           [{PodScheduled False 2019-02-18 06:12:23 -0500 EST 2019-02-17 09:42:20 -0500 EST Unschedulable 0/1 nodes are available: 1 node(s) didn't match pod affinity/anti-affinity, 1 node(s) didn't satisfy existing pods anti-affinity rules.}]
+Feb 18 06:12:57.394: INFO: calico-kube-controllers-5c699798bc-n5ww7                       10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:03 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:03 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  }]
+Feb 18 06:12:57.394: INFO: calico-node-g6sp6                                              10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:41:06 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:41:06 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  }]
+Feb 18 06:12:57.394: INFO: ibm-block-storage-attacher-r885x                               10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-18 06:08:17 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-18 06:08:19 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-18 06:08:19 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-18 06:08:17 -0500 EST  }]
+Feb 18 06:12:57.394: INFO: ibm-file-plugin-5f976d8488-9qkg6                               10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:44 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:44 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  }]
+Feb 18 06:12:57.394: INFO: ibm-keepalived-watcher-d9n4t                                   10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:05 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:05 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  }]
+Feb 18 06:12:57.394: INFO: ibm-kube-fluentd-9w7kk                                         10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:44:29 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:44:46 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:44:46 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:44:29 -0500 EST  }]
+Feb 18 06:12:57.394: INFO: ibm-master-proxy-static-10.182.132.35                          10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:52 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:52 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: ibm-storage-watcher-ddd4f749f-nlb55                            10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:29 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:29 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: kube-dns-amd64-fddfcc69-npgln                                  10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:41:01 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:41:01 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: kube-dns-autoscaler-587cd5cd44-blhrd                           10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:37 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:37 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: kubernetes-dashboard-b4bc7db5d-4czcq                           10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:34 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:34 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: metrics-server-86f87cc8bd-5r289                                10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:47 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:49 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:49 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:47 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: portworx-nxbb7                                                 10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 12:05:28 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 12:05:28 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: public-cr937b08c518b6402d8ec7872e68111f72-alb1-d9b98546-6fk4t                 Pending           [{PodScheduled False 2019-02-18 06:12:23 -0500 EST 2019-02-17 09:43:10 -0500 EST Unschedulable 0/1 nodes are available: 1 node(s) didn't match pod affinity/anti-affinity, 1 node(s) didn't satisfy existing pods anti-affinity rules.}]
+Feb 18 06:12:57.395: INFO: public-cr937b08c518b6402d8ec7872e68111f72-alb1-d9b98546-lncd8  10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:43:13 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:43:35 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:43:35 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:43:10 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: px-hook-etcd-preinstall-kb5gd                                  10.182.132.35  Succeeded         [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:43 -0500 EST PodCompleted } {Ready False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:46 -0500 EST PodCompleted } {ContainersReady False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:46 -0500 EST PodCompleted } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:43 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: px-hook-postdelete-unlabelnode-pdsg6                           10.182.132.35  Succeeded         [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:17:17 -0500 EST PodCompleted } {Ready False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:17:19 -0500 EST PodCompleted } {ContainersReady False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:17:19 -0500 EST PodCompleted } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:17:17 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: px-hook-predelete-nodelabel-djprp                              10.182.132.35  Succeeded         [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:17:12 -0500 EST PodCompleted } {Ready False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:17:15 -0500 EST PodCompleted } {ContainersReady False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:17:15 -0500 EST PodCompleted } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:17:12 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: px-lighthouse-98d7dc4f9-b7px6                                  10.182.132.35  Pending           [{Initialized False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST ContainersNotInitialized containers with incomplete status: [config-init]} {Ready False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST ContainersNotReady containers with unready status: [px-lighthouse config-sync stork-connector]} {ContainersReady False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST ContainersNotReady containers with unready status: [px-lighthouse config-sync stork-connector]} {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: stork-6bc9c99c98-6fkd7                                                        Pending           [{PodScheduled False 2019-02-18 06:12:23 -0500 EST 2019-02-17 11:58:47 -0500 EST Unschedulable 0/1 nodes are available: 1 node(s) didn't match pod affinity/anti-affinity, 1 node(s) didn't satisfy existing pods anti-affinity rules.}]
+Feb 18 06:12:57.395: INFO: stork-6bc9c99c98-7w6hj                                         10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:51 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:51 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: stork-6bc9c99c98-fpjpg                                                        Pending           [{PodScheduled False 2019-02-18 06:12:23 -0500 EST 2019-02-17 11:58:47 -0500 EST Unschedulable 0/1 nodes are available: 1 node(s) didn't match pod affinity/anti-affinity, 1 node(s) didn't satisfy existing pods anti-affinity rules.}]
+Feb 18 06:12:57.395: INFO: stork-scheduler-854c85759b-78fts                               10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:55 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:55 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: stork-scheduler-854c85759b-bdqsz                               10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:51 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:51 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: stork-scheduler-854c85759b-pqwsn                               10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:55 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:55 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:58:47 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: talisman-9hdt8                                                 10.182.132.35  Succeeded         [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:16:26 -0500 EST PodCompleted } {Ready False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:17:16 -0500 EST PodCompleted } {ContainersReady False 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:17:16 -0500 EST PodCompleted } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 11:16:26 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: tiller-deploy-95d654d46-wsx9r                                  10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:55:54 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:55:58 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:55:58 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:55:54 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: vpn-6c6b45457f-dhp5m                                           10.182.132.35  Running           [{Initialized True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  } {Ready True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:43 -0500 EST  } {ContainersReady True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:40:43 -0500 EST  } {PodScheduled True 0001-01-01 00:00:00 +0000 UTC 2019-02-17 09:39:53 -0500 EST  }]
+Feb 18 06:12:57.395: INFO: 
+Feb 18 06:12:57.423: INFO: 
+Logging node info for node 10.182.132.35
+Feb 18 06:12:57.451: INFO: Node Info: &Node{ObjectMeta:ObjectMeta{Name:10.182.132.35,GenerateName:,Namespace:,SelfLink:/api/v1/nodes/10.182.132.35,UID:e33c8496-32c1-11e9-8181-4abd00482c07,ResourceVersion:186291,Generation:0,CreationTimestamp:2019-02-17 09:39:53 -0500 EST,DeletionTimestamp:<nil>,DeletionGracePeriodSeconds:nil,Labels:map[string]string{arch: amd64,beta.kubernetes.io/arch: amd64,beta.kubernetes.io/instance-type: u2c.2x4.encrypted,beta.kubernetes.io/os: linux,failure-domain.beta.kubernetes.io/region: us-east,failure-domain.beta.kubernetes.io/zone: mon01,ibm-cloud.kubernetes.io/encrypted-docker-data: true,ibm-cloud.kubernetes.io/ha-worker: true,ibm-cloud.kubernetes.io/iaas-provider: softlayer,ibm-cloud.kubernetes.io/machine-type: u2c.2x4.encrypted,ibm-cloud.kubernetes.io/sgx-enabled: false,ibm-cloud.kubernetes.io/worker-pool-id: 937b08c518b6402d8ec7872e68111f72-1c4d84c,ibm-cloud.kubernetes.io/worker-version: 1.12.5_1538,kubernetes.io/hostname: 10.182.132.35,privateVLAN: 2257395,publicVLAN: 2257393,},Annotations:map[string]string{node.alpha.kubernetes.io/ttl: 0,volumes.kubernetes.io/controller-managed-attach-detach: true,},OwnerReferences:[],Finalizers:[],ClusterName:,},Spec:NodeSpec{PodCIDR:,ExternalID:,ProviderID:ibm://e242f140687cd68a8e037b26680e0f04///937b08c518b6402d8ec7872e68111f72/kube-mon01-cr937b08c518b6402d8ec7872e68111f72-w1,Unschedulable:false,},Status:NodeStatus{Capacity:ResourceList{cpu: {{2 0} {<nil>} 2 DecimalSI},ephemeral-storage: {{105553100800 0} {<nil>}  BinarySI},hugepages-1Gi: {{0 0} {<nil>} 0 DecimalSI},hugepages-2Mi: {{0 0} {<nil>} 0 DecimalSI},memory: {{4138598400 0} {<nil>}  BinarySI},pods: {{110 0} {<nil>} 110 DecimalSI},},Allocatable:ResourceList{cpu: {{1920 -3} {<nil>} 1920m DecimalSI},ephemeral-storage: {{100275445682 0} {<nil>} 100275445682 DecimalSI},hugepages-1Gi: {{0 0} {<nil>} 0 DecimalSI},hugepages-2Mi: {{0 0} {<nil>} 0 DecimalSI},memory: {{3620601856 0} {<nil>}  BinarySI},pods: {{110 0} {<nil>} 110 DecimalSI},},Phase:,Conditions:[{OutOfDisk False 2019-02-18 06:12:22 -0500 EST 2019-02-17 09:39:53 -0500 EST KubeletHasSufficientDisk kubelet has sufficient disk space available} {MemoryPressure False 2019-02-18 06:12:22 -0500 EST 2019-02-17 09:39:53 -0500 EST KubeletHasSufficientMemory kubelet has sufficient memory available} {DiskPressure False 2019-02-18 06:12:22 -0500 EST 2019-02-17 09:39:53 -0500 EST KubeletHasNoDiskPressure kubelet has no disk pressure} {PIDPressure False 2019-02-18 06:12:22 -0500 EST 2019-02-17 09:39:53 -0500 EST KubeletHasSufficientPID kubelet has sufficient PID available} {Ready True 2019-02-18 06:12:22 -0500 EST 2019-02-17 09:40:13 -0500 EST KubeletReady kubelet is posting ready status. AppArmor enabled}],Addresses:[{InternalIP 10.182.132.35} {ExternalIP 169.45.41.249} {Hostname 10.182.132.35}],DaemonEndpoints:NodeDaemonEndpoints{KubeletEndpoint:DaemonEndpoint{Port:10250,},},NodeInfo:NodeSystemInfo{MachineID:266c2075dace453da02500b328c9e325,SystemUUID:1E9A00D8-F142-150F-3356-2F85F0F069EA,BootID:e2f99066-ee89-48ea-80e3-9f0fedd60690,KernelVersion:4.4.0-141-generic,OSImage:Ubuntu 16.04.5 LTS,ContainerRuntimeVersion:containerd://1.1.6,KubeletVersion:v1.12.5+IKS,KubeProxyVersion:v1.12.5+IKS,OperatingSystem:linux,Architecture:amd64,},Images:[{[docker.io/portworx/px-node-wiper@sha256:c9cc1f6fb156c34cecdbcad70a340879b2e9fc21bf6c8da2d1a20a59c7b5a73b docker.io/portworx/px-node-wiper:1.5.1] 971081469} {[registry.ng.bluemix.net/armada-master/ibm-kube-fluentd-collector@sha256:8c2230fcc41c77b970aae92af2af74b22749310a918f2d3849fa34d198b54e7a registry.ng.bluemix.net/armada-master/ibm-kube-fluentd-collector:972865196aefd3324105087878de12c518ed579f] 140648972} {[registry.ng.bluemix.net/armada-master/ingress@sha256:360b240b9c5d840b003415b76e6ab317810cbc4a72a61c04d93e4d02f23a8e8c registry.ng.bluemix.net/armada-master/ingress:404] 130339291} {[docker.io/openstorage/stork@sha256:d63ef9a8b2a53adf58b952119296f42234926f8b2cd9a4c890d2140115531132 docker.io/openstorage/stork:2.0.1] 99871823} {[registry.ng.bluemix.net/armada-master/storage-file-plugin@sha256:2d60dddebd3c4d85ff16220cf6c15d1dd4683a6f2c65aacbadf8dd086934dbed registry.ng.bluemix.net/armada-master/storage-file-plugin:342] 95627796} {[docker.io/library/debian@sha256:58bab5b29a0b519a6967c57ff4b34e6cef0f0ad617aa1cca3fa95a0556cb0273 docker.io/library/debian:jessie] 54388091} {[docker.io/portworx/talisman@sha256:435e319bdf88c269d3c9b13c7adcbb66f6f8f5840ced02b73f74cafe5c9590dc docker.io/portworx/talisman:latest] 49214894} {[docker.io/portworx/lh-config-sync@sha256:b98e5f38779f05917ae628bc86ffc411c69b92354526cd9d598ae2ec02d552c5 docker.io/portworx/lh-config-sync:0.3] 46182998} {[registry.ng.bluemix.net/armada-master/kubernetes-dashboard-amd64@sha256:d6b4e5d77c1cdcb54cd5697a9fe164bc08581a7020d6463986fe1366d36060e8 registry.ng.bluemix.net/armada-master/kubernetes-dashboard-amd64:v1.10.1] 44743415} {[docker.io/portworx/oci-monitor@sha256:177835f7336e53948c8324ed0ca1a8b74b397896c3f08da791698d2d22876f81 docker.io/portworx/oci-monitor:2.0.2] 43931804} {[registry.ng.bluemix.net/armada-master/cni@sha256:77d335561bf44d09dfdd2ad2f4f3711210abead20d70a94a38f2598ef88d95e0 registry.ng.bluemix.net/armada-master/cni:v3.3.1] 23846173} {[gcr.io/kubernetes-helm/tiller@sha256:2a3dd484ecfcf9343994e0f6c2af0a6faf1af7f7e499905793643f91e90edcb3 gcr.io/kubernetes-helm/tiller:v2.10.0] 22083459} {[registry.ng.bluemix.net/armada-master/node@sha256:028231a4d707b17928504b6364ab6000989496921963d153fead69d9b8334ca8 registry.ng.bluemix.net/armada-master/node:v3.3.1] 20223791} {[registry.bluemix.net/ibm/ibmcloud-block-storage-attacher@sha256:c90477741e77b8fd0b6cc97fb6f05e5f7e768ba45981f4fd8b25925ff3d8fc59 registry.bluemix.net/ibm/ibmcloud-block-storage-attacher:latest] 18661830} {[docker.io/lachlanevenson/k8s-kubectl@sha256:74d40adcad4fbc4da61c2621b802f20696c5d84c8293b7246539b6fac1fe3100 docker.io/lachlanevenson/k8s-kubectl:v1.12.5] 16914051} {[gcr.io/google_containers/kube-scheduler-amd64@sha256:be0cff8dca34276d6b4f02febb179b199567ab8f24596b49a46b1a5ede43bbf7 gcr.io/google_containers/kube-scheduler-amd64:v1.12.5] 14916730} {[registry.ng.bluemix.net/armada-master/kube-controllers@sha256:5d3686a7dc06b54eeca901bb4a65dbda16bb93f8ad0b0f4091108d30301fa126 registry.ng.bluemix.net/armada-master/kube-controllers:v3.3.1] 14566696} {[registry.ng.bluemix.net/armada-master/k8s-dns-kube-dns-amd64@sha256:31f1fb7bd3c9c3f55472d08615e4c7e3b6441c1af05c2732324285e966779aec registry.ng.bluemix.net/armada-master/k8s-dns-kube-dns-amd64:1.14.13] 14048139} {[registry.ng.bluemix.net/armada-master/ingress-auth@sha256:13742baede0891f8d6c5a8f28fcbc7439fa50896b9c993e75171d0a60365a0b7 registry.ng.bluemix.net/armada-master/ingress-auth:300] 12944091} {[registry.ng.bluemix.net/armada-master/k8s-dns-sidecar-amd64@sha256:7fe865f8095bd2cad02cd1043ee72e3182ef69b739cff9e842611f96d069fa4b registry.ng.bluemix.net/armada-master/k8s-dns-sidecar-amd64:1.14.13] 12011357} {[registry.ng.bluemix.net/armada-master/k8s-dns-dnsmasq-nanny-amd64@sha256:3ee22d9a3bdb805aef74073ea04d6fa2a04339c380b809a8d95a0f95aeb15f67 registry.ng.bluemix.net/armada-master/k8s-dns-dnsmasq-nanny-amd64:1.14.13] 11570691} {[registry.ng.bluemix.net/armada-master/cluster-proportional-autoscaler-amd64@sha256:4feaa8166096f4f2fda32306f9d96bd9f539e3b665d16f927f0eba6cb92e3b03 registry.ng.bluemix.net/armada-master/cluster-proportional-autoscaler-amd64:1.2.0] 11135837} {[registry.ng.bluemix.net/armada-master/metrics-server-amd64@sha256:ad4a7150389426eedbd2bc81ba8067dc4807b7f47697310a8fe917f34475f83e registry.ng.bluemix.net/armada-master/metrics-server-amd64:v0.3.1] 10908506} {[registry.ng.bluemix.net/armada-master/keepalived@sha256:fa5c83d182b4aefafea7e89e2c440d42136c76c85e2e69f251f4c6537e08cbf0 registry.ng.bluemix.net/armada-master/keepalived:132] 9648446} {[registry.ng.bluemix.net/armada-master/addon-resizer@sha256:737c634a95f04bffbcd8d3a833745cc26d4d42e8a759ca75b8b8b407ef40b780 registry.ng.bluemix.net/armada-master/addon-resizer:1.8.4] 9498066} {[registry.ng.bluemix.net/armada-master/keepalived-watcher@sha256:9c4c08cd99bca900ad0e691d0a66e45422ec9661893ae3783d16520685305d5a registry.ng.bluemix.net/armada-master/keepalived-watcher:132] 8884677} {[registry.ng.bluemix.net/armada-master/haproxy@sha256:826bef8f95f894b96047c8405f188c0743d8c9a85a092552605b5490f401ff43 registry.ng.bluemix.net/armada-master/haproxy:1.8.12-alpine] 8838911} {[registry.ng.bluemix.net/armada-master/vpn-client@sha256:9b3df281e436b2aa92a7586cfcf1d4859a2cecf05c5f8cc24fbc0ec0788e1ef7 registry.ng.bluemix.net/armada-master/vpn-client:2.4.6-r3-IKS-13] 4972064} {[docker.io/hrishi/px-etcd-preinstall-hook@sha256:cba3c45b72ab799f53ca9fb5e42fd0ab60fbf70f660c41007b38f89678b78889 docker.io/hrishi/px-etcd-preinstall-hook:v2] 4242408} {[registry.ng.bluemix.net/armada-master/alpine@sha256:18959d9c6bb2acd6d07d837dc52e6467ab0f7282b36f12322c90f29be101e36d registry.ng.bluemix.net/armada-master/alpine:3.6] 2016698} {[registry.ng.bluemix.net/armada-master/pause@sha256:59eec8837a4d942cc19a52b8c09ea75121acc38114a2c68b98983ce9356b8610 registry.ng.bluemix.net/armada-master/pause:3.1] 315499}],VolumesInUse:[],VolumesAttached:[],},}
+Feb 18 06:12:57.451: INFO: 
+Logging kubelet events for node 10.182.132.35
+Feb 18 06:12:57.481: INFO: 
+Logging pods the kubelet thinks is on node 10.182.132.35
+Feb 18 06:12:57.577: INFO: vpn-6c6b45457f-dhp5m started at 2019-02-17 09:39:53 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.577: INFO: 	Container vpn ready: true, restart count 0
+Feb 18 06:12:57.577: INFO: ibm-kube-fluentd-9w7kk started at 2019-02-17 09:44:29 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.577: INFO: 	Container fluentd ready: true, restart count 0
+Feb 18 06:12:57.577: INFO: ibm-storage-watcher-ddd4f749f-nlb55 started at 2019-02-17 09:39:53 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.577: INFO: 	Container ibm-storage-watcher-container ready: true, restart count 0
+Feb 18 06:12:57.577: INFO: kubernetes-dashboard-b4bc7db5d-4czcq started at 2019-02-17 09:39:53 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.577: INFO: 	Container kubernetes-dashboard ready: true, restart count 0
+Feb 18 06:12:57.577: INFO: px-lighthouse-98d7dc4f9-b7px6 started at 2019-02-17 11:58:47 -0500 EST (0+3 container statuses recorded)
+Feb 18 06:12:57.577: INFO: 	Container config-sync ready: false, restart count 0
+Feb 18 06:12:57.578: INFO: 	Container px-lighthouse ready: false, restart count 0
+Feb 18 06:12:57.578: INFO: 	Container stork-connector ready: false, restart count 0
+Feb 18 06:12:57.578: INFO: stork-scheduler-854c85759b-pqwsn started at 2019-02-17 11:58:47 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container stork-scheduler ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: talisman-9hdt8 started at 2019-02-17 11:16:26 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container talisman ready: false, restart count 0
+Feb 18 06:12:57.578: INFO: ibm-file-plugin-5f976d8488-9qkg6 started at 2019-02-17 09:39:53 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container ibm-file-plugin-container ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: calico-node-g6sp6 started at 2019-02-17 09:39:53 -0500 EST (0+2 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container calico-node ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: 	Container install-cni ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: metrics-server-86f87cc8bd-5r289 started at 2019-02-17 09:40:47 -0500 EST (0+2 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container metrics-server ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: 	Container metrics-server-nanny ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: 7zv3r268kdspe50dcy250de7mmax5r19-vnbg4 started at 2019-02-17 11:08:50 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container runon ready: false, restart count 0
+Feb 18 06:12:57.578: INFO: stork-scheduler-854c85759b-bdqsz started at 2019-02-17 11:58:47 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container stork-scheduler ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: kube-dns-autoscaler-587cd5cd44-blhrd started at 2019-02-17 09:39:53 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container autoscaler ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: ibm-cloud-provider-ip-169-45-46-94-6866d9cc9f-jwcxv started at 2019-02-17 09:42:20 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container ibm-cloud-provider-ip-169-45-46-94 ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: px-hook-predelete-nodelabel-djprp started at 2019-02-17 11:17:12 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container pre-delete-job ready: false, restart count 0
+Feb 18 06:12:57.578: INFO: tiller-deploy-95d654d46-wsx9r started at 2019-02-17 09:55:54 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container tiller ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: ibm-master-proxy-static-10.182.132.35 started at <nil> (0+0 container statuses recorded)
+Feb 18 06:12:57.578: INFO: public-cr937b08c518b6402d8ec7872e68111f72-alb1-d9b98546-lncd8 started at 2019-02-17 09:43:10 -0500 EST (0+4 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container ingress-auth-1 ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: 	Container ingress-auth-2 ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: 	Container ingress-auth-3 ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: 	Container nginx-ingress ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: ibm-keepalived-watcher-d9n4t started at 2019-02-17 09:39:53 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container keepalived-watcher ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: stork-scheduler-854c85759b-78fts started at 2019-02-17 11:58:47 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.578: INFO: 	Container stork-scheduler ready: true, restart count 0
+Feb 18 06:12:57.578: INFO: calico-kube-controllers-5c699798bc-n5ww7 started at 2019-02-17 09:39:53 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.579: INFO: 	Container calico-kube-controllers ready: true, restart count 0
+Feb 18 06:12:57.579: INFO: kube-dns-amd64-fddfcc69-npgln started at 2019-02-17 09:39:53 -0500 EST (0+3 container statuses recorded)
+Feb 18 06:12:57.579: INFO: 	Container dnsmasq ready: true, restart count 0
+Feb 18 06:12:57.579: INFO: 	Container kubedns ready: true, restart count 0
+Feb 18 06:12:57.579: INFO: 	Container sidecar ready: true, restart count 0
+Feb 18 06:12:57.579: INFO: px-hook-postdelete-unlabelnode-pdsg6 started at 2019-02-17 11:17:17 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.579: INFO: 	Container post-delete-job ready: false, restart count 0
+Feb 18 06:12:57.579: INFO: px-hook-etcd-preinstall-kb5gd started at 2019-02-17 11:58:43 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.579: INFO: 	Container pre-install-job ready: false, restart count 0
+Feb 18 06:12:57.579: INFO: portworx-nxbb7 started at 2019-02-17 11:58:47 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.579: INFO: 	Container portworx ready: true, restart count 0
+Feb 18 06:12:57.579: INFO: stork-6bc9c99c98-7w6hj started at 2019-02-17 11:58:47 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.579: INFO: 	Container stork ready: true, restart count 0
+Feb 18 06:12:57.579: INFO: ibm-block-storage-attacher-r885x started at 2019-02-18 06:08:17 -0500 EST (0+1 container statuses recorded)
+Feb 18 06:12:57.579: INFO: 	Container ibm-block-storage-attacher-container ready: true, restart count 0
+Feb 18 06:12:57.579: INFO: Waiting up to 3m0s for all (but 0) nodes to be ready
+[1mSTEP[0m: Destroying namespace "blockattacher-e2e-ns" for this suite.
+Feb 18 06:13:09.517: INFO: namespace: blockattacher-e2e-ns, resource: bindings, ignored listing per whitelist
+
+[91m[1m• Failure [262.694 seconds][0m
+[k8s.io] [Feature:Block_Volume_Attach_E2E]
+[90m/root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework/framework.go:219[0m
+  [k8s.io] Block_Volume_Attach E2E 
+  [90m/root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework/framework.go:219[0m
+    [91m[1mBlock Volume attach E2e Testcases [It][0m
+    [90m/root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/block_volume_attach.go:70[0m
+
+    [91mExpected error:
+        <*exec.ExitError | 0xc0003e4020>: {
+            ProcessState: {
+                pid: 36897,
+                status: 256,
+                rusage: {
+                    Utime: {Sec: 0, Usec: 644413},
+                    Stime: {Sec: 0, Usec: 169754},
+                    Maxrss: 59380,
+                    Ixrss: 0,
+                    Idrss: 0,
+                    Isrss: 0,
+                    Minflt: 43693,
+                    Majflt: 0,
+                    Nswap: 0,
+                    Inblock: 0,
+                    Oublock: 10864,
+                    Msgsnd: 0,
+                    Msgrcv: 0,
+                    Nsignals: 0,
+                    Nvcsw: 2022,
+                    Nivcsw: 252,
+                },
+            },
+            Stderr: nil,
+        }
+        exit status 1
+    not to have occurred[0m
+
+    /root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/block_volume_attach.go:182
+
+    [91mFull Stack Trace[0m
+    	/root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/vendor/github.com/onsi/gomega/internal/assertion/assertion.go:69 +0x1ed
+    github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/vendor/github.com/onsi/gomega/internal/assertion.(*Assertion).NotTo(0xc0000b4700, 0x1858c00, 0x288a220, 0x0, 0x0, 0x0, 0x91)
+    	/root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/vendor/github.com/onsi/gomega/internal/assertion/assertion.go:43 +0xaf
+    github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests.glob..func1.2.1()
+    	/root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/block_volume_attach.go:182 +0x166a
+    github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/vendor/github.com/onsi/ginkgo/internal/leafnodes.(*runner).runSync(0xc0000887e0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, ...)
+    	/root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/e2e_suite_test.go:27 +0x63
+    testing.tRunner(0xc00032cb00, 0x1738a28)
+    	/usr/local/go/src/testing/testing.go:827 +0xbf
+    created by testing.(*T).Run
+    	/usr/local/go/src/testing/testing.go:878 +0x35c
+    
+[90m------------------------------[0m
+
+
+[91m[1mSummarizing 1 Failure:[0m
+
+[91m[1m[Fail] [0m[90m[k8s.io] [Feature:Block_Volume_Attach_E2E] [0m[0m[k8s.io] Block_Volume_Attach E2E  [0m[91m[1m[It] Block Volume attach E2e Testcases [0m
+[37m/root/block_attacher_PXTC_bkp/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/block_volume_attach.go:182[0m
+
+[1m[91mRan 1 of 1 Specs in 262.695 seconds[0m
+[1m[91mFAIL![0m -- [32m[1m0 Passed[0m | [91m[1m1 Failed[0m | [33m[1m0 Pending[0m | [36m[1m0 Skipped[0m --- FAIL: TestE2e (262.69s)
+FAIL
+FAIL	github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests	262.762s

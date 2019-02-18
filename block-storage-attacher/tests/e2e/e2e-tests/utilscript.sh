@@ -35,14 +35,14 @@ elif [ "$2" = "voldelete" ]
 then
     export VOL_ID=$1
     export NOD_IP=$3
-    bx sl block access-revoke -p $NOD_IP $VOL_ID
-    bx sl  block volume-cancel -f --immediate $VOL_ID
+    slcli block access-revoke  $VOL_ID
+    slcli -y block volume-cancel  --immediate $VOL_ID
 elif [ "$2" = "portworxpvcreate" ]
 then
     install_portworx_plugin
     check_portworx_pod_state "portworx"
     echo "BlockVolumeAttacher-Volume-Test: PortWorx Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
-    export CLSFILE=$3
+    export CLSFILE=$1
     kubectl  create -f $CLSFILE
 elif [ "$2" = "portworxdelete" ]
 then

@@ -1,0 +1,4 @@
+--- Cluster Details ---
+Region:us-east \n Cluster Location:mon01 \n Kube-Version: \n
+
+
