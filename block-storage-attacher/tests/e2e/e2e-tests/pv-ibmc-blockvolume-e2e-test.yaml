@@ -9,9 +9,9 @@ metadata:
     ibm.io/username: "IBM02SU1186049-I107846677"
     ibm.io/password: "DaupPLRj4x2FvnB2"
     ibm.io/targetip: "10.3.126.169"
-    ibm.io/lunid: "4"
+    ibm.io/lunid: "9"
     ibm.io/nodeip: "10.182.132.35"
-    ibm.io/volID: "65163067"
+    ibm.io/volID: "65285153"
 spec:
   capacity:
     storage: 20Gi
