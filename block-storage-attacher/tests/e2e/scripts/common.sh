@@ -394,11 +394,12 @@ function check_pod_state {
   pod_name=$1
   while true; do
     attempts=$((attempts+1))
-    pod_status=$(kubectl get pods -n kube-system | awk "/$pod_name/"'{print $2}')
-    if [   "$pod_status" = "1/1" ]; then
-      echo "$pod_name is  running ."
-      break
-    fi
+      pod_status=$(kubectl get pods -n kube-system | awk "/$pod_name/"'{print $2}')
+      readarray -t lines < <(echo "$pod_status")
+         if [ "${lines[0]}" = "1/1" ]; then
+            echo "$pod_name is  running ."
+            break
+         fi
     if [[ $attempts -gt 30 ]]; then
       echo "$pod_name  were not running well."
       kubectl get pods -n kube-system| awk "/$pod_name-/"
@@ -408,6 +409,27 @@ function check_pod_state {
     sleep 10
   done
 }
+function check_portworx_pod_state {
+  attempts=0
+  pod_name=$1
+  while true; do
+    attempts=$((attempts+1))
+      pod_status=$(kubectl get pods -n kube-system | awk "/$pod_name/"'{print $2}')
+      readarray -t lines < <(echo "$pod_status")
+         if [ "${lines[0]}" = "1/1" ]; then
+            echo "$pod_name is  running ."
+            break
+         fi
+    if [[ $attempts -gt 30 ]]; then
+      echo "$pod_name  were not running well."
+      kubectl get pods -n kube-system| awk "/$pod_name-/"
+      exit 1
+    fi
+    echo "$pod_name state == $pod_status  Sleeping 10 seconds"
+    sleep 30
+  done
+}
+
 
 # Check if the Deployment has reached running state (timeout: 300sec)
 function check_deployment_state {
@@ -491,3 +513,40 @@ function install_blockvolume_plugin {
 	set -e
 	echo "Checking storage plugin and driver status and wait till running"
 }
+function install_portworx_plugin {
+	if [ -z $PORTWORX_HELM_CHART ]; then
+        echo "port worx helm chart not found. Hence exiting"
+        exit 1
+    fi
+    echo "Installing helm chart portworx plugin  .."
+	# INSTALL HELM TILLER (Attempt again, if already installed)
+	echo "Initialize tiller AND Wait till running"
+	helm init --force-upgrade
+	check_pod_state "tiller-deploy"
+	
+        # INSTALL/UPGRADE HELM CHART
+	helm_values_override="--set etcdEndPoint=$ETCD_SET1;$ETCD_SET2,clusterName=$(uuidgen),etcd.credentials=$ETCDCREDS,usedrivesAndPartitions=true,usefileSystemDrive=true"
+	helm_install_cmd="helm install $helm_values_override $PORTWORX_HELM_CHART --name portworx"
+        
+	# CHECK FOR UPGRADE
+
+        echo "Checking for existing helm chart ibm-block-storage-attacher on cluster .."
+        portworx_helm_release=$(helm ls | grep DEPLOYED | awk "/portworx/"'{print $1}')
+        if [   "$portworx_helm_release" != "" ]; then
+          echo "Existing release $portworx_helm_release found for chart ibm-block-storage-attacher"
+          return  
+        fi
+	# DO HELM INSTALLATION
+	echo "Executing: $helm_install_cmd"
+	set +e
+	for i in {1..5}; do
+	    if $helm_install_cmd ; then
+	        echo "helm install started"
+	        break
+	    fi
+	    sleep 30
+	done
+	set -e
+	echo "Checking portworx status and wait till running"
+}
+

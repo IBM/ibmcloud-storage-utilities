@@ -5,7 +5,7 @@
  -subjects:
  -  - kind: ServiceAccount
  -    name: armada-srorage-e2e
- -    namespace: armada-storage-e2e-namespace
+ -    namespace: blockattacher-e2e-ns
  -roleRef:
  -  kind: ClusterRole
  -  name: armada-srorage-e2e-runner

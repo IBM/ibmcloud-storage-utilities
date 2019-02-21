@@ -92,6 +92,7 @@ if [[ $TEST_HELM_INSTALL == "true" ]]; then
 	check_pod_state "ibm-block-storage-attacher" 
 	#check_daemonset_state "ibmcloud-block-storage-driver"
 fi
+       
 
 echo "BlockVolumeAttacher-Volume-Test: Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
 
@@ -104,7 +105,7 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         export  SL_USERNAME=$PVG_SL_USERNAME
         bx_login
         bx cs credentials-set  --infrastructure-username  $PVG_SL_USERNAME  --infrastructure-api-key $PVG_SL_API_KEY
-        bx sl init -u   $PVG_SL_USERNAME  -p  $PVG_SL_API_KEY
+        #bx sl init -u   $PVG_SL_USERNAME  -p  $PVG_SL_API_KEY
         bx cs init --host  $ARMADA_API_ENDPOINT
 	setKubeConfig $PVG_CLUSTER_CRUISER
         export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")

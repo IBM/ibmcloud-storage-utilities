@@ -3,7 +3,7 @@ package common
 // busyboxTestImage is the list of images used in common test. These images should be prepulled
 // before a tests starts, so that the tests won't fail due image pulling flakes.
 const (
-	BusyboxTestImage     = "registry.ng.bluemix.net/armada-master/armada-block-volume-attacher"
+	BusyboxTestImage     = "redis"
 	PluginName           = "ibm.io/ibmc-blockattacher"
 	MountPath            = "/host/etc"
 	NamespaceName        = "block-volume-attacher-e2e-namespace"
