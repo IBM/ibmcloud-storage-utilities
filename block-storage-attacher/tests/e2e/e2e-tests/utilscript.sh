@@ -41,12 +41,13 @@ elif [ "$2" = "portworxpvcreate" ]
 then
     install_portworx_plugin
     check_portworx_pod_state "portworx"
-    echo "BlockVolumeAttacher-Volume-Test: PortWorx Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
+    echo "BlockVolumeAttacher-Volume-Test: PortWorx Plugin-Installation: Debug3" >> $E2E_PATH/e2eTests.txt
     export CLSFILE=$1
     kubectl  create -f $CLSFILE
 elif [ "$2" = "portworxdelete" ]
 then
     curl -fsL https://install.portworx.com/px-wipe | bash
+    kubectl delete storageclass $1 
     helm delete --purge portworx
 else
     echo "Wrong arguments"
