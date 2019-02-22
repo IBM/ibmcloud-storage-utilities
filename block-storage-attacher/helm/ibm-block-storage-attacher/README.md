@@ -4,7 +4,7 @@
 ## Introduction
 IBM Cloud Block Storage is persistent, high performance iSCSI storage that you can mount to apps that run in your Kubernetes cluster. To attach raw, unformatted, and unmounted block storage to a worker node in your cluster, install the IBM Cloud Block Storage Attacher by using a Helm chart. 
 
-For more information about IBM Cloud Block Storage, see [Getting started with Block Storage](https://cloud.ibm.com/docs/infrastructure/BlockStorage/index.html#getting-started-with-block-storage).
+For more information about IBM Cloud Block Storage, see [Getting started with Block Storage](https://cloud.ibm.com/docs/infrastructure/BlockStorage?topic=BlockStorage-GettingStarted#getting-started-with-block-storage).
 
 ## Chart Details
 The IBM Cloud Block Storage Attacher Helm chart creates the following resources in your cluster: 
@@ -13,7 +13,7 @@ The IBM Cloud Block Storage Attacher Helm chart creates the following resources 
 - 1 storage class that you later use to attach the block storage device to your worker node.
 
 ## Prerequisites
-*   If you do not have one yet, [create a standard cluster](https://cloud.ibm.com/docs/containers/cs_clusters.html#clusters_cli). 
+*   If you do not have one yet, [create a standard cluster](https://cloud.ibm.com/docs/containers?topic=containers-clusters#clusters_cli). 
 *   Kubernetes version 1.10 or later.
 *   Helm version 2.10 or later.
 *   The following CLIs and plugins.
@@ -168,4 +168,4 @@ If you do not want to use IBM Cloud Block Storage for your cluster, you can unin
    <pre>helm delete &lt;helm_chart_name&gt; --purge</pre>
 
 ## What's next?
-Now that you installed the IBM Cloud Block Storage Attacher, you can start to [automatically add block storage](https://cloud.ibm.com/docs/containers/cs_storage_utilities.html#attach_block) and [attach the block storage](https://cloud.ibm.com/docs/containers/cs_storage_utilities.html#automatic_block) to all your worker nodes. 
+Now that you installed the IBM Cloud Block Storage Attacher, you can start to [automatically add block storage](https://cloud.ibm.com/docs/containers?topic=containers-utilities#attach_block) and [attach the block storage](https://cloud.ibm.com/docs/containers?topic=containers-utilities#automatic_block) to all your worker nodes. 
