@@ -123,7 +123,7 @@ then
       found=true
       break
     else
-      echo "`date`:Found the $paths no of multipaths" >> $LOG
+      echo "`date`:Number of multipaths found: $paths" >> $LOG
     fi
     sleep 5
   done
