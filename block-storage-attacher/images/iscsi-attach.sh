@@ -122,6 +122,8 @@ then
       echo "`date`:Found the multipaths" >> $LOG
       found=true
       break
+    else
+      echo "`date`:Number of multipaths found: $paths" >> $LOG
     fi
     sleep 5
   done

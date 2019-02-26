@@ -35,7 +35,7 @@ elif [ "$2" = "voldelete" ]
 then
     export VOL_ID=$1
     export NOD_IP=$3
-    slcli block access-revoke  $VOL_ID
+    slcli block access-revoke  $VOL_ID --ip-address $NOD_IP
     slcli -y block volume-cancel  --immediate $VOL_ID
 elif [ "$2" = "portworxpvcreate" ]
 then
