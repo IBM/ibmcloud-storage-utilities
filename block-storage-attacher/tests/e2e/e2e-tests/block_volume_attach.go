@@ -169,11 +169,13 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			if filestatus == true {
 				filepatharg2 := fmt.Sprintf("%s", portworxscpath)
 				cmd := exec.Command(pvscriptpath, filepatharg2, "portworxpvcreate")
-				//var stdout, stderr bytes.Buffer
-				//cmd.Stdout = &stdout
-				//cmd.Stderr = &stderr
+				var stdout, stderr bytes.Buffer
+				cmd.Stdout = &stdout
+				cmd.Stderr = &stderr
 				err = cmd.Run()
 				if err != nil {
+					outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
+					fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
 					cleanUP(pvname, pv)
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx Installtion: FAIL\n")
 				} else {

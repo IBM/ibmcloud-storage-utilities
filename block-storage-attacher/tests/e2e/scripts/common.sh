@@ -8,6 +8,12 @@
 # IBM Corp.
 # encoding: utf-8
 
+SCRIPTS_FOLDER_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/scripts"
+E2EPATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
+SCRIPTS_FOLDER_PATH="$GOPATH/$SCRIPTS_FOLDER_PATH"
+E2E_PATH="$GOPATH/$E2EPATH"
+
+
 export ISSUE_REPO="${DEFAULT_ISSUE_REPO}"
 
 function set_issue_repo {
@@ -514,19 +520,23 @@ function install_blockvolume_plugin {
 	echo "Checking storage plugin and driver status and wait till running"
 }
 function install_portworx_plugin {
+        touch $E2E_PATH/debug.txt
+        echo "Debug" > $E2E_PATH/debug.txt
 	if [ -z $PORTWORX_HELM_CHART ]; then
-        echo "port worx helm chart not found. Hence exiting"
+        echo "port worx helm chart not found. Hence exiting" >> $E2E_PATH/debug.txt
         exit 1
     fi
     echo "Installing helm chart portworx plugin  .."
 	# INSTALL HELM TILLER (Attempt again, if already installed)
-	echo "Initialize tiller AND Wait till running"
+	echo "Initialize tiller AND Wait till running" >> $E2E_PATH/debug.txt
 	helm init --force-upgrade
 	check_pod_state "tiller-deploy"
 	
         # INSTALL/UPGRADE HELM CHART
 	helm_values_override="--set etcdEndPoint=$ETCD_SET1;$ETCD_SET2,clusterName=$(uuidgen),etcd.credentials=$ETCDCREDS,usedrivesAndPartitions=true,usefileSystemDrive=true"
+        echo "Helm installtion start" >> $E2E_PATH/debug.txt
 	helm_install_cmd="helm install $helm_values_override $PORTWORX_HELM_CHART --name portworx"
+        echo "Helm installtion done" >> $E2E_PATH/debug.txt
         
 	# CHECK FOR UPGRADE
 
@@ -541,12 +551,12 @@ function install_portworx_plugin {
 	set +e
 	for i in {1..5}; do
 	    if $helm_install_cmd ; then
-	        echo "helm install started"
+	        echo "helm install started" >> $E2E_PATH/debug.txt
 	        break
 	    fi
 	    sleep 30
 	done
 	set -e
-	echo "Checking portworx status and wait till running"
+	echo "Checking portworx status and wait till running" >> $E2E_PATH/debug.txt
 }
 
