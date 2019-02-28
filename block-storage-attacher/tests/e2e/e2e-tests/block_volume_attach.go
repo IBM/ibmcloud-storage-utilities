@@ -138,6 +138,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				}
 				pv, err = c.Core().PersistentVolumes().Get(pvname)
 				Expect(err).NotTo(HaveOccurred())
+			        fmt.Printf("Created Static PV \n%s\n", pvname)
 				attachStatus, err := getAttchStatus()
 				if err != nil {
 					cleanUP(pvname, pv)
