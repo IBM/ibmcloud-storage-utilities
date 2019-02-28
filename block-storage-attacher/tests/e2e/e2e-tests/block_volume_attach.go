@@ -351,7 +351,13 @@ func cleanUP(expvname string, pvobj *v1.PersistentVolume) {
 	volidarg := fmt.Sprintf("%s", volumeid)
 	nodeip := pvobj.ObjectMeta.Annotations["ibm.io/nodeip"]
 	nodeiparg := fmt.Sprintf("%s", nodeip)
-	exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg)
+	cmd := exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg)
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	cmd.Run()
+	outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
+	fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
 	c.Core().PersistentVolumes().Delete(expvname, nil)
 
 }
