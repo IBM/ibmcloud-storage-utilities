@@ -357,7 +357,7 @@ func cleanUP(expvname string, pvobj *v1.PersistentVolume) {
 	cmd.Stderr = &stderr
 	cmd.Run()
 	outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
-	fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
+	fmt.Printf("CleanUP: out:\n%s\n CleanUP err:\n%s\n", outStr, errStr)
 	c.Core().PersistentVolumes().Delete(expvname, nil)
 
 }
