@@ -155,18 +155,10 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			}
 
 			/* Port Worx PVC creation */
-			portworxscpath = gopath + "/" + portworxscpath
-			if err != nil {
-				cleanUP(pvname, pv)
-				logResult("BlockVolumeAttacher-Volume-Test: PVC Creaiton: FAIL\n")
-			} else {
-				logResult("BlockVolumeAttacher-Volume-Test: PVC Creaiton: PASS\n")
-			}
-			Expect(err).NotTo(HaveOccurred())
-
-			/* PVC Creation */
 
 			By("PVC  Creation")
+			portworxscpath = gopath + "/" + portworxscpath
+                        filestatus, err = fileExists(portworxscpath)
 			if filestatus == true {
 				filepatharg2 := fmt.Sprintf("%s", portworxscpath)
 				cmd := exec.Command(pvscriptpath, filepatharg2, "portworxpvcreate")
@@ -178,6 +170,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 					outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
 					fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
 					cleanUP(pvname, pv)
+                                        portworxcleanup(portworxclassname)
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx Installtion: FAIL\n")
 				} else {
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx installtion: PASS\n")
@@ -194,6 +187,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				claim, err := c.Core().PersistentVolumeClaims(ns).Create(claim)
 				if err != nil {
 					cleanUP(pvname, pv)
+                                        portworxcleanup(portworxclassname)
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx PVC creation: FAIL\n")
 				} else {
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx PVC creation: PASS\n")
@@ -361,4 +355,11 @@ func cleanUP(expvname string, pvobj *v1.PersistentVolume) {
 	fmt.Printf("CleanUP: out:\n%s\n CleanUP err:\n%s\n", outStr, errStr)
 	c.Core().PersistentVolumes().Delete(expvname, nil)
 
+}
+
+func portworxcleanup(classname string) {
+       
+        filepatharg := fmt.Sprintf("%s", classname)
+	cmd := exec.Command(pvscriptpath, filepatharg, "portworxdelete")
+	cmd.Run()
 }
