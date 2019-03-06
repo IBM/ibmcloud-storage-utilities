@@ -138,7 +138,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				}
 				pv, err = c.Core().PersistentVolumes().Get(pvname)
 				Expect(err).NotTo(HaveOccurred())
-			        fmt.Printf("Created Static PV \n%s\n", pvname)
+				fmt.Printf("Created Static PV \n%s\n", pvname)
 				attachStatus, err := getAttchStatus()
 				if err != nil {
 					cleanUP(pvname, pv)
@@ -158,7 +158,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 
 			By("PVC  Creation")
 			portworxscpath = gopath + "/" + portworxscpath
-                        filestatus, err = fileExists(portworxscpath)
+			filestatus, err = fileExists(portworxscpath)
 			if filestatus == true {
 				filepatharg2 := fmt.Sprintf("%s", portworxscpath)
 				cmd := exec.Command(pvscriptpath, filepatharg2, "portworxpvcreate")
@@ -170,7 +170,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 					outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
 					fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
 					cleanUP(pvname, pv)
-                                        portworxcleanup(portworxclassname)
+					portworxcleanup(portworxclassname)
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx Installtion: FAIL\n")
 				} else {
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx installtion: PASS\n")
@@ -187,7 +187,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				claim, err := c.Core().PersistentVolumeClaims(ns).Create(claim)
 				if err != nil {
 					cleanUP(pvname, pv)
-                                        portworxcleanup(portworxclassname)
+					portworxcleanup(portworxclassname)
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx PVC creation: FAIL\n")
 				} else {
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx PVC creation: PASS\n")
@@ -266,6 +266,7 @@ func getAttchStatus() (string, error) {
 	for start := time.Now(); time.Since(start) < (15 * time.Minute); {
 		pv, _ = c.Core().PersistentVolumes().Get(pvname)
 		attachStatus = pv.ObjectMeta.Annotations["ibm.io/attachstatus"]
+		fmt.Printf("\n%s\n", attachStatus)
 		time.Sleep(1 * time.Minute)
 		if attachStatus == "failed" {
 			return attachStatus, err
@@ -358,8 +359,8 @@ func cleanUP(expvname string, pvobj *v1.PersistentVolume) {
 }
 
 func portworxcleanup(classname string) {
-       
-        filepatharg := fmt.Sprintf("%s", classname)
+
+	filepatharg := fmt.Sprintf("%s", classname)
 	cmd := exec.Command(pvscriptpath, filepatharg, "portworxdelete")
 	cmd.Run()
 }
