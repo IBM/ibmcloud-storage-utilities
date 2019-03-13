@@ -17,7 +17,8 @@ SCRIPTS_FOLDER_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage
 E2EPATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
 SCRIPTS_FOLDER_PATH="$GOPATH/$SCRIPTS_FOLDER_PATH"
 E2E_PATH="$GOPATH/$E2EPATH"
-
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
 
 # Load common functions
 . $SCRIPTS_FOLDER_PATH/common.sh
@@ -44,6 +45,8 @@ then
     echo "BlockVolumeAttacher-Volume-Test: PortWorx Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
     export CLSFILE=$1
     kubectl  create -f $CLSFILE
+    kubectl create -f $E2EPATH/portworx_kp.yaml
+    kubectl create -f $E2EPATH/portworx_secret.yaml
 elif [ "$2" = "portworxdelete" ]
 then
     curl -fsL https://install.portworx.com/px-wipe | bash
