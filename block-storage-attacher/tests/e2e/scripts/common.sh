@@ -426,7 +426,7 @@ function check_portworx_pod_state {
             echo "$pod_name is  running ."
             break
          fi
-    if [[ $attempts -gt 30 ]]; then
+    if [[ $attempts -gt 50 ]]; then
       echo "$pod_name  were not running well."
       kubectl get pods -n kube-system| awk "/$pod_name-/"
       exit 1
