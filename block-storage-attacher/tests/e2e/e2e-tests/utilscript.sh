@@ -47,7 +47,7 @@ then
     kubectl  create -f $CLSFILE
     kubectl create -f $E2E_PATH/portworx_kp.yaml
     kubectl create -f $E2E_PATH/portworx_secret.yaml
-Helif [ "$2" = "portworxdelete" ]
+elif [ "$2" = "portworxdelete" ]
 then
     curl -fsL https://install.portworx.com/px-wipe | bash
     kubectl delete storageclass $1 
