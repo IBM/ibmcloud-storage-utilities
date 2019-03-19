@@ -1,3 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: portworx
 ---
 # Role to access Kubernetes secrets in the portworx namespace only
 kind: Role
