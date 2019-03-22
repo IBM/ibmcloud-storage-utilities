@@ -98,7 +98,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 
 			filestatus, err = fileExists(pvfilepath)
 			if err != nil {
-				logResult("BlockVolumeAttacher-Volume-Test: Volume Creaiton: FAIL\n")
+				logResult("BlockVolumeAttacher-Volume-Test: Volume Creation: FAIL\n")
 			} else {
 				logResult("BlockVolumeAttacher-Volume-Test: Volume Creaiton: PASS\n")
 			}
@@ -122,6 +122,8 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				cmd.Stderr = &stderr
 				err = cmd.Run()
 				if err != nil {
+					outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
+					fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
 					logResult("BlockVolumeAttacher-Volume-Test: PV Creation: FAIL\n")
 				} else {
 					logResult("BlockVolumeAttacher-Volume-Test: PV Creation: PASS\n")
@@ -234,7 +236,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			cmd.Stderr = &stderr
 			err = cmd.Run()
 			if err != nil {
-				logResult("BlockVolumeAttacher-Volume-Test: VOlume Deletion: FAIL\n")
+				logResult("BlockVolumeAttacher-Volume-Test: Volume Deletion: FAIL\n")
 			} else {
 				logResult("BlockVolumeAttacher-Volume-Test: VOlume Deletion: PASS\n")
 			}
