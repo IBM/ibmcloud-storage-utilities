@@ -45,7 +45,7 @@ then
     echo "BlockVolumeAttacher-Volume-Test: PortWorx Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
     export CLSFILE=$1
     kubectl  create -f $CLSFILE
-    kubectl create -f $E2E_PATH/portworx_kp.yaml
+    #kubectl create -f $E2E_PATH/portworx_kp.yaml
     kubectl create -f $E2E_PATH/portworx_secret.yaml
 elif [ "$2" = "portworxdelete" ]
 then
