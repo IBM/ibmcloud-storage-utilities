@@ -49,7 +49,7 @@ then
     kubectl create -f $E2E_PATH/portworx_secret.yaml
 elif [ "$2" = "portworxdelete" ]
 then
-    curl -fsL https://install.portworx.com/px-wipe | bash
+    sudo curl -fsL https://install.portworx.com/px-wipe | bash
     kubectl delete storageclass $1 
     helm delete --purge portworx
 else
