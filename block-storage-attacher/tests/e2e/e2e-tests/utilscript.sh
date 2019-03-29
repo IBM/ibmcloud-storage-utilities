@@ -45,11 +45,11 @@ then
     echo "BlockVolumeAttacher-Volume-Test: PortWorx Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
     export CLSFILE=$1
     kubectl  create -f $CLSFILE
-    kubectl create -f $E2E_PATH/portworx_kp.yaml
-    kubectl create -f $E2E_PATH/portworx_secret.yaml
+    #kubectl create -f $E2E_PATH/portworx_kp.yaml
+    #kubectl create -f $E2E_PATH/portworx_secret.yaml
 elif [ "$2" = "portworxdelete" ]
 then
-    curl -fsL https://install.portworx.com/px-wipe | bash
+    sudo curl -fsL https://install.portworx.com/px-wipe | bash
     kubectl delete storageclass $1 
     helm delete --purge portworx
 else
