@@ -100,7 +100,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			if err != nil {
 				logResult("BlockVolumeAttacher-Volume-Test: Volume Creation: FAIL\n")
 			} else {
-				logResult("BlockVolumeAttacher-Volume-Test: Volume Creaiton: PASS\n")
+				logResult("BlockVolumeAttacher-Volume-Test: Volume Creation: PASS\n")
 			}
 			Expect(err).NotTo(HaveOccurred())
 
@@ -238,7 +238,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			if err != nil {
 				logResult("BlockVolumeAttacher-Volume-Test: Volume Deletion: FAIL\n")
 			} else {
-				logResult("BlockVolumeAttacher-Volume-Test: VOlume Deletion: PASS\n")
+				logResult("BlockVolumeAttacher-Volume-Test: Volume Deletion: PASS\n")
 			}
 			Expect(err).NotTo(HaveOccurred())
 			outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
