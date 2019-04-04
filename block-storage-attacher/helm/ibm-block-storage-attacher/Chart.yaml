@@ -14,6 +14,6 @@ maintainers:
 - name: sikhlaqu
   email: sikhlaqu@in.ibm.com
 name: ibm-block-storage-attacher
-version: 1.0.1
+version: 1.0.2
 tillerVersion: ">=2.10.0"
 kubeVersion: ">=1.10"
