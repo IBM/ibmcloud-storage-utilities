@@ -37,7 +37,9 @@
 
 import sys
 import os
-from yaml import load
+import yaml
+#from yaml import load
+from yaml import load, Loader
 from px_iks_utils import IKS_clusters, IKS_vols
 from pprint import pprint as pp
 
@@ -167,7 +169,7 @@ def list_vols(IAMToken):
 
 ParamFile = "/data/yamlgen.yaml"
 with open(ParamFile, 'r') as f:
-    doc = load(f)
+    doc = yaml.load(f, Loader=Loader)
 check_cfg(doc)
 
 check_env()
