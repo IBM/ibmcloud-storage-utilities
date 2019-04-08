@@ -49,10 +49,17 @@ then
     #kubectl create -f $E2E_PATH/portworx_secret.yaml
 elif [ "$2" = "portworxdelete" ]
 then
+    export NOD_IP=$3 
     sudo curl -fsL https://install.portworx.com/px-wipe | bash
     kubectl delete storageclass $1 
     helm delete --purge portworx
-else
+    $E2E_PATH/runon_worker.sh  $NOD_IP  "multipath -F"  >$E2E_PATH/command_output 2>&1
+    $E2E_PATH/runon_worker.sh  $NOD_IP  "/opt/pwx/bin/pxctl sv nw --all" >>$E2E_PATH/command_output 2>&1
+    $E2E_PATH/runon_worker.sh  $NOD_IP  "rm -f /etc/systemd/system/portworx*.service" >>$E2E_PATH/command_output 2>&1
+    $E2E_PATH/runon_worker.sh  $NOD_IP  "grep -q '/opt/pwx/oci /opt/pwx/oci' /proc/self/mountinfo && umount /opt/pwx/oci" >>$E2E_PATH/command_output 2>&1
+    $E2E_PATH/runon_worker.sh  $NOD_IP  "chattr -ie /etc/pwx/.private.json" >>$E2E_PATH/command_output 2>&1
+    $E2E_PATH/runon_worker.sh  $NOD_IP  "rm -fr /opt/pwx; rm -fr /etc/pwx" >>$E2E_PATH/command_output 2>&1
+else 
     echo "Wrong arguments"
 fi
 

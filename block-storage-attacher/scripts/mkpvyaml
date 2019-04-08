@@ -37,11 +37,12 @@ import os
 import time
 import sys, traceback
 import json
+import yaml
 import urllib.request
 from os.path import expanduser
 import SoftLayer
 from pprint import pprint as pp
-from yaml import load, dump
+from yaml import load, dump, Loader
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
@@ -58,7 +59,7 @@ Paraml = yamlpath     # Name of input parameter file
 def load_cfg():
    global doc
    with open(Paraml, 'r') as f:
-        doc = load(f, Loader=yaml.Loader)
+        doc = yaml.load(f, Loader=Loader)
 
 # 
 # Run sanity checks on the input param file before proceeding
@@ -89,13 +90,13 @@ def get_instances(cluster):
     bmxconfig = home + "/.bluemix/config.json"
     
     with open(bmxconfig) as f:
-        data = json.load(f, Loader=yaml.Loader)
+        data = json.load(f)
     
     token= data['IAMToken']
     headers={'Content-Type': 'application/json', 'X-Region' : doc['region'], 'Authorization' : token }
     
     try:
-        request = urllib.request.Request(url="https://containers.bluemix.net/v1/clusters/" + cluster + "/workers" , headers=headers)
+        request = urllib.request.Request(url="https://containers.stage1.bluemix.net/v1/clusters/" + cluster + "/workers" , headers=headers)
         f = urllib.request.urlopen(request)
         response = f.read().decode('utf-8')
         print(response)
