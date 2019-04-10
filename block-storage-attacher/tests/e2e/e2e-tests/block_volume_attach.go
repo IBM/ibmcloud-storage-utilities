@@ -206,7 +206,9 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			/* Portworx deleteion */
 
 			filepatharg := fmt.Sprintf("%s", portworxclassname)
-			cmd = exec.Command(pvscriptpath, filepatharg, "portworxdelete")
+			nodeip := pv.ObjectMeta.Annotations["ibm.io/nodeip"]
+			nodeiparg := fmt.Sprintf("%s", nodeip)
+			cmd = exec.Command(pvscriptpath, filepatharg, "portworxdelete", nodeiparg)
 			var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
@@ -228,8 +230,8 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			By("Volume Deletion  ")
 			volumeid = pv.ObjectMeta.Annotations["ibm.io/volID"]
 			volidarg := fmt.Sprintf("%s", volumeid)
-			nodeip := pv.ObjectMeta.Annotations["ibm.io/nodeip"]
-			nodeiparg := fmt.Sprintf("%s", nodeip)
+			nodeip = pv.ObjectMeta.Annotations["ibm.io/nodeip"]
+			nodeiparg = fmt.Sprintf("%s", nodeip)
 			cmd = exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg)
 			//var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
