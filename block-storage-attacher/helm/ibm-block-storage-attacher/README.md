@@ -72,10 +72,10 @@ When you set up the Helm server in your cluster, you can use the Helm chart prov
 Now that the Helm server is up and running in your cluster, install the IBM Cloud Block Storage Attacher to attach the block storage on the nodes.
 
 1. Add the IBM Cloud Helm repository `ibm` to your Helm instance and get the latest version of all Helm charts.
-   <pre>helm repo add ibm https://registry.bluemix.net/helm/ibm</pre>
+   <pre>helm repo add iks-charts https://icr.io/helm/iks-charts</pre>
    <pre>helm repo update</pre>
 2. Install the IBM Cloud Block Storage Attacher. When you install the attacher, a daemon set, RBAC roles, and pre-defined storage classes are created in your cluster.
-   <pre>helm install --name ibm-block-storage-attacher ibm/ibm-block-storage-attacher</pre>
+   <pre>helm install --name ibm-block-storage-attacher iks-charts/ibm-block-storage-attacher</pre>
    
    Example output: 
    ```
@@ -129,7 +129,7 @@ The Helm chart has the following Values that can be overriden using the `helm in
 
 Example:
 ```
-helm install --set image.repository=registry.stage1.ng.bluemix.net/ibm/ibmcloud-block-storage-attacher ibm/ibm-block-storage-attacher
+helm install --set image.repository=registry.stage1.ng.bluemix.net/ibm/ibmcloud-block-storage-attacher iks-charts/ibm-block-storage-attacher
 ```
 | Value                  | Description                             | Default                                                  |
 |------------------------|-----------------------------------------|----------------------------------------------------------|
