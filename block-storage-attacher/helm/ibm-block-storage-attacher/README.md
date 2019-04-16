@@ -129,11 +129,11 @@ The Helm chart has the following Values that can be overriden using the `helm in
 
 Example:
 ```
-helm install --set image.repository=registry.stage1.ng.bluemix.net/ibm/ibmcloud-block-storage-attacher iks-charts/ibm-block-storage-attacher
+helm install --set image.repository=icr.io/ibm/ibmcloud-block-storage-attacher iks-charts/ibm-block-storage-attacher
 ```
 | Value                  | Description                             | Default                                                  |
 |------------------------|-----------------------------------------|----------------------------------------------------------|
-| image.repository       | The image repository of attacher        | registry.bluemix.net/ibm/ibmcloud-block-storage-attacher |
+| image.repository       | The image repository of attacher        | icr.io/ibm/ibmcloud-block-storage-attacher |
 | image.build            | The attacher driver build tag           | latest                                                   |
 | image.pullPolicy       | Image Pull Policy                       | Always                                                   |
 
