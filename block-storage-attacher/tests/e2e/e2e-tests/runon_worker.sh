@@ -14,7 +14,8 @@ function pod_status {
 }
 
 # create a random pod name
-JOB_NAME=$(LC_CTYPE=C cat /dev/urandom | base64 | tr -dc a-z0-9 | fold -w 32 | head -n 1)
+#JOB_NAME=$(LC_CTYPE=C cat /dev/urandom | base64 | tr -dc a-z0-9 | fold -w 32 | head -n 1)
+JOB_NAME=$2
 NAMESPACE="ibm-system"
 
 # create a tempdir

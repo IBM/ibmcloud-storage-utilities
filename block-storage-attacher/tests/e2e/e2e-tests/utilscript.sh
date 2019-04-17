@@ -23,7 +23,17 @@ export LANG=C.UTF-8
 # Load common functions
 . $SCRIPTS_FOLDER_PATH/common.sh
 
+function cleanupNode ()
+{
+   NodeIP = $1
+   commandstring = $2
+   JOB_NAME=$(LC_CTYPE=C cat /dev/urandom | base64 | tr -dc a-z0-9 | fold -w 32 | head -n 1)
+   $E2E_PATH/runon_worker.sh  $NodeIP  \"$commandstring\" >>$E2E_PATH/command_output 2>&1
+   kubectl delete job $JOB_NAME
+}
 
+
+   
 PV_Name=""
 VOL_ID=""
 
@@ -53,12 +63,13 @@ then
     sudo curl -fsL https://install.portworx.com/px-wipe | bash
     kubectl delete storageclass $1 
     helm delete --purge portworx
-    $E2E_PATH/runon_worker.sh  $NOD_IP  "multipath -F"  >$E2E_PATH/command_output 2>&1
-    $E2E_PATH/runon_worker.sh  $NOD_IP  "/opt/pwx/bin/pxctl sv nw --all" >>$E2E_PATH/command_output 2>&1
-    $E2E_PATH/runon_worker.sh  $NOD_IP  "rm -f /etc/systemd/system/portworx*.service" >>$E2E_PATH/command_output 2>&1
-    $E2E_PATH/runon_worker.sh  $NOD_IP  "grep -q '/opt/pwx/oci /opt/pwx/oci' /proc/self/mountinfo && umount /opt/pwx/oci" >>$E2E_PATH/command_output 2>&1
-    $E2E_PATH/runon_worker.sh  $NOD_IP  "chattr -ie /etc/pwx/.private.json" >>$E2E_PATH/command_output 2>&1
-    $E2E_PATH/runon_worker.sh  $NOD_IP  "rm -fr /opt/pwx; rm -fr /etc/pwx" >>$E2E_PATH/command_output 2>&1
+    touch $E2E_PATH/command_output
+    cleanupNode  $NOD_IP  "multipath -F"  
+    cleanupNode  $NOD_IP  "/opt/pwx/bin/pxctl sv nw --all" 
+    cleanupNode  $NOD_IP  "rm -f /etc/systemd/system/portworx*.service" 
+    cleanupNode  $NOD_IP  "grep -q '/opt/pwx/oci /opt/pwx/oci' /proc/self/mountinfo && umount /opt/pwx/oci" 
+    cleanupNode  $NOD_IP  "chattr -ie /etc/pwx/.private.json"
+    cleanupNode  $NOD_IP  "rm -fr /opt/pwx; rm -fr /etc/pwx"
 else 
     echo "Wrong arguments"
 fi
