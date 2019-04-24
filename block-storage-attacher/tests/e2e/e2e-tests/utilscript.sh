@@ -25,11 +25,11 @@ export LANG=C.UTF-8
 
 function cleanupNode ()
 {
-   NodeIP = $1
-   commandstring = $2
+   export NodeIP=$1
+   export commandstring=$2
    JOB_NAME=$(LC_CTYPE=C cat /dev/urandom | base64 | tr -dc a-z0-9 | fold -w 32 | head -n 1)
-   $E2E_PATH/runon_worker.sh  $NodeIP  \"$commandstring\" >>$E2E_PATH/command_output 2>&1
-   kubectl delete job $JOB_NAME
+   $E2E_PATH/runon_worker.sh  $NodeIP  $JOB_NAME \"$commandstring\" >>$E2E_PATH/command_output 2>&1
+   kubectl delete job $JOB_NAME -n ibm-system
 }
 
 
