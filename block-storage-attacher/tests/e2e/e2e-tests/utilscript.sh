@@ -23,7 +23,17 @@ export LANG=C.UTF-8
 # Load common functions
 . $SCRIPTS_FOLDER_PATH/common.sh
 
+function cleanupNode ()
+{
+   export NodeIP=$1
+   export commandstring=$2
+   JOB_NAME=$(LC_CTYPE=C cat /dev/urandom | base64 | tr -dc a-z0-9 | fold -w 32 | head -n 1)
+   $E2E_PATH/runon_worker.sh  $NodeIP  $JOB_NAME \"$commandstring\" >>$E2E_PATH/command_output 2>&1
+   kubectl delete job $JOB_NAME -n ibm-system
+}
 
+
+   
 PV_Name=""
 VOL_ID=""
 
@@ -49,10 +59,18 @@ then
     #kubectl create -f $E2E_PATH/portworx_secret.yaml
 elif [ "$2" = "portworxdelete" ]
 then
+    export NOD_IP=$3 
     sudo curl -fsL https://install.portworx.com/px-wipe | bash
     kubectl delete storageclass $1 
     helm delete --purge portworx
-else
+    touch $E2E_PATH/command_output
+    cleanupNode  $NOD_IP  "multipath -F"  
+    cleanupNode  $NOD_IP  "/opt/pwx/bin/pxctl sv nw --all" 
+    cleanupNode  $NOD_IP  "rm -f /etc/systemd/system/portworx*.service" 
+    cleanupNode  $NOD_IP  "grep -q '/opt/pwx/oci /opt/pwx/oci' /proc/self/mountinfo && umount /opt/pwx/oci" 
+    cleanupNode  $NOD_IP  "chattr -ie /etc/pwx/.private.json"
+    cleanupNode  $NOD_IP  "rm -fr /opt/pwx; rm -fr /etc/pwx"
+else 
     echo "Wrong arguments"
 fi
 

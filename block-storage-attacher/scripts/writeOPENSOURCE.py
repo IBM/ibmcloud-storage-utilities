@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import yaml
 
@@ -6,7 +6,7 @@ f = open('OPENSOURCE', 'w')
 
 with open("glide.lock", 'r') as stream:
     try:
-        data = yaml.load(stream, Loader=yaml.Loader)
+        data = yaml.load(stream, Loader=yaml.FullLoader)
         for dep in data["imports"]:
             f.write(dep["name"] + "," + dep["version"] + '\n')
     except yaml.YAMLError as exc:
