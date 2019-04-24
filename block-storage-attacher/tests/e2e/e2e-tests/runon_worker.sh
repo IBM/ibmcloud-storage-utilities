@@ -1,7 +1,7 @@
 #!/bin/bash
 #. ./connect_worker.sh  worker private ip bash
-if [ $# -lt 2 ]; then
-  echo "runon [node IP] [command]"
+if [ $# -lt 3 ]; then
+  echo "runon [node IP] [Job_Name] [command]"
   exit 1;
 fi
 
