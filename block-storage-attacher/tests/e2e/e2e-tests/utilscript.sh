@@ -50,13 +50,12 @@ then
     slcli -y block volume-cancel  --immediate $VOL_ID
 elif [ "$2" = "portworxpvcreate" ]
 then
+    kubectl apply -f $E2E_PATH/portworx_secret.yaml
     install_portworx_plugin
     check_portworx_pod_state "portworx"
     echo "BlockVolumeAttacher-Volume-Test: PortWorx Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
     export CLSFILE=$1
     kubectl  create -f $CLSFILE
-    #kubectl create -f $E2E_PATH/portworx_kp.yaml
-    #kubectl create -f $E2E_PATH/portworx_secret.yaml
 elif [ "$2" = "portworxdelete" ]
 then
     export NOD_IP=$3 
