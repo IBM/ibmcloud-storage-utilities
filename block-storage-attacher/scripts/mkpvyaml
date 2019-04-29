@@ -96,7 +96,7 @@ def get_instances(cluster):
     headers={'Content-Type': 'application/json', 'X-Region' : doc['region'], 'Authorization' : token }
     
     try:
-        request = urllib.request.Request(url="https://containers.stage1.bluemix.net/v1/clusters/" + cluster + "/workers" , headers=headers)
+        request = urllib.request.Request(url="https://containers.bluemix.net/v1/clusters/" + cluster + "/workers" , headers=headers)
         f = urllib.request.urlopen(request)
         response = f.read().decode('utf-8')
         print(response)
