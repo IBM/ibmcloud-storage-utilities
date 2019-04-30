@@ -51,6 +51,7 @@ then
 elif [ "$2" = "portworxpvcreate" ]
 then
     kubectl apply -f $E2E_PATH/portworx_secret.yaml
+    kubectl apply -f $E2E_PATH/IBM-KPconfig.yaml
     install_portworx_plugin
     check_portworx_pod_state "portworx"
     echo "BlockVolumeAttacher-Volume-Test: PortWorx Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
