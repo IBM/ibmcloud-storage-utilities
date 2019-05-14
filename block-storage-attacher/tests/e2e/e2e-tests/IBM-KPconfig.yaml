@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: px-ibm
+  namespace: portworx
+type: Opaque
+data:
+  IBM_SERVICE_API_KEY: bzExTWZZbWhLeElxWFprOFZEWE1leDA2b0Nfdld0Sl9icjdBNXM5NGlwQW0=
+  IBM_INSTANCE_ID: MGNiMzcwYTYtNWMzNS00M2UzLTk4NWQtZjc0MGZjZTEyMTM3
+  IBM_CUSTOMER_ROOT_KEY: ZWE2NjY1NjYtZDFkNy00NmQ1LTgxN2QtNDdjNTNiYTlhYjAz
+  IBM_BASE_URL: aHR0cHM6Ly91cy1lYXN0Lmttcy5jbG91ZC5pYm0uY29t

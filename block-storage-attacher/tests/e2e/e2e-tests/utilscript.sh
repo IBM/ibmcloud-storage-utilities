@@ -51,6 +51,7 @@ then
 elif [ "$2" = "portworxpvcreate" ]
 then
     kubectl apply -f $E2E_PATH/portworx_secret.yaml
+    kubectl apply -f $E2E_PATH/IBM-KPbinding.yaml
     kubectl apply -f $E2E_PATH/IBM-KPconfig.yaml
     install_portworx_plugin
     check_portworx_pod_state "portworx"
@@ -63,6 +64,7 @@ then
     sudo curl -fsL https://install.portworx.com/px-wipe | bash
     kubectl delete storageclass $1 
     helm delete --purge portworx
+    kubectl  delete namespace portworx
     touch $E2E_PATH/command_output
     cleanupNode  $NOD_IP  "multipath -F"  
     cleanupNode  $NOD_IP  "/opt/pwx/bin/pxctl sv nw --all" 
