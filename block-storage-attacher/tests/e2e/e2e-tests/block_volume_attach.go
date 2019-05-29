@@ -198,7 +198,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 
 				//pv := commontest.TestCreate(c, claim)
 				commontest.TestWrite(c, claim)
-				//commontest.TestRead(c, claim)
+				commontest.TestRead(c, claim)
 				//commontest.TestDelete(c, claim, pv)
 				// })
 			})
