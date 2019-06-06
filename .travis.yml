@@ -10,11 +10,13 @@ matrix:
   fast_finish: true
   allow_failures:
   - go: tip
+  include:
+    - language: python
+      install: pip install flake8
+      script: flake8 . --count --select=E9,F63,F72,F82 --show-source --statistics
 
 cache:
   bundler: true
-
-sudo: true
 
 # safelist
 branches:
@@ -38,4 +40,3 @@ after_success:
   - ${TRAVIS_HOME}/gopath/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/publishCoverage.sh || travis_terminate 1;
 after_failure:
   - ${TRAVIS_HOME}/gopath/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/handleFailure.sh
-
