@@ -12,7 +12,9 @@ matrix:
   - go: tip
   include:
     - language: python
-      install: pip install flake8
+      name: Python
+      before_install: pip install flake8
+      before_script: true
       script: flake8 . --count --select=E9,F63,F72,F82 --show-source --statistics
 
 cache:
