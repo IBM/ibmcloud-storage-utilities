@@ -50,19 +50,21 @@ then
     slcli -y block volume-cancel  --immediate $VOL_ID
 elif [ "$2" = "portworxpvcreate" ]
 then
+    kubectl apply -f $E2E_PATH/portworx_secret.yaml
+    kubectl apply -f $E2E_PATH/IBM-KPbinding.yaml
+    kubectl apply -f $E2E_PATH/IBM-KPconfig.yaml
     install_portworx_plugin
     check_portworx_pod_state "portworx"
     echo "BlockVolumeAttacher-Volume-Test: PortWorx Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
     export CLSFILE=$1
     kubectl  create -f $CLSFILE
-    #kubectl create -f $E2E_PATH/portworx_kp.yaml
-    #kubectl create -f $E2E_PATH/portworx_secret.yaml
 elif [ "$2" = "portworxdelete" ]
 then
     export NOD_IP=$3 
     sudo curl -fsL https://install.portworx.com/px-wipe | bash
     kubectl delete storageclass $1 
     helm delete --purge portworx
+    kubectl  delete namespace portworx
     touch $E2E_PATH/command_output
     cleanupNode  $NOD_IP  "multipath -F"  
     cleanupNode  $NOD_IP  "/opt/pwx/bin/pxctl sv nw --all" 

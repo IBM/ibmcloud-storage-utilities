@@ -1,4 +1,4 @@
 image:
-  repository: registry.bluemix.net/ibm/ibmcloud-block-storage-attacher
+  repository: icr.io/ibm/ibmcloud-block-storage-attacher
   build: latest
   pullPolicy: Always
