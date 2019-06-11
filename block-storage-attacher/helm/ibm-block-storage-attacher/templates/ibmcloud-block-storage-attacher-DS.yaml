@@ -70,6 +70,7 @@ spec:
             periodSeconds: 60
             timeoutSeconds: 5
             failureThreshold: 3
+      hostNetwork: true
       serviceAccountName: {{ .Chart.Name }}
       volumes:
         - name: sysd-run
