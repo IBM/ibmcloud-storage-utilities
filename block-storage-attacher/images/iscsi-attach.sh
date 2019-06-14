@@ -66,6 +66,8 @@ then
     echo "node.startup = automatic" >> $ISCSI_CONF
   fi
 
+  /usr/sbin/mpathconf --enable
+  multipathd
   service iscsid restart
   service open-iscsi restart
 
