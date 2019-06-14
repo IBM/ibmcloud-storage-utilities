@@ -1,0 +1,1023 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config/config.go (87.5%)</option>
+				
+				<option value="file1">github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/crn/crn.go (97.3%)</option>
+				
+				<option value="file2">github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/logger/logger.go (96.2%)</option>
+				
+				<option value="file3">github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/watcher/pv_watcher.go (50.6%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package config
+
+import (
+        "github.com/BurntSushi/toml"
+        "go.uber.org/zap"
+        "os"
+        "strconv"
+        "strings"
+)
+
+func getEnv(key string) string <span class="cov10" title="12">{
+        return os.Getenv(strings.ToUpper(key))
+}</span>
+
+// GetGoPath ...
+func GetGoPath() string <span class="cov3" title="2">{
+        if goPath := getEnv("GOPATH"); goPath != "" </span><span class="cov1" title="1">{
+                return goPath
+        }</span>
+        <span class="cov1" title="1">return ""</span>
+}
+
+// ParseConfig ...
+func ParseConfig(filePath string, conf interface{}, logger zap.Logger) <span class="cov3" title="2">{
+        if _, err := toml.DecodeFile(filePath, conf); err != nil </span><span class="cov0" title="0">{
+                logger.Fatal("error parsing config file", zap.Error(err))
+        }</span>
+}
+
+// GetConfigString ...
+func GetConfigString(envKey, defaultConf string) string <span class="cov3" title="2">{
+        if val := getEnv(envKey); val != "" </span><span class="cov1" title="1">{
+                return val
+        }</span>
+        <span class="cov1" title="1">return defaultConf</span>
+}
+
+// GetConfigInt ...
+func GetConfigInt(envKey string, defaulfConf int, logger zap.Logger) int <span class="cov3" title="2">{
+        if val := getEnv(envKey); val != "" </span><span class="cov1" title="1">{
+                if envInt, err := strconv.Atoi(val); err == nil </span><span class="cov1" title="1">{
+                        return envInt
+                }</span>
+                <span class="cov0" title="0">logger.Error("error parsing env val to int", zap.String("env", envKey))</span>
+        }
+        <span class="cov1" title="1">return defaulfConf</span>
+}
+
+// GetConfigBool ...
+func GetConfigBool(envKey string, defaultConf bool, logger zap.Logger) bool <span class="cov3" title="2">{
+        if val := getEnv(envKey); val != "" </span><span class="cov1" title="1">{
+                if envBool, err := strconv.ParseBool(val); err == nil </span><span class="cov1" title="1">{
+                        return envBool
+                }</span>
+                <span class="cov0" title="0">logger.Error("error parsing env val to bool", zap.String("env", envKey))</span>
+        }
+        <span class="cov1" title="1">return defaultConf</span>
+}
+
+// GetConfigStringList ...
+func GetConfigStringList(envKey string, defaultConf string, logger zap.Logger) []string <span class="cov3" title="2">{
+        // Assume env var is a list of strings separated by ','
+        val := defaultConf
+
+        if getEnv(envKey) != "" </span><span class="cov1" title="1">{
+                val = getEnv(envKey)
+        }</span>
+
+        <span class="cov3" title="2">val = strings.Replace(val, " ", "", -1)
+        return strings.Split(val, ",")</span>
+}
+
+type Volume struct {
+        Iqn      string `json:"iqn,omitempty"`
+        Username string `json:"username,omitempty"`
+        Password string `json:"password,omitempty"`
+        Target   string `json:"target,omitempty"`
+        Lunid    int    `json:"lunid,omitempty"`
+        Nodeip   string `json:"nodeip,omitempty"`
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package crn
+
+import (
+        "errors"
+        "fmt"
+        "os"
+        "path/filepath"
+        "strings"
+)
+
+const (
+        crnBase = "crn:%s:%s:%s:%s:%s:%s:storage_file:%s"
+
+        // CRN MountPath
+        crnPath = "/etc/crn_info_ibmc"
+
+        // CRN MountPath ENV variable
+        crnENVVariable = "CRN_CONFIGMAP_PATH"
+
+        /**
+        CRN constants
+        */
+
+        // CRNCnameProp is the property name that contains the cname value
+        CRNCnameProp = "CRN_CNAME"
+
+        // CRNCtypeProp is the property name that contains the ctype value
+        CRNCtypeProp = "CRN_CTYPE"
+
+        // CRNVersionProp is the property name that contains the ctype value
+        CRNVersionProp = "CRN_VERSION"
+
+        // CRNRegionProp is the property name that contains the region value
+        CRNRegionProp = "CRN_REGION"
+
+        // CRNClusterIDProp is the property name that contains the infrastructure id value
+        CRNClusterIDProp = "CLUSTER_ID"
+
+        // CRNServiceNameProp is the property name that contains the service name value
+        CRNServiceNameProp = "CRN_SERVICENAME"
+
+        // CRNServiceIDProp is the property name that contains the service id value
+        CRNServiceIDProp = "HOSTNAME"
+)
+
+// CRN struct is used to house all information that builds the CRN name
+type CRN struct {
+        Cname       string
+        Ctype       string
+        Cversion    string
+        Region      string
+        ClusterID   string
+        ServiceName string
+        ServiceID   string
+}
+
+func (c CRN) String() string <span class="cov2" title="4">{
+        return fmt.Sprintf(crnBase, c.Cname, c.Cversion, c.Ctype, c.ServiceName, c.Region, c.ClusterID, c.ServiceID)
+}</span>
+
+func getEnv(key string) string <span class="cov3" title="6">{
+        return os.Getenv(strings.ToUpper(key))
+}</span>
+
+// GetServiceCRN retrieves the crn for the given service and returns a string.
+func GetServiceCRN() (string, error) <span class="cov2" title="3">{
+        var crnPathDir string
+        crnPathDir = crnPath
+        if crnPath := getEnv(crnENVVariable); crnPath != "" </span><span class="cov1" title="1">{
+                crnPathDir = crnPath
+        }</span>
+
+        <span class="cov2" title="3">crnStruct, err := GetServiceCRNStruct(crnPathDir)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov2" title="3">return crnStruct.String(), nil</span>
+}
+
+// populateFromMountedConfigMap populates the existing CRN struct with values from
+// a mounted config map. The existing CRN value is overwritten if a new value exists
+// in the mounted config map
+func populateFromMountedConfigMap(pathToDirectory string, c *CRN) error <span class="cov5" title="22">{
+        var (
+                cname       string
+                cversion    string
+                ctype       string
+                region      string
+                clusterID   string
+                serviceName string
+                serviceID   string
+                err         error
+        )
+
+        var filePath string
+        filePath = filepath.Join(pathToDirectory, CRNCnameProp)
+        cname, err = getCRNValueFromConfigMapMount(filePath, c.Cname)
+        if err != nil </span><span class="cov1" title="2">{
+                return err
+        }</span>
+
+        <span class="cov5" title="20">filePath = filepath.Join(pathToDirectory, CRNVersionProp)
+        cversion, err = getCRNValueFromConfigMapMount(filePath, c.Cversion)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="19">filePath = filepath.Join(pathToDirectory, CRNCtypeProp)
+        ctype, err = getCRNValueFromConfigMapMount(filePath, c.Ctype)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="18">filePath = filepath.Join(pathToDirectory, CRNRegionProp)
+        region, err = getCRNValueFromConfigMapMount(filePath, c.Region)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="17">clusterID = getCRNValueFromEnvVar(CRNClusterIDProp, c.ClusterID)
+
+        filePath = filepath.Join(pathToDirectory, CRNServiceNameProp)
+        serviceName, err = getCRNValueFromConfigMapMount(filePath, c.ServiceName)
+        if err != nil </span><span class="cov1" title="1">{
+                return err
+        }</span>
+
+        <span class="cov4" title="16">serviceID = getCRNValueFromEnvVar(CRNServiceIDProp, c.ServiceID)
+
+        c.Cname = cname
+        c.Cversion = cversion
+        c.Ctype = ctype
+        c.Region = region
+        c.ClusterID = clusterID
+        c.ServiceName = serviceName
+        c.ServiceID = serviceID
+
+        return nil</span>
+}
+
+// getCRNValueFromConfigMapMount gets the crn value from the config map mount. If the
+// crn property doens't exist in the config map mount then the default value provided is returned
+func getCRNValueFromConfigMapMount(filePath string, defaultValue string) (string, error) <span class="cov7" title="100">{
+        if filePath == "" </span><span class="cov1" title="1">{
+                return defaultValue, errors.New("filePath must have a value")
+        }</span>
+
+        <span class="cov7" title="99">crnFile, err := os.Open(filePath)
+        if err != nil </span><span class="cov5" title="30">{
+                if os.IsNotExist(err) </span><span class="cov5" title="24">{
+                        return defaultValue, nil
+                }</span>
+                <span class="cov3" title="6">return defaultValue, err</span>
+        }
+        <span class="cov6" title="69">data := make([]byte, 200)
+        count, readErr := crnFile.Read(data)
+        if readErr != nil </span><span class="cov0" title="0">{
+                return defaultValue, readErr
+        }</span>
+        <span class="cov6" title="69">noSpace := strings.TrimSpace(string(data[:count]))
+        return Sanitize(noSpace), nil</span>
+}
+
+// GetServiceCRNStruct retrieves the crn for the given service from a mounted config map.
+// Mounting a config map populates a directory with files that correspond to each field
+// in the config map. These files contain the data for the field.
+func GetServiceCRNStruct(pathToDirectory string) (CRN, error) <span class="cov5" title="22">{
+        var err error
+        // default crn struct
+        crnStruct := CRN{
+                Cname:       CRNCnameProp,
+                Ctype:       CRNCtypeProp,
+                Cversion:    CRNVersionProp,
+                Region:      CRNRegionProp,
+                ClusterID:   CRNClusterIDProp,
+                ServiceName: CRNServiceNameProp,
+                ServiceID:   CRNServiceIDProp,
+        }
+        err = populateFromMountedConfigMap(pathToDirectory, &amp;crnStruct)
+        return crnStruct, err
+}</span>
+
+// getCRNValueFromEnvVar gets the crn value from an environment variable, returns the
+// default value supplied  if the environment variable does not exist
+func getCRNValueFromEnvVar(name string, defaultValue string) string <span class="cov5" title="35">{
+        if name == "" </span><span class="cov1" title="1">{
+                return defaultValue
+        }</span>
+        <span class="cov5" title="34">value, ok := os.LookupEnv(name)
+        if ok </span><span class="cov1" title="1">{
+                value = Sanitize(value)
+        }</span> else<span class="cov5" title="33"> {
+                // the environment variable doesn't exist so take the default value
+                value = defaultValue
+        }</span>
+        <span class="cov5" title="34">return value</span>
+}
+
+// sanitize removes characters from a string that aren't supported by metrics collection
+func Sanitize(metric string) string <span class="cov6" title="74">{
+        if metric == "" </span><span class="cov1" title="1">{
+                return metric
+        }</span>
+        <span class="cov6" title="73">newMetric := metric
+        for i, b := range metric </span><span class="cov10" title="754">{
+                if !((b &gt;= 'a' &amp;&amp; b &lt;= 'z') || (b &gt;= 'A' &amp;&amp; b &lt;= 'Z') || b == '_' || b == ':' || (b &gt;= '0' &amp;&amp; b &lt;= '9' &amp;&amp; i &gt; 0)) </span><span class="cov3" title="9">{
+                        invalidChar := fmt.Sprintf("%c", b)
+                        newMetric = strings.Replace(newMetric, invalidChar, "_", 1)
+                }</span>
+        }
+        <span class="cov6" title="73">return newMetric</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package logger
+
+import (
+        "context"
+        "errors"
+        "fmt"
+        "github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/crn"
+        uid "github.com/satori/go.uuid"
+        "go.uber.org/zap"
+        "go.uber.org/zap/zapcore"
+        "os"
+)
+
+const (
+        //CrnLabel is label in log for the crn
+        CrnLabel = "crn"
+
+        // PodNameEnvVar is the pod name environment variable
+        PodNameEnvVar = "POD_NAME"
+
+        //PodName is the zap field key label for pod name
+        PodName = "podName"
+
+        // RequestIDLabel is the context key for storing the request ID
+        RequestIDLabel = "requestID"
+
+        // TriggerKeyLabel is the context key for storing the trigger key
+        TriggerKeyLabel = "triggerKey"
+)
+
+// ZapLogger is the global logger
+var ZapLogger *zap.Logger
+
+// GetZapLogger returns an instance of the logger, initializing a new logger
+func GetZapLogger() (*zap.Logger, error) <span class="cov10" title="15">{
+        if ZapLogger == nil </span><span class="cov1" title="1">{
+                return NewZapLogger()
+        }</span>
+        <span class="cov9" title="14">return ZapLogger, nil</span>
+}
+
+// GetZapContextLogger Creates a new logger based from the global logger and adds values from the
+// context as logging fields. If the context passed in is null then it
+// returns the global logger
+func GetZapContextLogger(ctx context.Context) (*zap.Logger, error) <span class="cov3" title="2">{
+        var contextLogger *zap.Logger
+        globalLogger, _ := GetZapLogger()
+        if ctx != nil </span><span class="cov1" title="1">{
+                contextLogger = addContextFields(ctx, globalLogger)
+                return contextLogger, nil
+        }</span>
+        <span class="cov1" title="1">return globalLogger, nil</span>
+}
+
+// GetZapContextLogger Creates a new logger based from the global logger and adds RequestID from the
+// context as logging field.
+func GetZapDefaultContextLogger() (*zap.Logger, error) <span class="cov1" title="1">{
+        var contextLogger *zap.Logger
+        globalLogger, _ := GetZapLogger()
+        contextLogger = addContextFields(generateContextWithRequestID(), globalLogger)
+        return contextLogger, nil
+}</span>
+
+//GetZapContextLoggerFromLogger creates a new logger based from an existing logger and adds values from the
+//context as logging fields. If the context passed in is null then it
+//returns the global logger
+func GetZapContextLoggerFromLogger(ctx context.Context, origLogger *zap.Logger) (*zap.Logger, error) <span class="cov5" title="4">{
+        var contextLogger *zap.Logger
+        if origLogger == nil </span><span class="cov3" title="2">{
+                return origLogger, errors.New("a valid logger needs to be passed in")
+        }</span>
+        <span class="cov3" title="2">if ctx != nil </span><span class="cov1" title="1">{
+                contextLogger = addContextFields(ctx, origLogger)
+                return contextLogger, nil
+        }</span>
+        <span class="cov1" title="1">return origLogger, nil</span>
+}
+
+// Adds fields to an existing logger using values in the context
+func addContextFields(ctx context.Context, origLogger *zap.Logger) *zap.Logger <span class="cov6" title="5">{
+        if _, ok := ctx.Value(TriggerKeyLabel).(string); ok </span><span class="cov1" title="1">{
+                origLogger = origLogger.With(CreateZapTiggerKeyField(ctx))
+        }</span>
+        <span class="cov6" title="5">if _, ok := ctx.Value(RequestIDLabel).(string); ok </span><span class="cov6" title="5">{
+                origLogger = origLogger.With(CreateZapRequestIDField(ctx))
+        }</span>
+        <span class="cov6" title="5">return origLogger</span>
+}
+
+// NewZapLogger creates and returns a new global logger. It overwrites the
+// existing global logger if that has been previously defined.
+func NewZapLogger() (*zap.Logger, error) <span class="cov1" title="1">{
+        productionConfig := zap.NewProductionConfig()
+        productionConfig.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+        lgr, _ := productionConfig.Build()
+        lgr, _ = CreateZapCRNLogger(lgr)
+        ZapLogger = lgr
+        return ZapLogger, nil
+}</span>
+
+// CreateZapCRNLogger takes a zap logger and adds a crn field
+// NOTE: the logger returned is a different logger from the one passed in
+func CreateZapCRNLogger(logger *zap.Logger) (*zap.Logger, error) <span class="cov1" title="1">{
+        serviceCRN, err := crn.GetServiceCRN()
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Error("Error when retrieving the CRN information.", zap.Error(err))
+                return logger, nil
+        }</span>
+        <span class="cov1" title="1">return logger.With(zapcore.Field{Key: CrnLabel, Type: zapcore.StringType, String: fmt.Sprintf("%s:log", serviceCRN)}), nil</span>
+}
+
+// CreatePodNameLogger takes a zap logger and adds a pod name field
+// NOTE: the logger returned is a different logger from the one passed in
+func CreatePodNameLogger(logger *zap.Logger) (*zap.Logger, error) <span class="cov4" title="3">{
+        if logger == nil </span><span class="cov1" title="1">{
+                return nil, errors.New("logger passed in can not be null")
+        }</span>
+        <span class="cov3" title="2">podNameField := CreateZapPodNameKeyField()
+        return logger.With(podNameField), nil</span>
+}
+
+//CreateZapRequestIDField Creates a zap logger field containing the request ID, convenience method for creating the
+//field in cases where the ContextLogger can't be used and the field needs to be passed
+//in as a parameter in the logging statements
+func CreateZapRequestIDField(ctx context.Context) zapcore.Field <span class="cov7" title="8">{
+        if ctx != nil </span><span class="cov7" title="7">{
+                if requestID, ok := ctx.Value(RequestIDLabel).(string); ok </span><span class="cov6" title="6">{
+                        return zapcore.Field{Key: RequestIDLabel, Type: zapcore.StringType, String: requestID}
+                }</span>
+        }
+        <span class="cov3" title="2">return zapcore.Field{Key: RequestIDLabel, Type: zapcore.StringType, String: ""}</span>
+}
+
+//CreateZapTiggerKeyField Creates a zap logger field containing the trigger key for a job, convenience method for creating the
+//field in cases where the ContextLogger can't be used and the field needs to be passed
+//in as a parameter in the logging statements
+func CreateZapTiggerKeyField(ctx context.Context) zapcore.Field <span class="cov5" title="4">{
+        if ctx != nil </span><span class="cov4" title="3">{
+                if triggerKey, ok := ctx.Value(TriggerKeyLabel).(string); ok </span><span class="cov3" title="2">{
+                        return zapcore.Field{Key: TriggerKeyLabel, Type: zapcore.StringType, String: triggerKey}
+                }</span>
+        }
+        <span class="cov3" title="2">return zapcore.Field{Key: TriggerKeyLabel, Type: zapcore.StringType, String: ""}</span>
+}
+
+//CreateZapPodNameKeyField Creates a zap logger field containing the pod name that the container is in,
+// convenience method for creating the field so it can be passed
+//in as a parameter in the logging statements
+func CreateZapPodNameKeyField() zapcore.Field <span class="cov5" title="4">{
+        pod := os.Getenv(PodNameEnvVar)
+        // if the pod name isn't set then the value will be empty
+        return zapcore.Field{Key: PodName, Type: zapcore.StringType, String: pod}
+}</span>
+
+// Creates a context that contains a unique request ID
+func generateContextWithRequestID() context.Context <span class="cov3" title="2">{
+        requestID := uid.NewV4().String()
+        return context.WithValue(context.Background(), RequestIDLabel, requestID)
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package watcher
+
+import (
+        "fmt"
+        //"encoding/json"
+        "github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
+        "github.com/coreos/go-systemd/dbus"
+        "go.uber.org/zap"
+        metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+        "k8s.io/apimachinery/pkg/runtime"
+        "k8s.io/apimachinery/pkg/util/wait"
+        "k8s.io/apimachinery/pkg/watch"
+        "k8s.io/client-go/kubernetes"
+        //types "k8s.io/apimachinery/pkg/types"
+        //"k8s.io/client-go/pkg/api/v1"
+        "io/ioutil"
+        "k8s.io/api/core/v1"
+        "k8s.io/client-go/tools/cache"
+        "os"
+        "regexp"
+        "strconv"
+        "strings"
+        "time"
+)
+
+const (
+        ATTACHSTATUS = "ibm.io/attachstatus"
+        IQN          = "ibm.io/iqn"
+        USERNAME     = "ibm.io/username"
+        PASSWORD     = "ibm.io/password"
+        TARGET       = "ibm.io/targetip"
+        LUNID        = "ibm.io/lunid"
+        NODEIP       = "ibm.io/nodeip"
+        DMPATH       = "ibm.io/dm"
+        MULTIPATH    = "ibm.io/mpath"
+        ATTACH       = "attach"
+        DETACH       = "detach"
+
+        STORAGECLASS     = "ibmc-block-attacher"
+        STATUS_ATTACHING = "attaching"
+        STATUS_ATTACHED  = "attached"
+        STATUS_FAILED    = "failed"
+        BLOCK_CONF       = "/host/etc/iscsi-block-volume.conf"
+        ATTACHER_SERVICE = "ibmc-block-attacher.service"
+)
+
+var clientset kubernetes.Interface
+var lgr zap.Logger
+
+func WatchPersistentVolumes(client kubernetes.Interface, log zap.Logger) <span class="cov0" title="0">{
+        clientset = client
+        lgr = log
+        volumeSource := &amp;cache.ListWatch{
+                ListFunc: func(options metav1.ListOptions) (runtime.Object, error) </span><span class="cov0" title="0">{
+                        return clientset.CoreV1().PersistentVolumes().List(options)
+                }</span>,
+                WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) <span class="cov0" title="0">{
+                        return clientset.CoreV1().PersistentVolumes().Watch(options)
+                }</span>,
+        }
+        <span class="cov0" title="0">_, controller := cache.NewInformer(volumeSource, &amp;v1.PersistentVolume{}, time.Second*0,
+                cache.ResourceEventHandlerFuncs{
+                        AddFunc:    AttachVolume,
+                        DeleteFunc: DetachVolume,
+                        UpdateFunc: nil,
+                },
+        )
+        stopch := wait.NeverStop
+        go controller.Run(stopch)
+        lgr.Info("Watching persistent volumes for volume attach")
+        &lt;-stopch</span>
+}
+
+func AttachVolume(obj interface{}) <span class="cov4" title="2">{
+        pv, ok := obj.(*v1.PersistentVolume)
+        if !ok </span><span class="cov4" title="2">{
+                lgr.Error("Error in reading watcher event data of persistent volume")
+                return
+        }</span>
+        <span class="cov0" title="0">if pv.Spec.StorageClassName != STORAGECLASS </span><span class="cov0" title="0">{
+                lgr.Info("Persistent volume does not belong to storage class: ", zap.String("Name", pv.Name), zap.String("Storage_Class", pv.Spec.StorageClassName))
+                return
+        }</span>
+        <span class="cov0" title="0">ModifyAttachConfig(pv)</span>
+}
+
+func ModifyAttachConfig(pv *v1.PersistentVolume) <span class="cov8" title="4">{
+        lgr.Info("Volume to be attached: ", zap.String("Name", pv.Name))
+
+        validateErr := Validate(pv)
+        if validateErr != nil </span><span class="cov0" title="0">{
+                lgr.Error("", zap.Error(validateErr))
+                return
+        }</span>
+        <span class="cov8" title="4">volume := config.Volume{}
+        volume.Iqn = pv.Annotations[IQN]
+        volume.Username = pv.Annotations[USERNAME]
+        volume.Password = pv.Annotations[PASSWORD]
+        volume.Target = pv.Annotations[TARGET]
+        volume.Lunid, _ = strconv.Atoi(pv.Annotations[LUNID])
+        volume.Nodeip = pv.Annotations[NODEIP]
+
+        worker_node := os.Getenv("NODE_IP")
+        if worker_node != volume.Nodeip </span><span class="cov1" title="1">{
+                lgr.Info("The volume attach is not requested for this worker node")
+                return
+        }</span>
+        <span class="cov7" title="3">var input []byte
+        var err error
+        if input, err = ioutil.ReadFile(BLOCK_CONF); err != nil </span><span class="cov7" title="3">{
+                lgr.Error("Could not read iscsi-block-volume.conf file")
+                return
+        }</span> else<span class="cov0" title="0"> {
+                lines := strings.Split(string(input), "\n")
+                for i, line := range lines </span><span class="cov0" title="0">{
+                        if strings.Contains(line, "iqn=") </span><span class="cov0" title="0">{
+                                lines[i] = "iqn=" + strings.TrimSpace(volume.Iqn)
+                        }</span> else<span class="cov0" title="0"> if strings.Contains(line, "username=") </span><span class="cov0" title="0">{
+                                lines[i] = "username=" + strings.TrimSpace(volume.Username)
+                        }</span> else<span class="cov0" title="0"> if strings.Contains(line, "password=") </span><span class="cov0" title="0">{
+                                lines[i] = "password=" + strings.TrimSpace(volume.Password)
+                        }</span> else<span class="cov0" title="0"> if strings.Contains(line, "target_ip=") </span><span class="cov0" title="0">{
+                                lines[i] = "target_ip=" + strings.TrimSpace(volume.Target)
+                        }</span> else<span class="cov0" title="0"> if strings.Contains(line, "lunid=") </span><span class="cov0" title="0">{
+                                lines[i] = "lunid=" + strconv.Itoa(volume.Lunid)
+                        }</span> else<span class="cov0" title="0"> if strings.Contains(line, "node_ip=") </span><span class="cov0" title="0">{
+                                lines[i] = "node_ip=" + strings.TrimSpace(volume.Nodeip)
+                        }</span> else<span class="cov0" title="0"> if strings.Contains(line, "op=") </span><span class="cov0" title="0">{
+                                lines[i] = "op=" + strings.TrimSpace(ATTACH)
+                        }</span>
+                }
+
+                <span class="cov0" title="0">modifiedlines := []string{}
+                modifiedlines = append(modifiedlines, lines...)
+                output := strings.Join(modifiedlines, "\n")
+                if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0644); err != nil </span><span class="cov0" title="0">{
+                        lgr.Error("Could not write to iscsi-block-volume.conf file")
+                        return
+                }</span>
+        }
+
+        <span class="cov0" title="0">pvUpdated := false
+        for x := 0; x &lt; 5; x++ </span><span class="cov0" title="0">{
+                //Adding sleep since kubernetes will be still modifying the PV object
+                time.Sleep(5 * time.Second)
+
+                //Fetch the latest version of the PV from Kubernetes apiserver
+                latestPV, pvErr := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
+                if pvErr != nil </span><span class="cov0" title="0">{
+                        lgr.Warn("Failed to fetch PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(pvErr))
+                        continue</span>
+                }
+                //annotations := pv.ObjectMeta.Annotations
+                //annotations[ATTACHSTATUS] = STATUS_ATTACHING
+                //jsonAnnotations, _ := json.Marshal(annotations)
+                //patchData := "{\"metadata\": {\"annotations\":" + string(jsonAnnotations) + "}}"
+                //pv, err = clientset.CoreV1().PersistentVolumes().Patch(pv.ObjectMeta.Name, types.MergePatchType, []byte(patchData))
+                <span class="cov0" title="0">latestPV.Annotations[ATTACHSTATUS] = STATUS_ATTACHING
+                _, pvErr = clientset.CoreV1().PersistentVolumes().Update(latestPV)
+                if pvErr == nil </span><span class="cov0" title="0">{
+                        pvUpdated = true
+                        break</span>
+                }
+                <span class="cov0" title="0">lgr.Warn("Failed to update PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(pvErr))</span>
+        }
+        <span class="cov0" title="0">if !pvUpdated </span><span class="cov0" title="0">{
+                return
+        }</span>
+
+        // Restart ibmc-block-attacher service so volume can be attached
+        <span class="cov0" title="0">dbConn, connErr := dbus.New()
+        if connErr != nil </span><span class="cov0" title="0">{
+                lgr.Error("Error: Unable to connect!", zap.Error(connErr))
+                return
+        }</span>
+        <span class="cov0" title="0">reschan := make(chan string)
+        _, restartErr := dbConn.RestartUnit(ATTACHER_SERVICE, "fail", reschan)
+        if restartErr != nil </span><span class="cov0" title="0">{
+                lgr.Error("Error: Unable to restart target", zap.Error(restartErr))
+                return
+        }</span> else<span class="cov0" title="0"> {
+                lgr.Info("Unit Restarted !!")
+        }</span>
+        <span class="cov0" title="0">job := &lt;-reschan
+        if job != "done" </span><span class="cov0" title="0">{
+                lgr.Error("Error: Restart of service is not done: " + job)
+                return
+        }</span>
+        <span class="cov0" title="0">UpdatePersistentVolume(volume, pv)</span>
+}
+
+func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) <span class="cov1" title="1">{
+        folder := "/host/lib/ibmc-block-attacher"
+        if val := os.Getenv("service_dir"); val != "" </span><span class="cov1" title="1">{
+                folder = os.Getenv("service_dir")
+        }</span>
+        <span class="cov1" title="1">pathsFile := folder + "/out_paths"
+        mpathsFile := folder + "/out_multipaths"
+        var fileExists bool
+        var mpath string
+        var devicepath string
+        var lunid int
+
+        //Waiting for 625 secs here as the iscsi-attach script has a wait time of 600secs in total for the volume attach to finish
+        for x := 0; x &lt; 125; x++ </span><span class="cov1" title="1">{
+                _, err1 := os.Stat(pathsFile)
+                _, err2 := os.Stat(mpathsFile)
+                if (!os.IsNotExist(err1)) &amp;&amp; (!os.IsNotExist(err2)) </span><span class="cov1" title="1">{
+                        fileExists = true
+                        break</span>
+                }
+                <span class="cov0" title="0">time.Sleep(5 * time.Second)</span>
+        }
+
+        <span class="cov1" title="1">if fileExists </span><span class="cov1" title="1">{
+                var input []byte
+                var err error
+                //Parse paths to fetch lun id as per below command and output
+                /* multipathd show paths format "%w %i"
+                uuid                              hcil
+                3600a09803830445455244c4a38752d30 10:0:0:15  --&gt; The last part of hcil is lun id
+                3600a09803830445455244c4a38752d30 11:0:0:15
+                */
+                if input, err = ioutil.ReadFile(pathsFile); err != nil </span><span class="cov0" title="0">{
+                        lgr.Error("Could not read " + pathsFile + " file")
+                }</span> else<span class="cov1" title="1"> {
+                        lines := strings.Split(string(input), "\n")
+                        for _, line := range lines </span><span class="cov1" title="1">{
+                                space := regexp.MustCompile(`\s+`)
+                                line = space.ReplaceAllString(line, " ")
+                                line_parts := strings.Split(string(line), " ")
+                                lgr.Info("Line: ", zap.Strings("LINE", line_parts))
+                                if len(line_parts) &gt;= 2 </span><span class="cov1" title="1">{
+                                        // Parse the LUN ID from output
+                                        lun := strings.Split(string(line_parts[1]), ":")
+                                        if len(lun) == 4 </span><span class="cov1" title="1">{
+                                                if lunid, _ = strconv.Atoi(lun[3]); lunid == volume.Lunid </span><span class="cov1" title="1">{
+                                                        mpath = line_parts[0]
+                                                        break</span>
+                                                }
+                                        }
+                                }
+                        }
+                }
+
+                // Parse multipaths to fetch device path
+                /* multipathd show multipaths
+                name                              sysfs uuid
+                3600a09803830445455244c4a38752d30 dm-0  3600a09803830445455244c4a38752d30
+                */
+                <span class="cov1" title="1">if input, err = ioutil.ReadFile(mpathsFile); err != nil </span><span class="cov0" title="0">{
+                        lgr.Error("Could not read " + mpathsFile + " file")
+                }</span> else<span class="cov1" title="1"> {
+                        lines := strings.Split(string(input), "\n")
+                        for _, line := range lines </span><span class="cov1" title="1">{
+                                space := regexp.MustCompile(`\s+`)
+                                line = space.ReplaceAllString(line, " ")
+                                line_parts := strings.Split(string(line), " ")
+                                lgr.Info("Mpath Line: ", zap.Strings("LINE", line_parts))
+                                lgr.Info("MPath: ", zap.String("MPATH", mpath))
+                                if line_parts[0] == mpath </span><span class="cov1" title="1">{
+                                        // Device path sample is /dev/dm-0
+                                        devicepath = "/dev/" + line_parts[1]
+                                        break</span>
+                                }
+                        }
+                }
+                <span class="cov1" title="1">lgr.Info("Device path and volume lun ID: ", zap.String("LUN_Id", strconv.Itoa(volume.Lunid)), zap.String("Device_Path", devicepath))
+
+                // Delete the output files
+                del_err := os.Remove(pathsFile)
+                if del_err != nil </span><span class="cov0" title="0">{
+                        lgr.Error("Delete of "+pathsFile+" file failed ", zap.Error(del_err))
+                }</span>
+
+                <span class="cov1" title="1">del_err = os.Remove(mpathsFile)
+                if del_err != nil </span><span class="cov0" title="0">{
+                        lgr.Error("Delete of "+mpathsFile+" file failed ", zap.Error(del_err))
+                }</span>
+
+                <span class="cov1" title="1">for x := 0; x &lt; 5; x++ </span><span class="cov1" title="1">{
+                        //Adding sleep since kubernetes will be still modifying the PV object
+                        time.Sleep(5 * time.Second)
+
+                        //Fetch the latest version of the PV from Kubernetes apiserver
+                        latestPV, pvErr := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
+                        // Update PV with devicepath and multipath
+                        latestPV.Annotations[DMPATH] = devicepath
+                        latestPV.Annotations[MULTIPATH] = mpath
+                        latestPV.Annotations[ATTACHSTATUS] = STATUS_ATTACHED
+                        _, pvErr = clientset.CoreV1().PersistentVolumes().Update(latestPV)
+                        if pvErr == nil </span><span class="cov1" title="1">{
+                                break</span>
+                        }
+                        <span class="cov0" title="0">lgr.Warn("Failed to update PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(pvErr))</span>
+                }
+                <span class="cov1" title="1">return</span>
+        }
+        <span class="cov0" title="0">for x := 0; x &lt; 5; x++ </span><span class="cov0" title="0">{
+                //Adding sleep since kubernetes will be still modifying the PV object
+                time.Sleep(5 * time.Second)
+
+                //Fetch the latest version of the PV from Kubernetes apiserver
+                latestPV, pvErr := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
+                latestPV.Annotations[ATTACHSTATUS] = STATUS_FAILED
+                _, pvErr = clientset.CoreV1().PersistentVolumes().Update(latestPV)
+                if pvErr == nil </span><span class="cov0" title="0">{
+                        break</span>
+                }
+                <span class="cov0" title="0">lgr.Warn("Failed to update PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(pvErr))</span>
+        }
+}
+
+func Validate(pv *v1.PersistentVolume) error <span class="cov10" title="5">{
+        volDetails := make([]string, 0)
+        if pv.Annotations == nil </span><span class="cov0" title="0">{
+                lgr.Error("The PV has no volume details given to perform attach.")
+                pv.Annotations[ATTACHSTATUS] = STATUS_FAILED
+        }</span> else<span class="cov10" title="5"> {
+                if _, present := pv.Annotations[IQN]; !present </span><span class="cov1" title="1">{
+                        volDetails = append(volDetails, IQN)
+                        pv.Annotations[ATTACHSTATUS] = STATUS_FAILED
+                }</span>
+                <span class="cov10" title="5">if _, present := pv.Annotations[USERNAME]; !present </span><span class="cov1" title="1">{
+                        volDetails = append(volDetails, USERNAME)
+                        pv.Annotations[ATTACHSTATUS] = STATUS_FAILED
+                }</span>
+                <span class="cov10" title="5">if _, present := pv.Annotations[PASSWORD]; !present </span><span class="cov1" title="1">{
+                        volDetails = append(volDetails, PASSWORD)
+                        pv.Annotations[ATTACHSTATUS] = STATUS_FAILED
+                }</span>
+                <span class="cov10" title="5">if _, present := pv.Annotations[TARGET]; !present </span><span class="cov1" title="1">{
+                        volDetails = append(volDetails, TARGET)
+                        pv.Annotations[ATTACHSTATUS] = STATUS_FAILED
+                }</span>
+                <span class="cov10" title="5">if _, present := pv.Annotations[LUNID]; !present </span><span class="cov1" title="1">{
+                        volDetails = append(volDetails, LUNID)
+                        pv.Annotations[ATTACHSTATUS] = STATUS_FAILED
+                }</span> else<span class="cov8" title="4"> {
+                        if _, err := strconv.Atoi(pv.Annotations[LUNID]); err != nil </span><span class="cov0" title="0">{
+                                volDetails = append(volDetails, LUNID)
+                                pv.Annotations[ATTACHSTATUS] = STATUS_FAILED
+                        }</span>
+                }
+                <span class="cov10" title="5">if _, present := pv.Annotations[NODEIP]; !present </span><span class="cov1" title="1">{
+                        volDetails = append(volDetails, NODEIP)
+                        pv.Annotations[ATTACHSTATUS] = STATUS_FAILED
+                }</span>
+        }
+        <span class="cov10" title="5">if pv.Annotations[ATTACHSTATUS] == STATUS_FAILED </span><span class="cov1" title="1">{
+                lgr.Warn("Either no annotations are given or the following volume attributes are not valid in the PV:", zap.Strings("vol_attach_attrs", volDetails))
+
+                for x := 0; x &lt; 5; x++ </span><span class="cov1" title="1">{
+                        time.Sleep(5 * time.Second)
+
+                        //Fetch the latest version of the PV from Kubernetes apiserver
+                        latestPV, err := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
+                        latestPV.Annotations[ATTACHSTATUS] = STATUS_FAILED
+                        _, err = clientset.CoreV1().PersistentVolumes().Update(latestPV)
+                        if err == nil </span><span class="cov1" title="1">{
+                                break</span>
+                        }
+                        <span class="cov0" title="0">lgr.Error("Failed to update PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(err))</span>
+                }
+                <span class="cov1" title="1">return fmt.Errorf("Error while validating the PV annotations %s", pv.Name)</span>
+        }
+        <span class="cov8" title="4">return nil</span>
+}
+
+func DetachVolume(obj interface{}) <span class="cov1" title="1">{
+        pv, ok := obj.(*v1.PersistentVolume)
+        if !ok </span><span class="cov1" title="1">{
+                lgr.Error("Error in reading watcher event data of persistent volume")
+                return
+        }</span>
+        <span class="cov0" title="0">if pv.Spec.StorageClassName != STORAGECLASS </span><span class="cov0" title="0">{
+                lgr.Info("Persistent volume does not belong to storage class: ", zap.String("Name", pv.Name), zap.String("Storage_Class", pv.Spec.StorageClassName))
+                return
+        }</span>
+        <span class="cov0" title="0">ModifyDetachConfig(pv)</span>
+}
+
+func ModifyDetachConfig(pv *v1.PersistentVolume) <span class="cov1" title="1">{
+        lgr.Info("Volume to be detached: ", zap.String("Name", pv.Name))
+
+        volDetails := make([]string, 0)
+        if pv.Annotations == nil </span><span class="cov0" title="0">{
+                lgr.Error("The PV has no volume details given to perform detach.")
+                return
+        }</span> else<span class="cov1" title="1"> {
+                if _, present := pv.Annotations[DMPATH]; !present </span><span class="cov0" title="0">{
+                        volDetails = append(volDetails, DMPATH)
+                }</span>
+                <span class="cov1" title="1">if _, present := pv.Annotations[MULTIPATH]; !present </span><span class="cov0" title="0">{
+                        volDetails = append(volDetails, MULTIPATH)
+                }</span>
+                <span class="cov1" title="1">if len(volDetails) &gt; 0 </span><span class="cov0" title="0">{
+                        lgr.Error("Either no annotations are given or the following volume attributes are not valid in the PV:", zap.Strings("vol_detach_attrs", volDetails))
+                        return
+                }</span>
+        }
+
+        <span class="cov1" title="1">dev_path := strings.Split(pv.Annotations[DMPATH], "/")
+        var input []byte
+        var err error
+        if input, err = ioutil.ReadFile(BLOCK_CONF); err != nil </span><span class="cov1" title="1">{
+                lgr.Error("Could not read iscsi-block-volume.conf file")
+                return
+        }</span> else<span class="cov0" title="0"> {
+                lines := strings.Split(string(input), "\n")
+                for i, line := range lines </span><span class="cov0" title="0">{
+                        if strings.Contains(line, "dm=") </span><span class="cov0" title="0">{
+                                lines[i] = "dm=" + strings.TrimSpace(dev_path[2])
+                        }</span> else<span class="cov0" title="0"> if strings.Contains(line, "mpath=") </span><span class="cov0" title="0">{
+                                lines[i] = "mpath=" + strings.TrimSpace(pv.Annotations[MULTIPATH])
+                        }</span> else<span class="cov0" title="0"> if strings.Contains(line, "op=") </span><span class="cov0" title="0">{
+                                lines[i] = "op=" + strings.TrimSpace(DETACH)
+                        }</span>
+                }
+
+                <span class="cov0" title="0">modifiedlines := []string{}
+                modifiedlines = append(modifiedlines, lines...)
+                output := strings.Join(modifiedlines, "\n")
+                if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0644); err != nil </span><span class="cov0" title="0">{
+                        lgr.Error("Could not write to iscsi-block-volume.conf file")
+                        return
+                }</span>
+        }
+
+        // Restart ibmc-block-attacher service so volume can be attached
+        <span class="cov0" title="0">dbConn, connErr := dbus.New()
+        if connErr != nil </span><span class="cov0" title="0">{
+                lgr.Error("Error: Unable to connect!", zap.Error(connErr))
+                return
+        }</span>
+        <span class="cov0" title="0">reschan := make(chan string)
+        _, restartErr := dbConn.RestartUnit(ATTACHER_SERVICE, "fail", reschan)
+        if restartErr != nil </span><span class="cov0" title="0">{
+                lgr.Error("Error: Unable to restart target", zap.Error(restartErr))
+                return
+        }</span> else<span class="cov0" title="0"> {
+                lgr.Info("Unit Restarted !!")
+        }</span>
+        <span class="cov0" title="0">job := &lt;-reschan
+        if job != "done" </span><span class="cov0" title="0">{
+                lgr.Error("Error: Restart of service is not done: " + job)
+                return
+        }</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
