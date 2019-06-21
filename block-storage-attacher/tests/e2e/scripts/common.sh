@@ -42,8 +42,8 @@ function setKubeConfig {
     # your current bash session
 
     cluster_name=$1
-    echo "Generating Kube Config through 'bx cs cluster-config $cluster_name' and exporting KUBECONFIG"
-    configfile=$(bx cs cluster-config $cluster_name | grep ^export | cut -d '=' -f 2)
+    echo "Generating Kube Config through 'bx cs cluster-config $cluster_name --admin' and exporting KUBECONFIG"
+    configfile=$(bx cs cluster-config $cluster_name --admin | grep ^export | cut -d '=' -f 2)
     cat $configfile
     export KUBECONFIG=$configfile
 

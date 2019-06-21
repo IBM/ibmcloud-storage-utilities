@@ -90,9 +90,15 @@
 	Note: Wait for the cluster for getting the ready state
 	
 9. Set the kubeconfig
-
+   a. For IKS Cluster
 	```
 	configfile=$(bx cs cluster-config $PVG_CLUSTER_CRUISER | grep ^export | cut -d '=' -f 2)
+	export KUBECONFIG=$configfile
+	```
+   b. For OPENSHIFT Cluster
+  
+	```
+	configfile=$(bx cs cluster-config $PVG_CLUSTER_CRUISER --admin| grep ^export | cut -d '=' -f 2)
 	export KUBECONFIG=$configfile
 	```
 
