@@ -32,9 +32,6 @@ if [[ $TEST_BLUEMIX_LOGIN == "true" ]]; then
 	bx_login
         bx cr api $IMAGE_REGISTRY
         bx cr login
-        ibmcloud ks cluster-pull-secret-apply --cluster $PVG_CLUSTER_CRUISER
-        kubectl get secret default-pre-icr-io -o yaml | sed 's/default/kube-system/g' | kubectl -n kube-system create -f -
-        kubectl get secret default-stg-icr-io -o yaml | sed 's/default/kube-system/g' | kubectl -n kube-system create -f -
 fi
 
 # Incase of cluster_create value is "ifNotFound", then use the existing cluster (if there is one)
