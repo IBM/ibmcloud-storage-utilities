@@ -30,7 +30,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/scripts
 if [[ $TEST_BLUEMIX_LOGIN == "true" ]]; then
         echo "Bluemix Login DOne"
 	bx_login
-        bx cr api $IMAGE_REGISTRY
+        if [ $ARMADA_REGION == "us-south" ]; then
+          bx cr api $IMAGE_REGISTRY
+        fi
         bx cr login
 fi
 
