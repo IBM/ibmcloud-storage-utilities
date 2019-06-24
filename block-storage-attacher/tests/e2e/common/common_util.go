@@ -172,7 +172,7 @@ func RunInPodWithVolume(c clientset.Interface, ns, claimName, command string) {
 			Containers: []v1.Container{
 				{
 					Name:    "volume-tester",
-					Image:   BusyboxTestImage,
+					Image:   nginx,
 					Command: []string{"/bin/sh"},
 					Args:    []string{"-c", command},
 					VolumeMounts: []v1.VolumeMount{
