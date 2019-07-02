@@ -109,7 +109,7 @@ func TestWrite(client clientset.Interface, claim *v1.PersistentVolumeClaim) {
 
 	// Unlike cloud providers, kubelet should unmount NFS quickly
 	By("Sleeping to let kubelet destroy pods")
-	time.Sleep(5 * time.Second)
+	time.Sleep(30 * time.Second)
 }
 
 func TestRead(client clientset.Interface, claim *v1.PersistentVolumeClaim) {
@@ -118,7 +118,7 @@ func TestRead(client clientset.Interface, claim *v1.PersistentVolumeClaim) {
 
 	// Unlike cloud providers, kubelet should unmount NFS quickly
 	By("Sleeping to let kubelet destroy pods")
-	time.Sleep(5 * time.Second)
+	time.Sleep(30 * time.Second)
 }
 
 func TestDelete(client clientset.Interface, claim *v1.PersistentVolumeClaim, pv *v1.PersistentVolume) {
@@ -172,7 +172,7 @@ func RunInPodWithVolume(c clientset.Interface, ns, claimName, command string) {
 			Containers: []v1.Container{
 				{
 					Name:    "volume-tester",
-					Image:   nginx,
+					Image:   BusyboxTestImage,
 					Command: []string{"/bin/sh"},
 					Args:    []string{"-c", command},
 					VolumeMounts: []v1.VolumeMount{
