@@ -13,6 +13,8 @@ imagePullSecrets:
   - name: bluemix-default-secret
   - name: bluemix-default-secret-regional
   - name: bluemix-default-secret-international
+  - name: kube-system-pre-icr-io
+  - name: kube-system-stg-icr-io
 ---
 #ClusterRole with minimum permissions required for ibm-block-storage-attacher
 kind: ClusterRole
