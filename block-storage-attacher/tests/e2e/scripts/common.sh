@@ -533,7 +533,11 @@ function install_portworx_plugin {
 	check_pod_state "tiller-deploy"
 	
         # INSTALL/UPGRADE HELM CHART
-	helm_values_override="--set etcdEndPoint=$ETCD_SET1,clusterName=$(uuidgen),etcd.credentials=$ETCDCREDS,usedrivesAndPartitions=true,usefileSystemDrive=true,imageVersion=$PORTWORXVER,secretType=$IBMSECRETTYPE,drives=none,etcd.certPath=$CERTPATH,etcd.ca=$CAPATH"
+        if [[ $OPENSHIFT_INSTALL == "true" ]]; then 
+	   helm_values_override="--set etcdEndPoint=$ETCD_SET1,clusterName=$(uuidgen),etcd.credentials=$ETCDCREDS,usedrivesAndPartitions=true,usefileSystemDrive=true,imageVersion=$PORTWORXVER,secretType=$IBMSECRETTYPE,drives=none,etcd.certPath=$CERTPATH,etcd.ca=$CAPATH,registrySecret=redcred,openshiftInstall=true"
+        else
+	   helm_values_override="--set etcdEndPoint=$ETCD_SET1,clusterName=$(uuidgen),etcd.credentials=$ETCDCREDS,usedrivesAndPartitions=true,usefileSystemDrive=true,imageVersion=$PORTWORXVER,secretType=$IBMSECRETTYPE,drives=none,etcd.certPath=$CERTPATH,etcd.ca=$CAPATH"
+        fi
         echo "Helm installtion start" >> $E2E_PATH/debug.txt
 	helm_install_cmd="helm install $helm_values_override $PORTWORX_HELM_CHART --name portworx"
         echo "Helm installtion done" >> $E2E_PATH/debug.txt

@@ -10,12 +10,15 @@ set +a
 
 SCRIPTS_FOLDER_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/"
 E2EPATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
+OPENSHIFTFILE="openshift-clinet.tar.gz"
 SCRIPTS_FOLDER_PATH="$GOPATH/$SCRIPTS_FOLDER_PATH"
 E2E_PATH="$GOPATH/$E2EPATH"
 MKPVYAML="mkpvyaml"
 YAMLPATH="yamlgen.yaml"
 MKPVYAML="$SCRIPTS_FOLDER_PATH$MKPVYAML"
 YAMLPATH="$SCRIPTS_FOLDER_PATH$YAMLPATH"
+OPENSHIFTPATH="$SCRIPTS_FOLDER_PATH$OPENSHIFTFILE"
+OPENSHIFTFOLDER="$SCRIPTS_FOLDER_PATH/openshift-clinet"
 
 
 CLUSTERDETAILS="Region:$ARMADA_REGION \n Cluster Location:$PVG_CLUSTER_LOCATION \n Kube-Version:$PVG_CLUSTER_KUBE_VERSION \n"
@@ -108,6 +111,13 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         #bx sl init -u   $PVG_SL_USERNAME  -p  $PVG_SL_API_KEY
         bx cs init --host  $ARMADA_API_ENDPOINT
 	setKubeConfig $PVG_CLUSTER_CRUISER
+        if [[ $OPENSHIFT_INSTALL == "true" ]]; then
+        
+             tar -zxvf $OPENSHIFTPATH
+             mv  $OPENSHIFTFOLDER/oc /usr/local/bin/oc
+             oc login https://c2-e.us-east.containers.cloud.ibm.com:26017 --token=R74GPM8JpAqm6Qt5bfZdIHRQ2x-nGj8olAdvAQO9dNU
+             oc create secret docker-registry redcred --docker-server=registry.connect.redhat.com --docker-username=mumutyal --docker-password=Newpassword@04908 --docker-email=mumutyal@in.ibm.com -n kube-system 
+        fi
         export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
         addFullPathToCertsInKubeConfig
 	cat $KUBECONFIG
