@@ -10,15 +10,15 @@ set +a
 
 SCRIPTS_FOLDER_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/"
 E2EPATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
-OPENSHIFTTARFILE="openshift-clinet.tar.gz"
+OPENSHIFTTARFILE="openshift-client.tar.gz"
 SCRIPTS_FOLDER_PATH="$GOPATH/$SCRIPTS_FOLDER_PATH"
 E2E_PATH="$GOPATH/$E2EPATH"
 MKPVYAML="mkpvyaml"
 YAMLPATH="yamlgen.yaml"
 MKPVYAML="$SCRIPTS_FOLDER_PATH$MKPVYAML"
 YAMLPATH="$SCRIPTS_FOLDER_PATH$YAMLPATH"
-OPENSHIFTPATH="$E2E_PATH/scripts/$OPENSHIFTTARFILE"
-OPENSHIFTFOLDER="$SCRIPTS_FOLDER_PATH/openshift-clinet"
+OPENSHIFTPATH="$E2E_PATH$OPENSHIFTTARFILE"
+OPENSHIFTFOLDER="$SCRIPTS_FOLDER_PATH/openshift-client"
 
 
 CLUSTERDETAILS="Region:$ARMADA_REGION \n Cluster Location:$PVG_CLUSTER_LOCATION \n Kube-Version:$PVG_CLUSTER_KUBE_VERSION \n"
