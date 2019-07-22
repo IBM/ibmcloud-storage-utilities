@@ -117,7 +117,7 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
 	setKubeConfig $PVG_CLUSTER_CRUISER
         if [[ $OPENSHIFT_INSTALL == "true" ]]; then
         
-             tar -zxvf $OPENSHIFTPATH -C $E2EPATH
+             tar -zxvf $OPENSHIFTPATH -C $E2E_PATH
              mv  $OPENSHIFTFOLDER/oc /usr/local/bin/oc
              oc login https://c2-e.us-east.containers.cloud.ibm.com:26017 --token=R74GPM8JpAqm6Qt5bfZdIHRQ2x-nGj8olAdvAQO9dNU
              oc create secret docker-registry redcred --docker-server=registry.connect.redhat.com --docker-username=mumutyal --docker-password=Newpassword@04908 --docker-email=mumutyal@in.ibm.com -n kube-system 
