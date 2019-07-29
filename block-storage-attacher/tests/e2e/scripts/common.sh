@@ -534,7 +534,7 @@ function install_portworx_plugin {
 	
         # INSTALL/UPGRADE HELM CHART
         if [[ $OPENSHIFT_INSTALL == "true" ]]; then 
-	   helm_values_override="--set etcdEndPoint=$ETCD_SET1,clusterName=$(uuidgen),etcd.credentials=$ETCDCREDS,usedrivesAndPartitions=true,usefileSystemDrive=true,imageVersion=$PORTWORXVER,secretType=$IBMSECRETTYPE,drives=none,etcd.certPath=$CERTPATH,etcd.ca=$CAPATH,registrySecret=redcred,openshiftInstall=true"
+	   helm_values_override="--set etcdEndPoint=$ETCD_SET1,clusterName=$(uuidgen),etcd.credentials=$ETCDCREDS,usedrivesAndPartitions=true,usefileSystemDrive=true,imageVersion=$PORTWORXVER,secretType=$IBMSECRETTYPE,drives=none,etcd.certPath=$CERTPATH,etcd.ca=$CAPATH,registrySecret=regredcreds,openshiftInstall=true"
         else
 	   helm_values_override="--set etcdEndPoint=$ETCD_SET1,clusterName=$(uuidgen),etcd.credentials=$ETCDCREDS,usedrivesAndPartitions=true,usefileSystemDrive=true,imageVersion=$PORTWORXVER,secretType=$IBMSECRETTYPE,drives=none,etcd.certPath=$CERTPATH,etcd.ca=$CAPATH"
         fi
