@@ -172,7 +172,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 					outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
 					fmt.Printf("out:\n%s\nerr:\n%s\n", outStr, errStr)
 					cleanUP(pvname, pv)
-					//portworxcleanup(portworxclassname)
+					portworxcleanup(portworxclassname)
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx Installtion: FAIL\n")
 				} else {
 					logResult("BlockVolumeAttacher-Volume-Test: Portworx installtion: PASS\n")
