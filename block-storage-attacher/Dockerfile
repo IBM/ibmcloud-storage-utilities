@@ -1,4 +1,5 @@
 FROM alpine:3.7
+RUN apk add --update
 
 # Default values
 ARG git_commit_id=unknown
