@@ -1,5 +1,4 @@
 FROM alpine:3.7
-RUN apk add --update
 
 # Default values
 ARG git_commit_id=unknown
@@ -12,6 +11,10 @@ LABEL git-commit-id=${git_commit_id}
 LABEL git-remote-url=${git_remote_url}
 LABEL build-date=${build_date}
 LABEL jenkins-build-number=${jenkins_build_number}
+
+
+RUN apk add --update
+RUN apk upgrade
 
 RUN mkdir -p /home/armada-storage/
 RUN mkdir -p /host
