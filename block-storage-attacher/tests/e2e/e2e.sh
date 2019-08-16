@@ -30,6 +30,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/scripts
 if [[ $TEST_BLUEMIX_LOGIN == "true" ]]; then
         echo "Bluemix Login DOne"
 	bx_login
+        if [ $ARMADA_REGION == "us-south" ]; then
+          bx cr api $IMAGE_REGISTRY
+        fi
+        bx cr login
 fi
 
 # Incase of cluster_create value is "ifNotFound", then use the existing cluster (if there is one)
@@ -108,6 +112,9 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         #bx sl init -u   $PVG_SL_USERNAME  -p  $PVG_SL_API_KEY
         bx cs init --host  $ARMADA_API_ENDPOINT
 	setKubeConfig $PVG_CLUSTER_CRUISER
+        if [[ $OPENSHIFT_INSTALL == "true" ]]; then
+          sed -i "s/cluster: ibmc-blockvolume-e2e-test/cluster: openshift-portworx-e2e               /"  $YAMLPATH 
+        fi
         export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
         addFullPathToCertsInKubeConfig
 	cat $KUBECONFIG
