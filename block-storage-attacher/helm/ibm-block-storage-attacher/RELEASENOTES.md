@@ -2,8 +2,7 @@
 
 This chart has below new features added
 
-- Change image registry to use icr.io
-- Changes to support OpenShift
+- Update the GO lang version of block attacher image to 1.12.9
 
 
 # Breaking Changes
@@ -12,7 +11,7 @@ None
 
 # Fixes
 
-Please refer v1.1.0 changelog section.
+Please refer v1.1.1 changelog section.
 
 
 # Documentation
@@ -28,10 +27,14 @@ Please refer v1.1.0 changelog section.
 
 | Chart | Date | Kubernetes Required | Breaking Changes | Details                    |
 | ----- | ---------- | ------------ | ---------------- | --------------------------- |
+| 1.1.1 | 2019-08-28 | >=1.10       | None             | Refer Changelog v1.1.1      |
 | 1.1.0 | 2019-06-20 | >=1.10       | None             | Refer Changelog v1.1.0      |
 | 1.0.2 | 2019-03-19 | >=1.10       | None             | Refer Changelog v1.0.2      |
 | 1.0.1 | 2019-01-23 | >=1.10       | None             | Refer Changelog v1.0.1      |
 | 1.0.0 | 2018-12-05 | >=1.10       | None             | Initial chart version       |
+
+## [v1.1.1] - 2019-08-28
+Update the GO lang version of block attacher image to 1.12.9
 
 ## [v1.1.0] - 2019-06-20
 This is the release for OpenShift support
