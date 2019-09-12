@@ -400,6 +400,14 @@ func ModifyDetachConfig(pv *v1.PersistentVolume) {
 		}
 	}
 
+	volume := config.Volume{}
+	volume.Nodeip = pv.Annotations[NODEIP]
+	worker_node := os.Getenv("NODE_IP")
+	if worker_node != volume.Nodeip {
+		lgr.Info("The volume detach is not requested for this worker node")
+		return
+	}
+
 	dev_path := strings.Split(pv.Annotations[DMPATH], "/")
 	var input []byte
 	var err error
