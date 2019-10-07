@@ -2,3 +2,5 @@ image:
   repository: icr.io/ibm/ibmcloud-block-storage-attacher
   build: latest
   pullPolicy: Always
+
+tolerations: []

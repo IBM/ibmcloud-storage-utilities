@@ -39,6 +39,10 @@ spec:
             - matchExpressions:
               - key: "ibm-cloud.kubernetes.io/iaas-provider"
                 operator: DoesNotExist
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}-container
         image: "{{ .Values.image.repository }}:{{ .Values.image.build }}"
