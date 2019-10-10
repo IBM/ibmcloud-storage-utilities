@@ -10,6 +10,6 @@ block-storage-attacher:
 	make vet; \
 	make fmt; \
 	make test; \
-        make gosec; \
+	make gosec; \
 	make coverage
 
