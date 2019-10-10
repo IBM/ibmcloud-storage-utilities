@@ -12,8 +12,8 @@ import (
 )
 
 func main() {
-	flag.Set("logtostderr", "true")
-	flag.Parse()
+
+	var err error
 
 	// Logger
 	logger, _ := logger.GetZapLogger()
@@ -25,8 +25,14 @@ func main() {
 		loggerLevel.SetLevel(zap.DebugLevel)
 	}
 
+	err = flag.Set("logtostderr", "true")
+	if err != nil {
+		logger.Fatal("Failed to set flag:", zap.Error(err))
+
+	}
+	flag.Parse()
+
 	var config *rest.Config
-	var err error
 	config, err = clientcmd.BuildConfigFromFlags("", "")
 	if err != nil {
 		logger.Fatal("Failed to create config:", zap.Error(err))

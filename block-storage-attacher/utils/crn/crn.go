@@ -145,7 +145,7 @@ func getCRNValueFromConfigMapMount(filePath string, defaultValue string) (string
 		return defaultValue, errors.New("filePath must have a value")
 	}
 
-	crnFile, err := os.Open(filePath)
+	crnFile, err := os.Open(filepath.Clean(filePath))
 	if err != nil {
 		if os.IsNotExist(err) {
 			return defaultValue, nil

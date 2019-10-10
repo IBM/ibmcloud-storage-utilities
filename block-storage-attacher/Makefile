@@ -10,16 +10,17 @@ BUILD_DATE="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")"
 BUILD_NUMBER?=unknown
 
 .PHONY: all
-all: deps fmt vet buildgo test buildimage
+all: deps gosec fmt vet buildgo test buildimage
 
 .PHONY: driver
-driver: deps buildimage
+driver: deps gosec buildimage
 
 .PHONY: deps
 deps:
 	echo "Installing dependencies ..."
 	glide install --strip-vendor
 	go get github.com/pierrre/gotestcover
+	go get -v github.com/securego/gosec/cmd/gosec
 
 .PHONY: fmt
 fmt:
@@ -29,6 +30,9 @@ fmt:
 .PHONY: vet
 vet:
 	go vet ${GOPACKAGES}
+.PHONY: gosec
+gosec:
+	$(GOPATH)/bin/gosec ./...
 
 .PHONY: buildgo
 buildgo:
