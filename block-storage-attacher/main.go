@@ -25,11 +25,7 @@ func main() {
 		loggerLevel.SetLevel(zap.DebugLevel)
 	}
 
-	err = flag.Set("logtostderr", "true")
-	if err != nil {
-		logger.Fatal("Failed to set flag:", zap.Error(err))
-
-	}
+	_ = flag.Set("logtostderr", "true")
 	flag.Parse()
 
 	var config *rest.Config

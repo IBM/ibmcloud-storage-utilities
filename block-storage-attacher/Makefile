@@ -32,7 +32,7 @@ vet:
 	go vet ${GOPACKAGES}
 .PHONY: gosec
 gosec:
-	$(GOPATH)/bin/gosec ./...
+	$(GOPATH)/bin/gosec -exclude-dir=tests ./...
 
 .PHONY: buildgo
 buildgo:
