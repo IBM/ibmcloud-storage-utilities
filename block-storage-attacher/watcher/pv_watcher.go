@@ -11,6 +11,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/util/workqueue"
+	"golang.org/x/time/rate"
 	//types "k8s.io/apimachinery/pkg/types"
 	//"k8s.io/client-go/pkg/api/v1"
 	"io/ioutil"
@@ -48,11 +50,17 @@ const (
 
 var clientset kubernetes.Interface
 var lgr zap.Logger
-var mutex = &sync.Mutex{}
+var volumeQueue workqueue.RateLimitingInterface
 
 func WatchPersistentVolumes(client kubernetes.Interface, log zap.Logger) {
 	clientset = client
 	lgr = log
+	ratelimiter := workqueue.NewMaxOfRateLimiter(
+		workqueue.NewItemExponentialFailureRateLimiter(15*time.Second, 1000*time.Second),
+		&workqueue.BucketRateLimiter{Limiter: rate.NewLimiter(rate.Limit(10), 100)},
+	)
+	volumeQueue = workqueue.NewNamedRateLimitingQueue(ratelimiter, "volumes")
+
 	volumeSource := &cache.ListWatch{
 		ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
 			return clientset.CoreV1().PersistentVolumes().List(options)
@@ -71,7 +79,47 @@ func WatchPersistentVolumes(client kubernetes.Interface, log zap.Logger) {
 	stopch := wait.NeverStop
 	go controller.Run(stopch)
 	lgr.Info("Watching persistent volumes for volume attach")
+	go runVolumeWorker(stopch)
+	lgr.Info("Running volume worker")
 	<-stopch
+}
+
+func runVolumeWorker(_ <-chan struct{}) {
+	for processNextVolume() {
+	}
+}
+
+// processNextVolume processes items from volumeQueue
+func processNextVolume() bool {
+	obj, shutdown := volumeQueue.Get()
+
+	if shutdown {
+		return false
+	}
+
+	err := func(obj interface{}) error {
+		defer volumeQueue.Done(obj)
+		var key *v1.PersistentVolume
+		var ok bool
+		if key, ok = obj.(*v1.PersistentVolume); !ok {
+			volumeQueue.Forget(obj)
+			return fmt.Errorf("Expected string in workqueue but got %#v", obj)
+		}
+
+		if isRetryRequired, err := ModifyAttachConfig(key); isRetryRequired {
+			volumeQueue.AddRateLimited(obj)
+			lgr.Info("Retrying to attach storage", zap.String("Name", key.Name))
+			return fmt.Errorf("Retrying to attach storage %q: %s", key, err.Error())
+		}
+
+		volumeQueue.Forget(obj)
+		return nil
+	}(obj)
+
+	if err != nil {
+		lgr.Error("Attach Error", zap.Error(err))
+	}
+	return true
 }
 
 func AttachVolume(obj interface{}) {
@@ -84,25 +132,13 @@ func AttachVolume(obj interface{}) {
 		lgr.Info("Persistent volume does not belong to storage class: ", zap.String("Name", pv.Name), zap.String("Storage_Class", pv.Spec.StorageClassName))
 		return
 	}
-	attached := false
-	for !attached {
-		isRetryRequired, _ := ModifyAttachConfig(pv)
-		if !isRetryRequired {
-			attached = true
-			break
-		}
-		lgr.Info("Retrying to attach storage", zap.String("Name", pv.Name))
-		//Sleep for 2mins before retry of volume attach
-		//time.Sleep(2 * time.Minute)
+	if volumeQueue.NumRequeues(pv) == 0 {
+		volumeQueue.Add(pv)
+		lgr.Info("Added storage to queue", zap.String("PV Name", pv.Name))
 	}
 }
 
 func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
-	lgr.Info("Waiting for mutex lock", zap.String("Name", pv.Name))
-	//mutex.Lock()
-	lgr.Info("Acquired mutex lock", zap.String("Name", pv.Name))
-	//defer mutex.Unlock()
-
 	//Check if the PV exists using Kubernetes apiserver
 	_, volErr := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
 	if volErr != nil {
@@ -211,9 +247,7 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 		lgr.Error("Error: Restart of service is not done: " + job)
 		return true, fmt.Errorf("Error: Restart of service is not done.")
 	}
-	//return
 	retry, attErr := UpdatePersistentVolume(volume, pv)
-	//mutex.Unlock()
 	return retry, attErr
 }
 
