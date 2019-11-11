@@ -2,17 +2,17 @@ package watcher
 
 import (
 	"fmt"
-	"sync"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
 	"github.com/coreos/go-systemd/dbus"
 	"go.uber.org/zap"
+	"golang.org/x/time/rate"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/util/workqueue"
-	"golang.org/x/time/rate"
+	"sync"
 	//types "k8s.io/apimachinery/pkg/types"
 	//"k8s.io/client-go/pkg/api/v1"
 	"io/ioutil"
@@ -50,6 +50,7 @@ const (
 
 var clientset kubernetes.Interface
 var lgr zap.Logger
+var mutex = &sync.Mutex{}
 var volumeQueue workqueue.RateLimitingInterface
 
 func WatchPersistentVolumes(client kubernetes.Interface, log zap.Logger) {
@@ -139,6 +140,11 @@ func AttachVolume(obj interface{}) {
 }
 
 func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
+	lgr.Info("Waiting for mutex lock in ATTACH", zap.String("Name", pv.Name))
+	mutex.Lock()
+	lgr.Info("Acquired mutex lock in ATTACH", zap.String("Name", pv.Name))
+	defer mutex.Unlock()
+
 	//Check if the PV exists using Kubernetes apiserver
 	_, volErr := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
 	if volErr != nil {
@@ -474,6 +480,11 @@ func DetachVolume(obj interface{}) {
 }
 
 func ModifyDetachConfig(pv *v1.PersistentVolume) {
+	lgr.Info("Waiting for mutex lock in DETACH", zap.String("Name", pv.Name))
+	mutex.Lock()
+	lgr.Info("Acquired mutex lock in DETACH", zap.String("Name", pv.Name))
+	defer mutex.Unlock()
+
 	lgr.Info("Volume to be detached: ", zap.String("Name", pv.Name))
 
 	volDetails := make([]string, 0)
