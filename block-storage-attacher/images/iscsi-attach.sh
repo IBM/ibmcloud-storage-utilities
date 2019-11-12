@@ -115,6 +115,7 @@ then
   echo "`date`:Attached the volume successfully." >> $LOG
 
   found=false
+  sleep 2 #Adding sleep so multipaths can be created on worker node
   for pathcounter in {1..60};
   do
     paths=`multipathd show paths format "%w %i" | wc -l`
@@ -136,6 +137,7 @@ then
     exit 1
   fi
 
+  sleep 2 #Adding sleep so multipaths can be created on worker node
   echo "`multipathd show paths format "%w %i"`" > /lib/ibmc-block-attacher/out_paths
   echo "`multipathd show multipaths`" > /lib/ibmc-block-attacher/out_multipaths
   exit $rc
