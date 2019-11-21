@@ -284,10 +284,11 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 		var input []byte
 		var err error
 		//Parse paths to fetch lun id as per below command and output
-		/* multipathd show paths format "%w %i"
-		uuid                              hcil
-		3600a09803830445455244c4a38752d30 10:0:0:15  --> The last part of hcil is lun id
-		3600a09803830445455244c4a38752d30 11:0:0:15
+		/* multipathd show paths format "%w %i %C"
+		uuid                              hcil      next_check
+		3600a09803830476d6f3f4f435751684f 20:0:0:37 orphan
+		3600a09803830445455244c4a38752d30 10:0:0:15 XXXXXXXXX. 18/20 --> The last part of hcil is lun id
+		3600a09803830445455244c4a38752d30 11:0:0:15 XXXX...... 9/20
 		*/
 		if input, err = ioutil.ReadFile(pathsFile); err != nil {
 			lgr.Error("Could not read " + pathsFile + " file")
@@ -298,7 +299,8 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 				line = space.ReplaceAllString(line, " ")
 				line_parts := strings.Split(string(line), " ")
 				lgr.Info("Line: ", zap.Strings("LINE", line_parts))
-				if len(line_parts) >= 2 {
+				// We ignore the orphan multipaths
+				if (len(line_parts) >= 3) && (strings.TrimSpace(line_parts[2]) != "orphan") {
 					// Parse the LUN ID from output
 					lun := strings.Split(string(line_parts[1]), ":")
 					if len(lun) == 4 {

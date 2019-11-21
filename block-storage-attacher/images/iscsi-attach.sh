@@ -7,6 +7,7 @@ LOG=/var/log/ibmc-block-attacher-service.log
 INITIATOR=/etc/iscsi/initiatorname.iscsi
 ISCSI_CONF=/etc/iscsi/iscsid.conf
 #ISCSIADM=/sbin/iscsiadm
+iscsi_restart=true
 
 if [ "$op" = "attach" ];
 then
@@ -18,7 +19,11 @@ then
 
   echo "`date`:====Start Attach====" >> $LOG
 
-  if grep -q "^InitiatorName" $INITIATOR;
+  if grep -q "^InitiatorName=$iqn" $INITIATOR;
+  then
+    echo "`date`:InitiatorName found" >> $LOG
+    iscsi_restart=false
+  elif grep -q "^InitiatorName" $INITIATOR;
   then
     sed -i 's/^InitiatorName.*/InitiatorName='$iqn'/' $INITIATOR
   else
@@ -26,7 +31,11 @@ then
     echo "InitiatorName="$iqn >> $INITIATOR
   fi
 
-  if grep -q "^node.session.auth.username" $ISCSI_CONF;
+  if grep -q "^node.session.auth.username = $username" $ISCSI_CONF;
+  then
+    echo "`date`:node.session.auth.username found" >> $LOG
+    iscsi_restart=false
+  elif grep -q "^node.session.auth.username" $ISCSI_CONF;
   then
     sed -i 's/^node.session.auth.username.*/node.session.auth.username = '$username'/' $ISCSI_CONF
   else
@@ -34,7 +43,11 @@ then
     echo "node.session.auth.username = "$username >> $ISCSI_CONF
   fi
 
-  if grep -q "^node.session.auth.password" $ISCSI_CONF;
+  if grep -q "^node.session.auth.password = $password" $ISCSI_CONF;
+  then
+    echo "`date`:node.session.auth.password found" >> $LOG
+    iscsi_restart=false
+  elif grep -q "^node.session.auth.password" $ISCSI_CONF;
   then
     sed -i 's/^node.session.auth.password.*/node.session.auth.password = '$password'/' $ISCSI_CONF
   else
@@ -42,7 +55,11 @@ then
     echo "node.session.auth.password = "$password >> $ISCSI_CONF
   fi
 
-  if grep -q "^discovery.sendtargets.auth.username" $ISCSI_CONF;
+  if grep -q "^discovery.sendtargets.auth.username = $username" $ISCSI_CONF;
+  then
+    echo "`date`:discovery.sendtargets.auth.username found" >> $LOG
+    iscsi_restart=false
+  elif grep -q "^discovery.sendtargets.auth.username" $ISCSI_CONF;
   then
     sed -i 's/^discovery.sendtargets.auth.username.*/discovery.sendtargets.auth.username = '$username'/' $ISCSI_CONF
   else
@@ -50,7 +67,11 @@ then
     echo "discovery.sendtargets.auth.username = "$username >> $ISCSI_CONF
   fi
 
-  if grep -q "^discovery.sendtargets.auth.password" $ISCSI_CONF;
+  if grep -q "^discovery.sendtargets.auth.password = $password" $ISCSI_CONF;
+  then
+    echo "`date`:discovery.sendtargets.auth.password found" >> $LOG
+    iscsi_restart=false
+  elif grep -q "^discovery.sendtargets.auth.password" $ISCSI_CONF;
   then
     sed -i 's/^discovery.sendtargets.auth.password.*/discovery.sendtargets.auth.password = '$password'/' $ISCSI_CONF
   else
@@ -58,7 +79,11 @@ then
     echo "discovery.sendtargets.auth.password = "$password >> $ISCSI_CONF
   fi
 
-  if grep -q "^node.startup" $ISCSI_CONF;
+  if grep -q "^node.startup = automatic" $ISCSI_CONF;
+  then
+    echo "`date`:node.startup is set to automatic already" >> $LOG
+    iscsi_restart=false
+  elif grep -q "^node.startup" $ISCSI_CONF;
   then
     sed -i 's/^node.startup.*/node.startup = automatic/' $ISCSI_CONF
   else
@@ -66,10 +91,15 @@ then
     echo "node.startup = automatic" >> $ISCSI_CONF
   fi
 
-  /usr/sbin/mpathconf --enable
+#  /usr/sbin/mpathconf --enable
   multipathd
-  service iscsid restart
-  service open-iscsi restart
+
+  if $iscsi_restart;
+  then
+    echo "`date`:Restarting iscsi service" >> $LOG
+    service iscsid restart
+    service open-iscsi restart
+  fi
 
   echo "`date`:iscsi discovery" >> $LOG
   iscsiadm -m discovery -t sendtargets -p $target_ip >> $LOG
@@ -138,7 +168,7 @@ then
   fi
 
   sleep 2 #Adding sleep so multipaths can be created on worker node
-  echo "`multipathd show paths format "%w %i"`" > /lib/ibmc-block-attacher/out_paths
+  echo "`multipathd show paths format "%w %i %C"`" > /lib/ibmc-block-attacher/out_paths
   echo "`multipathd show multipaths`" > /lib/ibmc-block-attacher/out_multipaths
   exit $rc
 elif [ "$op" = "detach" ];
