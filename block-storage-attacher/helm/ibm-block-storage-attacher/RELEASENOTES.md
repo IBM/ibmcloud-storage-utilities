@@ -2,7 +2,7 @@
 
 This chart has below new features added
 
-- Fix for detach PV impacting other attacher pods
+- Adding infinite retry for attach and improving error handling
 
 
 # Breaking Changes
@@ -11,7 +11,7 @@ None
 
 # Fixes
 
-Please refer v1.1.2 changelog section.
+Please refer v1.1.3 changelog section.
 
 
 # Documentation
@@ -27,12 +27,21 @@ Please refer v1.1.2 changelog section.
 
 | Chart | Date | Kubernetes Required | Breaking Changes | Details                    |
 | ----- | ---------- | ------------ | ---------------- | --------------------------- |
+| 1.1.3 | 2019-11-25 | >=1.10       | None             | Refer Changelog v1.1.3      |
 | 1.1.2 | 2019-09-12 | >=1.10       | None             | Refer Changelog v1.1.2      |
 | 1.1.1 | 2019-08-28 | >=1.10       | None             | Refer Changelog v1.1.1      |
 | 1.1.0 | 2019-06-20 | >=1.10       | None             | Refer Changelog v1.1.0      |
 | 1.0.2 | 2019-03-19 | >=1.10       | None             | Refer Changelog v1.0.2      |
 | 1.0.1 | 2019-01-23 | >=1.10       | None             | Refer Changelog v1.0.1      |
 | 1.0.0 | 2018-12-05 | >=1.10       | None             | Initial chart version       |
+
+## [v1.1.3] - 2019-11-25
+Adding infinite retry for attach and improving error handling
+
+### Changelog
+- Adding infinite retry for attach flow and improving error handling.
+- Added queues to accept multiple attach volume requests.
+- Added mutex locks for attach and detach.
 
 ## [v1.1.2] - 2019-09-12
 Fix for detach PV impacting other attacher pods
