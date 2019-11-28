@@ -16,7 +16,7 @@ export PVG_TEST_UTILS=dove/dove-tools/py/pvg_run_test_utils.sh
 export PVG_BX_DASH_S="ibmc-file-e2e-test"
 
 bx login -a $PVG_BX_DASH_A -u $BLUEMIX_USER -p $BLUEMIX_PASSWORD -c $PVG_BX_DASH_C -o $PVG_BX_DASH_O -s $PVG_BX_DASH_S
-bx cs init --host $ARMADA_API_ENDPOINT
+#bx cs init --host $ARMADA_API_ENDPOINT
 bx cs clusters
 bx cs credentials-set --infrastructure-username $INFRA_USER --infrastructure-api-key $INFRA_KEY
 
