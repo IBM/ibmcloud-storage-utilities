@@ -41,7 +41,7 @@ Fix for detach PV impacting other attacher pods
 - Changes to pv_watcher to ignore detach requests of other nodes.
 
 ## [v1.1.1] - 2019-08-28
-Update the GO lang version of block attacher image to 1.13.4
+Update the GO lang version of block attacher image to 1.12.9
 
 ### Changelog
 - Changes to Dockerfile.builder file

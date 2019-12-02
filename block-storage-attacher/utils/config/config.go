@@ -71,7 +71,7 @@ func GetConfigStringList(envKey string, defaultConf string, logger zap.Logger) [
 }
 
 type Volume struct {
-	VolId    string `json:"volId,omitempty"`
+	VolId    string `json:"volID,omitempty"`
 	Iqn      string `json:"iqn,omitempty"`
 	Username string `json:"username,omitempty"`
 	Password string `json:"password,omitempty"`
