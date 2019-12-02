@@ -346,11 +346,8 @@ function bx_login {
     bx --version
     bx plugin list
 
-    bx login -a $PVG_BX_DASH_A -u $PVG_BX_USER -p $PVG_BX_PWD -c $PVG_BX_DASH_C
-    bx cs init --host $ARMADA_API_ENDPOINT
-    bx cs region $ARMADA_REGION
-	#bx cr login
-    bx cs credentials-set --infrastructure-username $PVG_SL_USERNAME --infrastructure-api-key $PVG_SL_API_KEY
+    bx login -a $PVG_BX_DASH_A -u $PVG_BX_USER -p $PVG_BX_PWD -c $PVG_BX_DASH_C -r $ARMADA_REGION
+    #bx cs init --host $ARMADA_API_ENDPOINT
 
 }
 

@@ -139,7 +139,7 @@ func TestValidate(t *testing.T) {
 	objs := []runtime.Object{pv}
 	clientset = fake.NewSimpleClientset(objs...)
 
-	err := Validate(pv)
+	_, err := Validate(pv)
 	assert.NotNil(t, err)
 	os.RemoveAll("/host/etc/iscsi-block-volume.conf")
 

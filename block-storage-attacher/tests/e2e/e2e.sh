@@ -108,9 +108,9 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         export SL_API_KEY=$PVG_SL_API_KEY
         export  SL_USERNAME=$PVG_SL_USERNAME
         bx_login
-        bx cs credentials-set  --infrastructure-username  $PVG_SL_USERNAME  --infrastructure-api-key $PVG_SL_API_KEY
+        #bx cs credentials-set  --infrastructure-username  $PVG_SL_USERNAME  --infrastructure-api-key $PVG_SL_API_KEY
         #bx sl init -u   $PVG_SL_USERNAME  -p  $PVG_SL_API_KEY
-        bx cs init --host  $ARMADA_API_ENDPOINT
+        #bx cs init --host  $ARMADA_API_ENDPOINT
 	setKubeConfig $PVG_CLUSTER_CRUISER
         if [[ $OPENSHIFT_INSTALL == "true" ]]; then
           sed -i "s/cluster: ibmc-blockvolume-e2e-test/cluster: openshift-portworx-e2e               /"  $YAMLPATH 
