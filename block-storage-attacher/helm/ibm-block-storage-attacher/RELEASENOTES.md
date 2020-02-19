@@ -2,7 +2,7 @@
 
 This chart has below new features added
 
-- Adding infinite retry for attach and improving error handling
+- Changing the API version of Daemon set to support kubernetes 1.16.5
 
 
 # Breaking Changes
@@ -11,7 +11,7 @@ None
 
 # Fixes
 
-Please refer v1.1.3 changelog section.
+Please refer v1.1.4 changelog section.
 
 
 # Documentation
@@ -27,6 +27,7 @@ Please refer v1.1.3 changelog section.
 
 | Chart | Date | Kubernetes Required | Breaking Changes | Details                    |
 | ----- | ---------- | ------------ | ---------------- | --------------------------- |
+| 1.1.4 | 2020-02-19 | >=1.10       | None             | Refer Changelog v1.1.4      |
 | 1.1.3 | 2019-11-25 | >=1.10       | None             | Refer Changelog v1.1.3      |
 | 1.1.2 | 2019-09-12 | >=1.10       | None             | Refer Changelog v1.1.2      |
 | 1.1.1 | 2019-08-28 | >=1.10       | None             | Refer Changelog v1.1.1      |
@@ -34,6 +35,12 @@ Please refer v1.1.3 changelog section.
 | 1.0.2 | 2019-03-19 | >=1.10       | None             | Refer Changelog v1.0.2      |
 | 1.0.1 | 2019-01-23 | >=1.10       | None             | Refer Changelog v1.0.1      |
 | 1.0.0 | 2018-12-05 | >=1.10       | None             | Initial chart version       |
+
+## [v1.1.4] - 2020-02-19
+Changing the API version of Daemon set to support kubernetes 1.16.5
+
+### Changelog
+- Updated the API version of Daemon set to apps/v1
 
 ## [v1.1.3] - 2019-11-25
 Adding infinite retry for attach and improving error handling
