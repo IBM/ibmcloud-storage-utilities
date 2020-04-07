@@ -31,13 +31,13 @@ if [[ $TEST_BLUEMIX_LOGIN == "true" ]]; then
         echo "Bluemix Login DOne"
 	bx_login
         if [ $ARMADA_REGION == "us-south" ]; then
-          bx cr api $IMAGE_REGISTRY
+          ibmcloud ks  api $IMAGE_REGISTRY
         fi
-        bx cr login
+        ibmcloud cr login
 fi
 
 # Incase of cluster_create value is "ifNotFound", then use the existing cluster (if there is one)
-cluster_id=$(bx cs clusters | awk "/$PVG_CLUSTER_CRUISER/"'{print $2}')
+cluster_id=$(ibmcloud ks clusters | awk "/$PVG_CLUSTER_CRUISER/"'{print $2}')
 
 # incase of cluster_create "always", delete the PREV cluster (if any)
 if [[ -n "$cluster_id" && "$TEST_CLUSTER_CREATE" == "always" ]]; then
@@ -58,7 +58,7 @@ if [[ -z "$cluster_id" && "$TEST_CLUSTER_CREATE" != "never" ]]; then
 	# Put a small delay to let things settle
 	sleep 30
 	
-	bx cs clusters
+        ibmcloud ks clusters	
 	
 	# Verify cluster is up and running
 	echo "Checking the cluster for deployed state..."
@@ -68,9 +68,9 @@ if [[ -z "$cluster_id" && "$TEST_CLUSTER_CREATE" != "never" ]]; then
 	check_worker_state $PVG_CLUSTER_CRUISER
 	
 	# Run sniff tests against cluster
-	bx cs clusters
-	bx cs cluster-get $PVG_CLUSTER_CRUISER
-	bx cs workers $PVG_CLUSTER_CRUISER
+	ibmcloud ks clusters
+	ibmcloud ks cluster-get $PVG_CLUSTER_CRUISER
+	ibmcloud ks workers $PVG_CLUSTER_CRUISER
 	
 	echo "Cluster creation is successful and ready to use"
 fi
