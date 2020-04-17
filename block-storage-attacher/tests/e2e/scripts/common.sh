@@ -47,7 +47,7 @@ function setKubeConfig {
     cat $configfile
     export KUBECONFIG=$configfile
 
-    test $KUBECONFIG
+    #test $KUBECONFIG
     set_issue_repo ${DEFAULT_ISSUE_REPO}
 
 }
