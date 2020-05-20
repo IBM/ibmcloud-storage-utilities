@@ -79,7 +79,7 @@ fi
 
 # Setup the kube configs, user can also opt to skip this during dev-test
 if [[ $TEST_CLUSTER_CONFIG_DOWNLOAD == "true" ]]; then
-	#setKubeConfig $PVG_CLUSTER_CRUISER
+	setKubeConfig $PVG_CLUSTER_CRUISER
 	#cat $KUBECONFIG
 	echo "Kubeconfig file download was successful"
 fi

@@ -43,9 +43,9 @@ function setKubeConfig {
 
     cluster_name=$1
     echo "Generating Kube Config through 'ibmcloud ks  cluster config $cluster_name --admin' and exporting KUBECONFIG"
-    configfile=$(ibmcloud ks  cluster config --cluster $cluster_name --admin | grep ^export | cut -d '=' -f 2)
+    ibmcloud ks  cluster config --cluster $cluster_name --admin 
     cat $configfile
-    export KUBECONFIG=$configfile
+    #export KUBECONFIG=$configfile
 
     #test $KUBECONFIG
     set_issue_repo ${DEFAULT_ISSUE_REPO}
