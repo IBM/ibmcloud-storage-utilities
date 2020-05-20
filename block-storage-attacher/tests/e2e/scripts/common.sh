@@ -492,7 +492,7 @@ function install_blockvolume_plugin {
 
 	# INSTALL/UPGRADE HELM CHART
 	helm_values_override="--set image.repository=$IMAGE_REGISTRY/$USER_NAMESPACE/$PLUGIN_IMAGE --set image.build=$PLUGIN_BUILD"
-	helm_install_cmd="helm install $helm_values_override $HELM_CHART"
+	helm_install_cmd="helm install blockattach $helm_values_override $HELM_CHART"
 
 	# CHECK FOR UPGRADE
 
@@ -532,7 +532,7 @@ function install_portworx_plugin {
         # INSTALL/UPGRADE HELM CHART
 	helm_values_override="--set kvdb=$ETCD_SET1,clusterName=$(uuidgen),usedrivesAndPartitions=true,usefileSystemDrive=true,imageVersion=$PORTWORXVER,secretType=$IBMSECRETTYPE,drives=none,etcd.secret=$PXETCDSECRET"
         echo "Helm installtion start" >> $E2E_PATH/debug.txt
-	helm_install_cmd="helm install $helm_values_override $PORTWORX_HELM_CHART --name portworx"
+	helm_install_cmd="helm install portworx $helm_values_override $PORTWORX_HELM_CHART"
         echo "Helm installtion done" >> $E2E_PATH/debug.txt
         
 	# CHECK FOR UPGRADE
