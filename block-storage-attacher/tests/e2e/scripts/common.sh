@@ -487,8 +487,8 @@ function install_blockvolume_plugin {
     echo "Installing helm chart ibm-block-storage-attacher .."
 	# INSTALL HELM TILLER (Attempt again, if already installed)
 	echo "Initialize tiller AND Wait till running"
-	helm init --force-upgrade
-	check_pod_state "tiller-deploy"
+	#helm init --force-upgrade
+	#check_pod_state "tiller-deploy"
 
 	# INSTALL/UPGRADE HELM CHART
 	helm_values_override="--set image.repository=$IMAGE_REGISTRY/$USER_NAMESPACE/$PLUGIN_IMAGE --set image.build=$PLUGIN_BUILD"
