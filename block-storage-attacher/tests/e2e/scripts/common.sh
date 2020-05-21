@@ -46,7 +46,7 @@ function setKubeConfig {
     cluster_id=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $2}')
     echo "Generating Kube Config through 'ibmcloud ks  cluster config $cluster_name --admin' and exporting KUBECONFIG"
     ibmcloud ks  cluster config --cluster $cluster_name --admin
-    configfile = "$bluemix_home/.bluemix/plugins/container-service/clusters/$cluster_name-$cluster_id-admin/kube-config*.yml" 
+    configfile = "~/.bluemix/plugins/container-service/clusters/$cluster_name-$cluster_id-admin/kube-config*.yml" 
     cat $configfile
     export KUBECONFIG=$configfile
 
