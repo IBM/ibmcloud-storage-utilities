@@ -80,13 +80,13 @@ fi
 # Setup the kube configs, user can also opt to skip this during dev-test
 if [[ $TEST_CLUSTER_CONFIG_DOWNLOAD == "true" ]]; then
 	setKubeConfig $PVG_CLUSTER_CRUISER
-	#cat $KUBECONFIG
+	cat $KUBECONFIG
 	echo "Kubeconfig file download was successful"
 fi
 
 # Update certpath from relative to full path, without which the golang test fail
-#addFullPathToCertsInKubeConfig
-#cat $KUBECONFIG
+addFullPathToCertsInKubeConfig
+cat $KUBECONFIG
 echo "Kubeclient has been configured successfully to access the cluster"
 
 
@@ -116,8 +116,8 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
           sed -i "s/cluster: ibmc-blockvolume-e2e-test/cluster: openshift-portworx-e2e               /"  $YAMLPATH 
         fi
         export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
-        #addFullPathToCertsInKubeConfig
-	#cat $KUBECONFIG
+        addFullPathToCertsInKubeConfig
+	cat $KUBECONFIG
         echo "Bluemix COnfig"
         cat ~/.bluemix/config.json
         sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML

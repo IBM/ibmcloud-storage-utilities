@@ -12,6 +12,7 @@ SCRIPTS_FOLDER_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage
 E2EPATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
 SCRIPTS_FOLDER_PATH="$GOPATH/$SCRIPTS_FOLDER_PATH"
 E2E_PATH="$GOPATH/$E2EPATH"
+bluemix_home="$BLUEMIX_HOME"
 
 
 export ISSUE_REPO="${DEFAULT_ISSUE_REPO}"
@@ -42,12 +43,14 @@ function setKubeConfig {
     # your current bash session
 
     cluster_name=$1
+    cluster_id=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $2}')
     echo "Generating Kube Config through 'ibmcloud ks  cluster config $cluster_name --admin' and exporting KUBECONFIG"
-    ibmcloud ks  cluster config --cluster $cluster_name --admin 
+    ibmcloud ks  cluster config --cluster $cluster_name --admin
+    configfile = "$bluemix_home/.bluemix/plugins/container-service/clusters/$cluster_name-$cluster_id-admin/kube-config*.yml" 
     cat $configfile
-    #export KUBECONFIG=$configfile
+    export KUBECONFIG=$configfile
 
-    #test $KUBECONFIG
+    test $KUBECONFIG
     set_issue_repo ${DEFAULT_ISSUE_REPO}
 
 }
