@@ -39,6 +39,12 @@ function setKubeConfig {
     fi
     set_issue_repo "armada-api"
 
+     bluemix_home="$BLUEMIX_HOME"
+    if [ -z ${BLUEMIX_HOME+x} ]; then
+        bluemix_home="$HOME"
+    fi
+
+
     # Get the kube config from the `bx` cli and export KUBECONFIG for
     # your current bash session
 
@@ -46,8 +52,9 @@ function setKubeConfig {
     cluster_id=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $2}')
     echo "Generating Kube Config through 'ibmcloud ks  cluster config $cluster_name --admin' and exporting KUBECONFIG"
     ibmcloud ks  cluster config --cluster $cluster_name --admin
-    ="/root/.bluemix/plugins/container-service/clusters/$cluster_name-$cluster_id-admin/kube-config*.yml" 
+    kube_config_location="$bluemix_home/.bluemix/plugins/container-service/clusters/$cluster_name-$cluster_id-admin/kube-config*.yml" 
     echo "$kube_config_location"
+    ls -l $kube_config_location
   
      if ls $kube_config_location 1> /dev/null 2>&1; then
         echo "Kube Config File has already been Generated through 'ibmcloud ks cluster config $cluster_name'. exporting KUBECONFIG"
