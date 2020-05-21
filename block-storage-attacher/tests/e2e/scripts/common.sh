@@ -46,9 +46,21 @@ function setKubeConfig {
     cluster_id=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $2}')
     echo "Generating Kube Config through 'ibmcloud ks  cluster config $cluster_name --admin' and exporting KUBECONFIG"
     ibmcloud ks  cluster config --cluster $cluster_name --admin
-    configfile="~/.bluemix/plugins/container-service/clusters/$cluster_name-$cluster_id-admin/kube-config*.yml" 
-    cat $configfile
-    export KUBECONFIG=$configfile
+    ="/root/.bluemix/plugins/container-service/clusters/$cluster_name-$cluster_id-admin/kube-config*.yml" 
+    echo "$kube_config_location"
+  
+     if ls $kube_config_location 1> /dev/null 2>&1; then
+        echo "Kube Config File has already been Generated through 'ibmcloud ks cluster config $cluster_name'. exporting KUBECONFIG"
+        export KUBECONFIG="$(echo $kube_config_location)"
+
+    else
+        echo "Generating Kube Config through 'ibmcloud ks cluster config $cluster_name' and exporting KUBECONFIG"
+        config_output=$(ibmcloud ks cluster config $cluster_name)
+        echo $config_output
+        configfile=$(echo $config_output | grep export | cut -d '=' -f 2)
+        cat $configfile
+        export KUBECONFIG=$configfile
+    fi
 
     test $KUBECONFIG
     set_issue_repo ${DEFAULT_ISSUE_REPO}
