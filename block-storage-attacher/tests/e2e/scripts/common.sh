@@ -548,8 +548,8 @@ function install_portworx_plugin {
     echo "Installing helm chart portworx plugin  .."
 	# INSTALL HELM TILLER (Attempt again, if already installed)
 	echo "Initialize tiller AND Wait till running" >> $E2E_PATH/debug.txt
-	helm init --force-upgrade
-	check_pod_state "tiller-deploy"
+	#helm init --force-upgrade
+	#check_pod_state "tiller-deploy"
 	
         # INSTALL/UPGRADE HELM CHART
 	helm_values_override="--set kvdb=$ETCD_SET1,clusterName=$(uuidgen),usedrivesAndPartitions=true,usefileSystemDrive=true,imageVersion=$PORTWORXVER,secretType=$IBMSECRETTYPE,drives=none,etcd.secret=$PXETCDSECRET"
