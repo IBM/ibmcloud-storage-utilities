@@ -36,7 +36,8 @@ if [ "$cluster_id" != "" ]; then
 fi
 
 set -x
-bx cs cluster-create --name $TEST_CLUSTER_NAME --zone $CLUSTER_LOCATION --public-vlan $ZONE_PUBLIC_VLAN  --private-vlan $ZONE_PRIVATE_VLAN --workers $PVG_BX_CLUSTER_WORKERS_COUNT --machine-type $PVG_BX_MACHINE_TYPE --kube-version $KUBE_VERSION
+
+ibmcloud ks cluster create $CLUSTER_TYPE --name $TEST_CLUSTER_NAME --zone $CLUSTER_LOCATION --public-vlan $ZONE_PUBLIC_VLAN  --private-vlan $ZONE_PRIVATE_VLAN --workers $PVG_BX_CLUSTER_WORKERS_COUNT --flavor $PVG_BX_MACHINE_TYPE --kube-version $KUBE_VERSION
 
 # Verify cluster is up and running
 echo "Checking the cluster for deployed state..."

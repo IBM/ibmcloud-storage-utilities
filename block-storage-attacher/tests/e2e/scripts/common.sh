@@ -117,19 +117,21 @@ function cluster_create {
     cluster_name=$2
     if [[ $cluster_type == "patrol" ]]; then
         ibmcloud ks cluster-create --name $cluster_name
+        ibmcloud ks cluster create $CLUSTER_TYPE --name $cluster_name 
     elif [[ $cluster_type == "cruiser" ]]; then
         machine_type=$3
         cluster_workers=$4
         eval PVG_CRUISER_PUBLIC_VLAN=\$${PVG_CLUSTER_LOCATION}_PVG_CRUISER_PUBLIC_VLAN
         eval PVG_CRUISER_PRIVATE_VLAN=\$${PVG_CLUSTER_LOCATION}_PVG_CRUISER_PRIVATE_VLAN
         if [[ -n $PVG_CLUSTER_KUBE_VERSION ]]; then
-	        ibmcloud ks  cluster-create --name $cluster_name --location $PVG_CLUSTER_LOCATION \
+	        ibmcloud ks  cluster create --name $cluster_name --location $PVG_CLUSTER_LOCATION \
 	            --public-vlan $PVG_CRUISER_PUBLIC_VLAN --private-vlan $PVG_CRUISER_PRIVATE_VLAN \
 	            --workers $cluster_workers --machine-type $machine_type --kube-version $PVG_CLUSTER_KUBE_VERSION
         else
-	        ibmcloud ks cluster-create --name $cluster_name --location $PVG_CLUSTER_LOCATION \
-	            --public-vlan $PVG_CRUISER_PUBLIC_VLAN --private-vlan $PVG_CRUISER_PRIVATE_VLAN \
-	            --workers $cluster_workers --machine-type $machine_type
+                 ibmcloud ks  cluster create --name $cluster_name --location $PVG_CLUSTER_LOCATION \
+                    --public-vlan $PVG_CRUISER_PUBLIC_VLAN --private-vlan $PVG_CRUISER_PRIVATE_VLAN \
+                    --workers $cluster_workers --machine-type $machine_type --kube-version $PVG_CLUSTER_KUBE_VERSION
+
         fi
     else
         echo "type must be set to one of 'patrol' or 'cruiser'"
