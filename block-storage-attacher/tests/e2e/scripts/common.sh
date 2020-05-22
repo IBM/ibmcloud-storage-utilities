@@ -124,14 +124,13 @@ function cluster_create {
         eval PVG_CRUISER_PUBLIC_VLAN=\$${PVG_CLUSTER_LOCATION}_PVG_CRUISER_PUBLIC_VLAN
         eval PVG_CRUISER_PRIVATE_VLAN=\$${PVG_CLUSTER_LOCATION}_PVG_CRUISER_PRIVATE_VLAN
         if [[ -n $PVG_CLUSTER_KUBE_VERSION ]]; then
-	        ibmcloud ks  cluster create --name $cluster_name --location $PVG_CLUSTER_LOCATION \
+	        ibmcloud ks  cluster create $CLUSTER_TYPE --name $cluster_name --zone $PVG_CLUSTER_LOCATION \
 	            --public-vlan $PVG_CRUISER_PUBLIC_VLAN --private-vlan $PVG_CRUISER_PRIVATE_VLAN \
-	            --workers $cluster_workers --machine-type $machine_type --kube-version $PVG_CLUSTER_KUBE_VERSION
+	            --workers $cluster_workers --flavor $machine_type --version $PVG_CLUSTER_KUBE_VERSION
         else
-                 ibmcloud ks  cluster create --name $cluster_name --location $PVG_CLUSTER_LOCATION \
+                ibmcloud ks  cluster create $CLUSTER_TYPE --name $cluster_name --zone $PVG_CLUSTER_LOCATION \
                     --public-vlan $PVG_CRUISER_PUBLIC_VLAN --private-vlan $PVG_CRUISER_PRIVATE_VLAN \
-                    --workers $cluster_workers --machine-type $machine_type --kube-version $PVG_CLUSTER_KUBE_VERSION
-
+                    --workers $cluster_workers --flavor $machine_type
         fi
     else
         echo "type must be set to one of 'patrol' or 'cruiser'"

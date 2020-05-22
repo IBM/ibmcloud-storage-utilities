@@ -44,7 +44,7 @@ function add_worker_pools_and_zones {
     local zones_array=( `bx cs zones |tail -n +3` )
     for zone in "${zones_array[@]}"
     do
-        bx cs worker-pool-create --name pool_$zone --cluster $1 --machine-type $PVG_BX_MACHINE_TYPE --size-per-zone  $PVG_BX_CLUSTER_WORKERS_COUNT
+        bx cs worker-pool-create --name pool_$zone --cluster $1 --flavor $PVG_BX_MACHINE_TYPE --size-per-zone  $PVG_BX_CLUSTER_WORKERS_COUNT
         public_zone=$(get_public_vlan $zone)
         private_zone=$(get_private_vlan $zone)
         bx cs zone-add --zone $zone --cluster $1 --worker-pools pool_$zone --public-vlan $public_zone --private-vlan $private_zone
