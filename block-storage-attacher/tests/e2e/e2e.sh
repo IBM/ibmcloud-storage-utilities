@@ -17,8 +17,31 @@ YAMLPATH="yamlgen.yaml"
 MKPVYAML="$SCRIPTS_FOLDER_PATH$MKPVYAML"
 YAMLPATH="$SCRIPTS_FOLDER_PATH$YAMLPATH"
 
+if [ "$PVG_CLUSTER_TYPE" == "classic" ]; then
 
-CLUSTERDETAILS="Region:$ARMADA_REGION \n Cluster Location:$PVG_CLUSTER_LOCATION \n Kube-Version:$PVG_CLUSTER_KUBE_VERSION \n"
+    if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
+       CLUSTERTYPE="ROKS Classic"
+    else
+       CLUSTERTYPE="IKS Classic"
+    fi
+elif [ "$PVG_CLUSTER_TYPE" == "vpc-classic" ]; then
+
+    if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
+       CLUSTERTYPE="ROKS VPC Gen1"
+    else
+       CLUSTERTYPE="IKS VPC Gen1"
+    fi
+else
+    if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
+       CLUSTERTYPE="ROKS VPC Gen2"
+    else
+       CLUSTERTYPE="IKS VPC Gen2"
+    fi
+fi
+
+
+
+CLUSTERDETAILS=" Cluster Type:$CLUSTERTYPE \n Region:$ARMADA_REGION \n Cluster Location:$PVG_CLUSTER_LOCATION \n Kube-Version:$PVG_CLUSTER_KUBE_VERSION \n"
 echo -e "$CLUSTERDETAILS" > $E2E_PATH/setupDetails.txt
 
 # Load common functions
@@ -69,8 +92,8 @@ if [[ -z "$cluster_id" && "$TEST_CLUSTER_CREATE" != "never" ]]; then
 	
 	# Run sniff tests against cluster
 	ibmcloud ks clusters
-	ibmcloud ks cluster-get $PVG_CLUSTER_CRUISER
-	ibmcloud ks workers $PVG_CLUSTER_CRUISER
+	ibmcloud ks cluster get --cluster $PVG_CLUSTER_CRUISER
+	ibmcloud ks workers --cluster $PVG_CLUSTER_CRUISER
 	
 	echo "Cluster creation is successful and ready to use"
 fi
@@ -125,9 +148,11 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
 	#make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
 	make  PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
         exitStatus=$?
+        ibmcloud ks cluster rm  --cluster $PVG_CLUSTER_CRUISER 
 fi
 
 echo "--- Cluster Details ---" >  $E2E_PATH/setupDetails.txt
+echo "$CLUSTERDETAILS" >> $E2E_PATH/setupDetails.txt
 echo "$CLUSTERDETAILS" >> $E2E_PATH/setupDetails.txt
 echo "${PLUGINDETAILS}" >> $E2E_PATH/setupDetails.txt
 echo "$CLUSTER_ID" >> $E2E_PATH/setupDetails.txt

@@ -62,7 +62,7 @@ function setKubeConfig {
 
     else
         echo "Generating Kube Config through 'ibmcloud ks cluster config $cluster_name' and exporting KUBECONFIG"
-        config_output=$(ibmcloud ks cluster config $cluster_name)
+        config_output=$(ibmcloud ks cluster config --cluster $cluster_name)
         echo $config_output
         configfile=$(echo $config_output | grep export | cut -d '=' -f 2)
         cat $configfile
@@ -116,7 +116,6 @@ function cluster_create {
     cluster_type=$1
     cluster_name=$2
     if [[ $cluster_type == "patrol" ]]; then
-        ibmcloud ks cluster-create --name $cluster_name
         ibmcloud ks cluster create $CLUSTER_TYPE --name $cluster_name 
     elif [[ $cluster_type == "cruiser" ]]; then
         machine_type=$3
@@ -169,7 +168,7 @@ function check_cluster_deleted {
             echo "$cluster_name ($cluster_id) failed to be deleted after 15 minutes. Exiting."
             slack_commentary "$cluster_name ($cluster_id) failed to be deleted after 15 minutes."
             # Show cluster workers state as it is helpful.
-            ibmcloud ks workers $cluster_name
+            ibmcloud ks workers --cluster $cluster_name
             exit 2
         fi
         echo "$cluster_name ($cluster_id) state == $state.  Sleeping 30 seconds"
@@ -212,7 +211,7 @@ function check_cluster_state {
             echo "$cluster_name ($cluster_id) failed to reach a valid state after 15 minutes. Exiting."
             slack_commentary "$cluster_name ($cluster_id) failed to reach a valid state after 15 minutes."
             # Show cluster workers state as it is helpful.
-            ibmcloud ks workers $cluster_name
+            ibmcloud ks workers --cluster $cluster_name
             exit 2
         fi
         echo "$cluster_name ($cluster_id) state == $state.  Sleeping 30 seconds"
@@ -239,14 +238,14 @@ function check_worker_state {
     echo "Waiting for $cluster_name workers to reach deployed state( $TIMEOUT minutes )..."
     slack_commentary "Waiting for $cluster_name workers to reach deployed state..."
     set +e
-    ibmcloud ks workers $cluster_name | grep $PVG_CLUSTER_LOCATION
+    ibmcloud ks workers --cluster $cluster_name | grep $PVG_CLUSTER_LOCATION
     set -e
 
     # Try for up to 90 minutes(default) for the workers to reach deployed state
     for ((i=1; i<=TIMEOUT; i++)); do
         oldifs="$IFS"
         IFS=$'\n'
-        workers=($(ibmcloud ks workers $cluster_name | grep $PVG_CLUSTER_LOCATION))
+        workers=($(ibmcloud ks workers --cluster $cluster_name | grep $PVG_CLUSTER_LOCATION))
         IFS="$oldifs"
         worker_cnt=${#workers[@]}
         # Inspect the state of each worker
@@ -277,7 +276,7 @@ function check_worker_state {
             # Else sleep 60 seconds
 
             # Ignore failures on this command call
-            ibmcloud ks workers $cluster_name || true
+            ibmcloud ks workers --cluster $cluster_name || true
             status_msg="$all_workers_good of $worker_cnt $cluster_name workers are in deployed state. Sleeping 60 seconds."
             echo "$status_msg"
             slack_commentary "$status_msg"
