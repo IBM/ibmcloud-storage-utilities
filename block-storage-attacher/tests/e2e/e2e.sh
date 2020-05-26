@@ -135,14 +135,12 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         #bx sl init -u   $PVG_SL_USERNAME  -p  $PVG_SL_API_KEY
         #bx cs init --host  $ARMADA_API_ENDPOINT
 	setKubeConfig $PVG_CLUSTER_CRUISER
-        if [[ $OPENSHIFT_INSTALL == "true" ]]; then
-          sed -i "s/cluster: ibmc-blockvolume-e2e-test/cluster: openshift-portworx-e2e               /"  $YAMLPATH 
-        fi
         export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
         addFullPathToCertsInKubeConfig
 	cat $KUBECONFIG
         echo "Bluemix COnfig"
         cat ~/.bluemix/config.json
+        sed -i "s/$OLD_CLUUSTER_NAME/$NEW_CLUSTER_NAME/" $MKPVYAML
         sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
         sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
 	#make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
