@@ -320,7 +320,7 @@ function rm_cluster {
     ibmcloud ks clusters
 
     for i in {1..3}; do
-        if ibmcloud ks cluster-rm $cluster_name -f; then
+        if ibmcloud ks cluster rm --cluster $cluster_name -f; then
             sleep 30
             # Remove old kubeconfig files aswell
             rm -rf $HOME/.bluemix/plugins/container-service/clusters/$cluster_name
