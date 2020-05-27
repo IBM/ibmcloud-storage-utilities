@@ -76,7 +76,7 @@ fi
 if [[ -z "$cluster_id" && "$TEST_CLUSTER_CREATE" != "never" ]]; then
 
 	# Create a cruiser
-	cruiser_create $PVG_CLUSTER_CRUISER u1c.2x4 1
+	cruiser_create $PVG_CLUSTER_CRUISER $PVG_CLUSTER_MACHINE_TYPE 1
 	
 	# Put a small delay to let things settle
 	sleep 30
