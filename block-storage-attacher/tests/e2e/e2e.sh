@@ -146,7 +146,7 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
 	#make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
 	make  PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
         exitStatus=$?
-        ibmcloud ks cluster rm  --cluster $PVG_CLUSTER_CRUISER 
+        ibmcloud ks cluster rm  --cluster $PVG_CLUSTER_CRUISER -f --force-delete-storage  
 fi
 
 echo "--- Cluster Details ---" >  $E2E_PATH/setupDetails.txt
