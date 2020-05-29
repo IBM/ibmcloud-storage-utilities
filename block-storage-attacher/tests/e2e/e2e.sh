@@ -17,8 +17,31 @@ YAMLPATH="yamlgen.yaml"
 MKPVYAML="$SCRIPTS_FOLDER_PATH$MKPVYAML"
 YAMLPATH="$SCRIPTS_FOLDER_PATH$YAMLPATH"
 
+if [ "$PVG_CLUSTER_TYPE" == "classic" ]; then
 
-CLUSTERDETAILS="Region:$ARMADA_REGION \n Cluster Location:$PVG_CLUSTER_LOCATION \n Kube-Version:$PVG_CLUSTER_KUBE_VERSION \n"
+    if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
+       CLUSTERTYPE="ROKS Classic"
+    else
+       CLUSTERTYPE="IKS Classic"
+    fi
+elif [ "$PVG_CLUSTER_TYPE" == "vpc-classic" ]; then
+
+    if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
+       CLUSTERTYPE="ROKS VPC Gen1"
+    else
+       CLUSTERTYPE="IKS VPC Gen1"
+    fi
+else
+    if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
+       CLUSTERTYPE="ROKS VPC Gen2"
+    else
+       CLUSTERTYPE="IKS VPC Gen2"
+    fi
+fi
+
+
+
+CLUSTERDETAILS=" Cluster Type:$CLUSTERTYPE \n Region:$ARMADA_REGION \n Cluster Location:$PVG_CLUSTER_LOCATION \n Kube-Version:$PVG_CLUSTER_KUBE_VERSION \n"
 echo -e "$CLUSTERDETAILS" > $E2E_PATH/setupDetails.txt
 
 # Load common functions
@@ -31,13 +54,13 @@ if [[ $TEST_BLUEMIX_LOGIN == "true" ]]; then
         echo "Bluemix Login DOne"
 	bx_login
         if [ $ARMADA_REGION == "us-south" ]; then
-          bx cr api $IMAGE_REGISTRY
+          ibmcloud ks  api $IMAGE_REGISTRY
         fi
-        bx cr login
+        ibmcloud cr login
 fi
 
 # Incase of cluster_create value is "ifNotFound", then use the existing cluster (if there is one)
-cluster_id=$(bx cs clusters | awk "/$PVG_CLUSTER_CRUISER/"'{print $2}')
+cluster_id=$(ibmcloud ks clusters | awk "/$PVG_CLUSTER_CRUISER/"'{print $2}')
 
 # incase of cluster_create "always", delete the PREV cluster (if any)
 if [[ -n "$cluster_id" && "$TEST_CLUSTER_CREATE" == "always" ]]; then
@@ -53,12 +76,12 @@ fi
 if [[ -z "$cluster_id" && "$TEST_CLUSTER_CREATE" != "never" ]]; then
 
 	# Create a cruiser
-	cruiser_create $PVG_CLUSTER_CRUISER u1c.2x4 1
+	cruiser_create $PVG_CLUSTER_CRUISER $PVG_CLUSTER_MACHINE_TYPE 1
 	
 	# Put a small delay to let things settle
 	sleep 30
 	
-	bx cs clusters
+        ibmcloud ks clusters	
 	
 	# Verify cluster is up and running
 	echo "Checking the cluster for deployed state..."
@@ -68,9 +91,9 @@ if [[ -z "$cluster_id" && "$TEST_CLUSTER_CREATE" != "never" ]]; then
 	check_worker_state $PVG_CLUSTER_CRUISER
 	
 	# Run sniff tests against cluster
-	bx cs clusters
-	bx cs cluster-get $PVG_CLUSTER_CRUISER
-	bx cs workers $PVG_CLUSTER_CRUISER
+	ibmcloud ks clusters
+	ibmcloud ks cluster get --cluster $PVG_CLUSTER_CRUISER
+	ibmcloud ks workers --cluster $PVG_CLUSTER_CRUISER
 	
 	echo "Cluster creation is successful and ready to use"
 fi
@@ -112,21 +135,21 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         #bx sl init -u   $PVG_SL_USERNAME  -p  $PVG_SL_API_KEY
         #bx cs init --host  $ARMADA_API_ENDPOINT
 	setKubeConfig $PVG_CLUSTER_CRUISER
-        if [[ $OPENSHIFT_INSTALL == "true" ]]; then
-          sed -i "s/cluster: ibmc-blockvolume-e2e-test/cluster: openshift-portworx-e2e               /"  $YAMLPATH 
-        fi
         export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
         addFullPathToCertsInKubeConfig
 	cat $KUBECONFIG
         echo "Bluemix COnfig"
         cat ~/.bluemix/config.json
+        sed -i "s/$OLD_CLUUSTER_NAME/$NEW_CLUSTER_NAME/" $YAMLPATH
         sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
         sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
 	make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
+	#make  PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
         exitStatus=$?
 fi
 
 echo "--- Cluster Details ---" >  $E2E_PATH/setupDetails.txt
+echo "$CLUSTERDETAILS" >> $E2E_PATH/setupDetails.txt
 echo "$CLUSTERDETAILS" >> $E2E_PATH/setupDetails.txt
 echo "${PLUGINDETAILS}" >> $E2E_PATH/setupDetails.txt
 echo "$CLUSTER_ID" >> $E2E_PATH/setupDetails.txt

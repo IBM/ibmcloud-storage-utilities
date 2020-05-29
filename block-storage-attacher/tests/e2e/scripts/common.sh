@@ -12,6 +12,7 @@ SCRIPTS_FOLDER_PATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage
 E2EPATH="src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/e2e-tests/"
 SCRIPTS_FOLDER_PATH="$GOPATH/$SCRIPTS_FOLDER_PATH"
 E2E_PATH="$GOPATH/$E2EPATH"
+bluemix_home="$BLUEMIX_HOME"
 
 
 export ISSUE_REPO="${DEFAULT_ISSUE_REPO}"
@@ -38,14 +39,35 @@ function setKubeConfig {
     fi
     set_issue_repo "armada-api"
 
+     bluemix_home="$BLUEMIX_HOME"
+    if [ -z ${BLUEMIX_HOME+x} ]; then
+        bluemix_home="$HOME"
+    fi
+
+
     # Get the kube config from the `bx` cli and export KUBECONFIG for
     # your current bash session
 
     cluster_name=$1
-    echo "Generating Kube Config through 'bx cs cluster-config $cluster_name --admin' and exporting KUBECONFIG"
-    configfile=$(bx cs cluster-config $cluster_name --admin | grep ^export | cut -d '=' -f 2)
-    cat $configfile
-    export KUBECONFIG=$configfile
+    cluster_id=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $2}')
+    echo "Generating Kube Config through 'ibmcloud ks  cluster config $cluster_name --admin' and exporting KUBECONFIG"
+    ibmcloud ks  cluster config --cluster $cluster_name --admin
+    kube_config_location="$bluemix_home/.bluemix/plugins/container-service/clusters/$cluster_name-$cluster_id-admin/kube-config*.yml" 
+    echo "$kube_config_location"
+    ls -l $kube_config_location
+  
+     if ls $kube_config_location 1> /dev/null 2>&1; then
+        echo "Kube Config File has already been Generated through 'ibmcloud ks cluster config $cluster_name'. exporting KUBECONFIG"
+        export KUBECONFIG="$(echo $kube_config_location)"
+
+    else
+        echo "Generating Kube Config through 'ibmcloud ks cluster config $cluster_name' and exporting KUBECONFIG"
+        config_output=$(ibmcloud ks cluster config --cluster $cluster_name)
+        echo $config_output
+        configfile=$(echo $config_output | grep export | cut -d '=' -f 2)
+        cat $configfile
+        export KUBECONFIG=$configfile
+    fi
 
     test $KUBECONFIG
     set_issue_repo ${DEFAULT_ISSUE_REPO}
@@ -94,20 +116,20 @@ function cluster_create {
     cluster_type=$1
     cluster_name=$2
     if [[ $cluster_type == "patrol" ]]; then
-        bx cs cluster-create --name $cluster_name
+        ibmcloud ks cluster create $CLUSTER_TYPE --name $cluster_name 
     elif [[ $cluster_type == "cruiser" ]]; then
         machine_type=$3
         cluster_workers=$4
         eval PVG_CRUISER_PUBLIC_VLAN=\$${PVG_CLUSTER_LOCATION}_PVG_CRUISER_PUBLIC_VLAN
         eval PVG_CRUISER_PRIVATE_VLAN=\$${PVG_CLUSTER_LOCATION}_PVG_CRUISER_PRIVATE_VLAN
         if [[ -n $PVG_CLUSTER_KUBE_VERSION ]]; then
-	        bx cs cluster-create --name $cluster_name --location $PVG_CLUSTER_LOCATION \
+	        ibmcloud ks  cluster create $CLUSTER_TYPE --name $cluster_name --zone $PVG_CLUSTER_LOCATION \
 	            --public-vlan $PVG_CRUISER_PUBLIC_VLAN --private-vlan $PVG_CRUISER_PRIVATE_VLAN \
-	            --workers $cluster_workers --machine-type $machine_type --kube-version $PVG_CLUSTER_KUBE_VERSION
+	            --workers $cluster_workers --flavor $machine_type --version $PVG_CLUSTER_KUBE_VERSION
         else
-	        bx cs cluster-create --name $cluster_name --location $PVG_CLUSTER_LOCATION \
-	            --public-vlan $PVG_CRUISER_PUBLIC_VLAN --private-vlan $PVG_CRUISER_PRIVATE_VLAN \
-	            --workers $cluster_workers --machine-type $machine_type
+                ibmcloud ks  cluster create $CLUSTER_TYPE --name $cluster_name --zone $PVG_CLUSTER_LOCATION \
+                    --public-vlan $PVG_CRUISER_PUBLIC_VLAN --private-vlan $PVG_CRUISER_PRIVATE_VLAN \
+                    --workers $cluster_workers --flavor $machine_type
         fi
     else
         echo "type must be set to one of 'patrol' or 'cruiser'"
@@ -126,15 +148,15 @@ function check_cluster_deleted {
     set_issue_repo "armada-deploy"
     set +x
     cluster_name=$1
-    cluster_id=$(bx cs clusters | awk "/$cluster_name/"'{print $2}')
+    cluster_id=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $2}')
     echo "Waiting for $cluster_name ($cluster_id) to be deleted..."
     while true; do
-        cluster_count=$(bx cs clusters | grep $cluster_name | wc -l | xargs)
+        cluster_count=$(ibmcloud ks clusters | grep $cluster_name | wc -l | xargs)
         echo "$cluster_count instances still exist"
         if [[ $cluster_count -eq 0 ]]; then
             break;
         fi
-        state=$(bx cs clusters | awk "/$cluster_name/"'{print $3}')
+        state=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $3}')
 
         attempts=$((attempts+1))
         if [[ $state == "*_failed" ]]; then
@@ -146,14 +168,14 @@ function check_cluster_deleted {
             echo "$cluster_name ($cluster_id) failed to be deleted after 15 minutes. Exiting."
             slack_commentary "$cluster_name ($cluster_id) failed to be deleted after 15 minutes."
             # Show cluster workers state as it is helpful.
-            bx cs workers $cluster_name
+            ibmcloud ks workers --cluster $cluster_name
             exit 2
         fi
         echo "$cluster_name ($cluster_id) state == $state.  Sleeping 30 seconds"
         slack_commentary "$cluster_name ($cluster_id) state = $state. Sleeping 30 seconds."
         sleep 30
     done
-    bx cs clusters
+    ibmcloud ks clusters
     set -x
     set_issue_repo ${DEFAULT_ISSUE_REPO}
 }
@@ -168,10 +190,10 @@ function check_cluster_state {
     set_issue_repo "armada-deploy"
     set +x
     cluster_name=$1
-    cluster_id=$(bx cs clusters | awk "/$cluster_name/"'{print $2}')
+    cluster_id=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $2}')
     echo "Waiting for $cluster_name ($cluster_id) to reach deployed state..."
     while true; do
-        state=$(bx cs clusters | awk "/$cluster_name/"'{print $3}')
+        state=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $3}')
         attempts=$((attempts+1))
         if [[ $state == "*_failed" ]]; then
             echo "$cluster_name ($cluster_id) entered a $state state. Exiting"
@@ -189,14 +211,14 @@ function check_cluster_state {
             echo "$cluster_name ($cluster_id) failed to reach a valid state after 15 minutes. Exiting."
             slack_commentary "$cluster_name ($cluster_id) failed to reach a valid state after 15 minutes."
             # Show cluster workers state as it is helpful.
-            bx cs workers $cluster_name
+            ibmcloud ks workers --cluster $cluster_name
             exit 2
         fi
         echo "$cluster_name ($cluster_id) state == $state.  Sleeping 30 seconds"
         slack_commentary "$cluster_name ($cluster_id) state = $state. Sleeping 30 seconds."
         sleep 30
     done
-    bx cs clusters
+    ibmcloud ks clusters
     set -x
     set_issue_repo ${DEFAULT_ISSUE_REPO}
 }
@@ -216,14 +238,14 @@ function check_worker_state {
     echo "Waiting for $cluster_name workers to reach deployed state( $TIMEOUT minutes )..."
     slack_commentary "Waiting for $cluster_name workers to reach deployed state..."
     set +e
-    bx cs workers $cluster_name | grep $PVG_CLUSTER_LOCATION
+    ibmcloud ks workers --cluster $cluster_name | grep $PVG_CLUSTER_LOCATION
     set -e
 
     # Try for up to 90 minutes(default) for the workers to reach deployed state
     for ((i=1; i<=TIMEOUT; i++)); do
         oldifs="$IFS"
         IFS=$'\n'
-        workers=($(bx cs workers $cluster_name | grep $PVG_CLUSTER_LOCATION))
+        workers=($(ibmcloud ks workers --cluster $cluster_name | grep $PVG_CLUSTER_LOCATION))
         IFS="$oldifs"
         worker_cnt=${#workers[@]}
         # Inspect the state of each worker
@@ -254,7 +276,7 @@ function check_worker_state {
             # Else sleep 60 seconds
 
             # Ignore failures on this command call
-            bx cs workers $cluster_name || true
+            ibmcloud ks workers --cluster $cluster_name || true
             status_msg="$all_workers_good of $worker_cnt $cluster_name workers are in deployed state. Sleeping 60 seconds."
             echo "$status_msg"
             slack_commentary "$status_msg"
@@ -264,11 +286,11 @@ function check_worker_state {
     done
 
     # Ignore failures on this command call
-    bx cs workers $cluster_name || true
+    ibmcloud ks workers $cluster_name || true
     if [[ $worker_cnt -ne $all_workers_good ]]; then
         # 30 minutes have passed and not all workers reached deployed state
         # so return as failed.
-        workers=($(bx cs workers $cluster_name | grep $PVG_CLUSTER_LOCATION))
+        workers=($(ibmcloud ks workers $cluster_name | grep $PVG_CLUSTER_LOCATION))
         for worker in "${workers[@]}"; do
             state=$(echo $worker | awk '{print $5}')
             if [[ $state == "bootstrapping" ]]; then
@@ -294,14 +316,15 @@ function rm_cluster {
     fi
     removed=1
     cluster_name=$1
+    cluster_id=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $2}')
 
-    bx cs clusters
+    ibmcloud ks clusters
 
     for i in {1..3}; do
-        if bx cs cluster-rm $cluster_name -f; then
+        if ibmcloud ks cluster rm --cluster $cluster_name -f --force-delete-storage; then
             sleep 30
             # Remove old kubeconfig files aswell
-            rm -rf $HOME/.bluemix/plugins/container-service/clusters/$cluster_name
+            rm -rf $HOME/.bluemix/plugins/container-service/clusters/$cluster_name-$cluster_id-admin
             removed=0
             break
         fi
@@ -343,10 +366,10 @@ function docker_reg_login {
 
 function bx_login {
     echo 'Logging Into BlueMix Containers service'
-    bx --version
-    bx plugin list
+    ibmcloud --version
+    ibmcloud plugin list
 
-    bx login -a $PVG_BX_DASH_A -u $PVG_BX_USER -p $PVG_BX_PWD -c $PVG_BX_DASH_C -r $ARMADA_REGION
+    ibmcloud login -a $PVG_BX_DASH_A -u $PVG_BX_USER -p $PVG_BX_PWD -c $PVG_BX_DASH_C -r $ARMADA_REGION
     #bx cs init --host $ARMADA_API_ENDPOINT
 
 }
@@ -487,12 +510,12 @@ function install_blockvolume_plugin {
     echo "Installing helm chart ibm-block-storage-attacher .."
 	# INSTALL HELM TILLER (Attempt again, if already installed)
 	echo "Initialize tiller AND Wait till running"
-	helm init --force-upgrade
-	check_pod_state "tiller-deploy"
+	#helm init --force-upgrade
+	#check_pod_state "tiller-deploy"
 
 	# INSTALL/UPGRADE HELM CHART
 	helm_values_override="--set image.repository=$IMAGE_REGISTRY/$USER_NAMESPACE/$PLUGIN_IMAGE --set image.build=$PLUGIN_BUILD"
-	helm_install_cmd="helm install $helm_values_override $HELM_CHART"
+	helm_install_cmd="helm install blockattach $helm_values_override $HELM_CHART"
 
 	# CHECK FOR UPGRADE
 
@@ -526,13 +549,13 @@ function install_portworx_plugin {
     echo "Installing helm chart portworx plugin  .."
 	# INSTALL HELM TILLER (Attempt again, if already installed)
 	echo "Initialize tiller AND Wait till running" >> $E2E_PATH/debug.txt
-	helm init --force-upgrade
-	check_pod_state "tiller-deploy"
+	#helm init --force-upgrade
+	#check_pod_state "tiller-deploy"
 	
         # INSTALL/UPGRADE HELM CHART
 	helm_values_override="--set kvdb=$ETCD_SET1,clusterName=$(uuidgen),usedrivesAndPartitions=true,usefileSystemDrive=true,imageVersion=$PORTWORXVER,secretType=$IBMSECRETTYPE,drives=none,etcd.secret=$PXETCDSECRET"
         echo "Helm installtion start" >> $E2E_PATH/debug.txt
-	helm_install_cmd="helm install $helm_values_override $PORTWORX_HELM_CHART --name portworx"
+	helm_install_cmd="helm install portworx $helm_values_override $PORTWORX_HELM_CHART"
         echo "Helm installtion done" >> $E2E_PATH/debug.txt
         
 	# CHECK FOR UPGRADE

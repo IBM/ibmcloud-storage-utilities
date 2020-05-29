@@ -62,7 +62,7 @@ function set_cluster_config_and_run_tests {
     make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-storage-e2e-test
 }
 
-bx cs cluster-create --name $TEST_CLUSTER_NAME --zone $CLUSTER_LOCATION --public-vlan $ZONE_PUBLIC_VLAN  --private-vlan $ZONE_PRIVATE_VLAN --workers $PVG_BX_CLUSTER_WORKERS_COUNT --machine-type $PVG_BX_MACHINE_TYPE --kube-version $KUBE_VERSION
+ ibmcloud ks cluster create $CLUSTER_TYPE --name $TEST_CLUSTER_NAME --zone $CLUSTER_LOCATION --public-vlan $ZONE_PUBLIC_VLAN  --private-vlan $ZONE_PRIVATE_VLAN --workers $PVG_BX_CLUSTER_WORKERS_COUNT --flavor $PVG_BX_MACHINE_TYPE --kube-version $KUBE_VERSION
 
 kube_versions=(1.9 1.10)
 set_cluster_config_and_run_tests
