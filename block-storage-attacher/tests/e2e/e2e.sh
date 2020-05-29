@@ -143,10 +143,9 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
         sed -i "s/$OLD_CLUUSTER_NAME/$NEW_CLUSTER_NAME/" $MKPVYAML
         sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
         sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
-	#make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
-	make  PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
+	make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
+	#make  PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
         exitStatus=$?
-        ibmcloud ks cluster rm  --cluster $PVG_CLUSTER_CRUISER -f --force-delete-storage  
 fi
 
 echo "--- Cluster Details ---" >  $E2E_PATH/setupDetails.txt

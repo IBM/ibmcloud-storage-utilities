@@ -316,14 +316,15 @@ function rm_cluster {
     fi
     removed=1
     cluster_name=$1
+    cluster_id=$(ibmcloud ks clusters | awk "/$cluster_name/"'{print $2}')
 
     ibmcloud ks clusters
 
     for i in {1..3}; do
-        if ibmcloud ks cluster rm --cluster $cluster_name -f; then
+        if ibmcloud ks cluster rm --cluster $cluster_name -f --force-delete-storage; then
             sleep 30
             # Remove old kubeconfig files aswell
-            rm -rf $HOME/.bluemix/plugins/container-service/clusters/$cluster_name
+            rm -rf $HOME/.bluemix/plugins/container-service/clusters/$cluster_name-$cluster_id-admin
             removed=0
             break
         fi
