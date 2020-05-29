@@ -140,7 +140,7 @@ if [[ $TEST_CODE_BUILD == "true" ]]; then
 	cat $KUBECONFIG
         echo "Bluemix COnfig"
         cat ~/.bluemix/config.json
-        sed -i "s/$OLD_CLUUSTER_NAME/$NEW_CLUSTER_NAME/" $MKPVYAML
+        sed -i "s/$OLD_CLUUSTER_NAME/$NEW_CLUSTER_NAME/" $YAMLPATH
         sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
         sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
 	make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
