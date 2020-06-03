@@ -16,11 +16,13 @@ MKPVYAML="mkpvyaml"
 YAMLPATH="yamlgen.yaml"
 MKPVYAML="$SCRIPTS_FOLDER_PATH$MKPVYAML"
 YAMLPATH="$SCRIPTS_FOLDER_PATH$YAMLPATH"
+NOOF_WORKERS=1
 
 if [ "$PVG_CLUSTER_TYPE" == "classic" ]; then
 
     if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
        CLUSTERTYPE="ROKS Classic"
+       NOOF_WORKERS=2
     else
        CLUSTERTYPE="IKS Classic"
     fi
@@ -28,12 +30,14 @@ elif [ "$PVG_CLUSTER_TYPE" == "vpc-classic" ]; then
 
     if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
        CLUSTERTYPE="ROKS VPC Gen1"
+       NOOF_WORKERS=2
     else
        CLUSTERTYPE="IKS VPC Gen1"
     fi
 else
     if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
        CLUSTERTYPE="ROKS VPC Gen2"
+       NOOF_WORKERS=2
     else
        CLUSTERTYPE="IKS VPC Gen2"
     fi
@@ -76,7 +80,7 @@ fi
 if [[ -z "$cluster_id" && "$TEST_CLUSTER_CREATE" != "never" ]]; then
 
 	# Create a cruiser
-	cruiser_create $PVG_CLUSTER_CRUISER $PVG_CLUSTER_MACHINE_TYPE 1
+	cruiser_create $PVG_CLUSTER_CRUISER $PVG_CLUSTER_MACHINE_TYPE $NOOF_WORKERS
 	
 	# Put a small delay to let things settle
 	sleep 30
