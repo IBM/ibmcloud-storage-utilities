@@ -58,7 +58,7 @@ if [[ $TEST_BLUEMIX_LOGIN == "true" ]]; then
         echo "Bluemix Login DOne"
 	bx_login
         if [ $ARMADA_REGION == "us-south" ]; then
-          ibmcloud ks  api $IMAGE_REGISTRY
+          ibmcloud ks  api --insecure $IMAGE_REGISTRY
         fi
         ibmcloud cr login
 fi
