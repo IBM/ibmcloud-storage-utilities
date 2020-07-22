@@ -57,9 +57,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/scripts
 if [[ $TEST_BLUEMIX_LOGIN == "true" ]]; then
         echo "Bluemix Login DOne"
 	bx_login
-    #    if [ $ARMADA_REGION == "us-south" ]; then
+        if [ $ARMADA_REGION == "us-south" ]; then
           #ibmcloud ks  api --insecure $IMAGE_REGISTRY
-    #    fi
+          echo "Us South"
+        fi
         ibmcloud cr login
 fi
 
