@@ -36,9 +36,9 @@ pvg-build-e2e-tests-image: verify-gofmt
 armada-portworx-e2e-test: verify-gofmt
 	@echo $(PVG_PHASE)
 ifeq ("$(PVG_PHASE)","armada-prestage")
-	go test ./e2e-tests -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -ginkgo.failFast true -ginkgo.focus "PRESTAGE" --kubeconfig=${KUBECONFIGPATH} -timeout 90m
+	go test ./e2e-tests -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -ginkgo.failFast true -ginkgo.focus "PRESTAGE" --kubeconfig=${KUBECONFIGPATH} 
 else
-	go test ./e2e-tests -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -ginkgo.failFast true --kubeconfig=${KUBECONFIGPATH} -timeout 90m
+	go test ./e2e-tests -v -p 1 -ginkgo.progress -ginkgo.v -ginkgo.trace -ginkgo.failFast true --kubeconfig=${KUBECONFIGPATH} 
 endif
 .PHONY: armada-portworx-e2e-test
 
