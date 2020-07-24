@@ -200,7 +200,7 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 		modifiedlines := []string{}
 		modifiedlines = append(modifiedlines, lines...)
 		output := strings.Join(modifiedlines, "\n")
-		if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0644); err != nil {
+		if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0600); err != nil {
 			lgr.Error("Could not write to iscsi-block-volume.conf file")
 			return false, fmt.Errorf("Could not write to iscsi-block-volume.conf file. Error: %v", err)
 		}
@@ -535,7 +535,7 @@ func ModifyDetachConfig(pv *v1.PersistentVolume) {
 		modifiedlines := []string{}
 		modifiedlines = append(modifiedlines, lines...)
 		output := strings.Join(modifiedlines, "\n")
-		if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0644); err != nil {
+		if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0600); err != nil {
 			lgr.Error("Could not write to iscsi-block-volume.conf file")
 			return
 		}
