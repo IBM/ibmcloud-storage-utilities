@@ -42,7 +42,6 @@ var accessMode v1.PersistentVolumeAccessMode
 
 func init() {
 	// Initialise default access modes to be used PVC creation
-        testing.Init()
 	switch accessModeEnv := os.Getenv("PVC_ACCESS_MODE"); accessModeEnv {
 	case "RWO":
 		accessMode = v1.ReadWriteOnce
