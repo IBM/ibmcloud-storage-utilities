@@ -1,5 +1,4 @@
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.2-349
-#FROM registry.ng.bluemix.net/armada-master/ibm-storage-ubi8:8.2-349
 # Default values
 ARG git_commit_id=unknown
 ARG git_remote_url=unknown
