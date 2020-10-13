@@ -11,9 +11,6 @@ LABEL git-remote-url=${git_remote_url}
 LABEL build-date=${build_date}
 LABEL jenkins-build-number=${jenkins_build_number}
 
-#RUN apk add --update
-#RUN apk upgrade
-#RUN microdnf add --update
 RUN microdnf update 
 RUN mkdir -p /home/armada-storage/
 RUN mkdir -p /host
