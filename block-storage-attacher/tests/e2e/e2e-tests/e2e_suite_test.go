@@ -19,6 +19,7 @@ import (
 )
 
 func init() {
+        testing.Init()
 	framework.ViperizeFlags()
 }
 

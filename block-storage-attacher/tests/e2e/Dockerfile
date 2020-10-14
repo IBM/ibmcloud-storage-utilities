@@ -1,4 +1,4 @@
-FROM alpine:3.5
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.2-349
 # Create Directory to hold all testing binaries
 RUN mkdir /pvg-tests
 
