@@ -20,7 +20,6 @@ ADD images/iscsi-block-volume.conf /home/armada-storage
 ADD images/ibmc-block-attacher.service /home/armada-storage
 ADD images/run.sh /home/armada-storage
 RUN chown -R 1000:1000 /var/log
-USER 1000:1000
 RUN chmod 775 /home/armada-storage/systemutil
 RUN chmod 775 /home/armada-storage/run.sh
 RUN chmod 775 /home/armada-storage/iscsi-attach.sh
