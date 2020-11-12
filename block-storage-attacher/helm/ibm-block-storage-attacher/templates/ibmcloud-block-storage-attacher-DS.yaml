@@ -61,6 +61,11 @@ spec:
             name: host-lib
           - mountPath: /host/var/log
             name: host-var-log
+        securityContext:
+            privileged: false
+            allowPrivilegeEscalation: false
+            runAsNonRoot: false
+            runAsUser: 0
         livenessProbe:
             exec:
               command:
