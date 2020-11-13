@@ -45,7 +45,7 @@ When you set up the Helm server in your cluster, you can use the Helm chart prov
      <pre>ibmcloud ks cluster config --cluster &lt;cluster_name_or_id&gt;</pre>
    - Copy and paste the command that is displayed in your terminal to set the KUBECONFIG environment variable.
      <pre>export KUBECONFIG=/Users/&lt;user_name&gt;/.bluemix/plugins/container-service/clusters/&lt;cluster_name&gt;/kube-config-prod-dal10-<cluster_name>.yml</pre>
-3. Initialize Helm to set up a Helm server in your cluster(For Helm 2 only).
+3. Initialize Helm to set up a Helm server in your cluster (For Helm 2 only).
    <pre>helm init</pre>
 
    Example output:
@@ -154,9 +154,9 @@ If you want to upgrade your existing IBM Cloud Block Storage Attacher chart to t
    ```
 
 2. Upgrade the IBM Cloud Block Storage Attacher to latest.
-   <pre>helm upgrade --force --recreate-pods &lt;helm_chart_name&gt; iks-charts/ibm-block-storage-attacher</pre> (For Helm 2)
+   <pre>helm upgrade --force --recreate-pods &lt;helm_chart_name&gt; iks-charts/ibm-block-storage-attacher (For helm 2)</pre> 
 
-   <pre>helm upgrade --force  &lt;helm_chart_name&gt; iks-charts/ibm-block-storage-attacher</pre>(For Helm 3)
+   <pre>helm upgrade --force  &lt;helm_chart_name&gt; iks-charts/ibm-block-storage-attacher (For Helm 3)</pre>
 
 ## Removing the IBM Cloud Block Storage Attacher from your cluster
 If you do not want to use IBM Cloud Block Storage for your cluster, you can uninstall the Helm chart.
@@ -171,9 +171,9 @@ If you do not want to use IBM Cloud Block Storage for your cluster, you can unin
    ```
 
 2. Delete the IBM Cloud Block Storage Attacher by removing the Helm chart.
-   <pre>helm delete &lt;helm_chart_name&gt; --purge</pre> (For helm 2)
+   <pre>helm delete &lt;helm_chart_name&gt; --purge (For Helm 2)</pre> 
 
-   <pre>helm delete &lt;helm_chart_name&gt;</pre> (For Helm 3)
+   <pre>helm delete &lt;helm_chart_name&gt; (For Helm 3)</pre> 
 
 ## What's next?
 Now that you installed the IBM Cloud Block Storage Attacher, you can start to [automatically add block storage](https://cloud.ibm.com/docs/containers?topic=containers-utilities#attach_block) and [attach the block storage](https://cloud.ibm.com/docs/containers?topic=containers-utilities#automatic_block) to all your worker nodes.
