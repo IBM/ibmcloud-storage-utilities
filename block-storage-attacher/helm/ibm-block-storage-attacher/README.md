@@ -45,7 +45,7 @@ When you set up the Helm server in your cluster, you can use the Helm chart prov
      <pre>ibmcloud ks cluster config --cluster &lt;cluster_name_or_id&gt;</pre>
    - Copy and paste the command that is displayed in your terminal to set the KUBECONFIG environment variable.
      <pre>export KUBECONFIG=/Users/&lt;user_name&gt;/.bluemix/plugins/container-service/clusters/&lt;cluster_name&gt;/kube-config-prod-dal10-<cluster_name>.yml</pre>
-3. Initialize Helm to set up a Helm server in your cluster (For Helm 2 only).
+3. Initialize Helm to set up a Helm server in your cluster (**For Helm 2 only**).
    <pre>helm init</pre>
 
    Example output:
@@ -75,9 +75,9 @@ Now that the Helm server is up and running in your cluster, install the IBM Clou
    <pre>helm repo add iks-charts https://icr.io/helm/iks-charts</pre>
    <pre>helm repo update</pre>
 2. Install the IBM Cloud Block Storage Attacher. When you install the attacher, a daemon set, RBAC roles, and pre-defined storage classes are created in your cluster.
-   <pre>helm install --name ibm-block-storage-attacher iks-charts/ibm-block-storage-attacher (For Helm 2)</pre>
+   <pre>helm install --name ibm-block-storage-attacher iks-charts/ibm-block-storage-attacher (**For Helm 2**)</pre>
 
-   <pre>helm install  ibm-block-storage-attacher iks-charts/ibm-block-storage-attacher (For Helm 3)</pre>
+   <pre>helm install ibm-block-storage-attacher iks-charts/ibm-block-storage-attacher (**For Helm 3**)</pre>
 
    Example output:
    ```
@@ -127,19 +127,19 @@ Now that the Helm server is up and running in your cluster, install the IBM Clou
 5. Repeat the steps for all clusters where you want to attach block storage to your worker nodes.
 
 ## Custom configuration settings
-The Helm chart has the following Values that can be overriden using the `helm install --set` parameter.
+The Helm chart has the following Values that can be overridden using the `helm install --set` parameter.
 
 Example:
 ```
 helm install --set image.repository=icr.io/ibm/ibmcloud-block-storage-attacher iks-charts/ibm-block-storage-attacher (For Helm 2)
 
-helm install helm_char_name --set image.repository=icr.io/ibm/ibmcloud-block-storage-attacher iks-charts/ibm-block-storage-attacher (For Helm 3)
+helm install <helm_chart_name> --set image.repository=icr.io/ibm/ibmcloud-block-storage-attacher iks-charts/ibm-block-storage-attacher (For Helm 3)
 ```
-| Value                  | Description                             | Default                                                  |
-|------------------------|-----------------------------------------|----------------------------------------------------------|
-| image.repository       | The image repository of attacher        | icr.io/ibm/ibmcloud-block-storage-attacher |
-| image.build            | The attacher driver build tag           | latest                                                   |
-| image.pullPolicy       | Image Pull Policy                       | Always                                                   |
+| Value                  | Description                      | Default                                    |
+|------------------------|----------------------------------|--------------------------------------------|
+| image.repository       | The image repository of attacher | icr.io/ibm/ibmcloud-block-storage-attacher |
+| image.build            | The attacher driver build tag    |                                            |
+| image.pullPolicy       | Image Pull Policy                | Always                                     |
 
 ## Updating the IBM Cloud Block Storage Attacher on your cluster
 If you want to upgrade your existing IBM Cloud Block Storage Attacher chart to the latest version, you can update the Helm chart.
@@ -154,9 +154,9 @@ If you want to upgrade your existing IBM Cloud Block Storage Attacher chart to t
    ```
 
 2. Upgrade the IBM Cloud Block Storage Attacher to latest.
-   <pre>helm upgrade --force --recreate-pods &lt;helm_chart_name&gt; iks-charts/ibm-block-storage-attacher (For helm 2)</pre> 
+   <pre>helm upgrade --force --recreate-pods &lt;helm_chart_name&gt; iks-charts/ibm-block-storage-attacher (**For helm 2**)</pre>
 
-   <pre>helm upgrade --force  &lt;helm_chart_name&gt; iks-charts/ibm-block-storage-attacher (For Helm 3)</pre>
+   <pre>helm upgrade --force  &lt;helm_chart_name&gt; iks-charts/ibm-block-storage-attacher (**For Helm 3**)</pre>
 
 ## Removing the IBM Cloud Block Storage Attacher from your cluster
 If you do not want to use IBM Cloud Block Storage for your cluster, you can uninstall the Helm chart.
@@ -171,9 +171,9 @@ If you do not want to use IBM Cloud Block Storage for your cluster, you can unin
    ```
 
 2. Delete the IBM Cloud Block Storage Attacher by removing the Helm chart.
-   <pre>helm delete &lt;helm_chart_name&gt; --purge (For Helm 2)</pre> 
+   <pre>helm delete &lt;helm_chart_name&gt; --purge (**For Helm 2**)</pre>
 
-   <pre>helm delete &lt;helm_chart_name&gt; (For Helm 3)</pre> 
+   <pre>helm delete &lt;helm_chart_name&gt; (**For Helm 3**)</pre>
 
 ## What's next?
 Now that you installed the IBM Cloud Block Storage Attacher, you can start to [automatically add block storage](https://cloud.ibm.com/docs/containers?topic=containers-utilities#attach_block) and [attach the block storage](https://cloud.ibm.com/docs/containers?topic=containers-utilities#automatic_block) to all your worker nodes.
