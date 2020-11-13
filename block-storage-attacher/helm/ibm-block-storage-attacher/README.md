@@ -75,9 +75,9 @@ Now that the Helm server is up and running in your cluster, install the IBM Clou
    <pre>helm repo add iks-charts https://icr.io/helm/iks-charts</pre>
    <pre>helm repo update</pre>
 2. Install the IBM Cloud Block Storage Attacher. When you install the attacher, a daemon set, RBAC roles, and pre-defined storage classes are created in your cluster.
-   <pre>helm install --name ibm-block-storage-attacher iks-charts/ibm-block-storage-attacher</pre> (For Helm 2)
+   <pre>helm install --name ibm-block-storage-attacher iks-charts/ibm-block-storage-attacher (For Helm 2)</pre>
 
-   <pre>helm install  ibm-block-storage-attacher iks-charts/ibm-block-storage-attacher</pre> (For Helm 3)
+   <pre>helm install  ibm-block-storage-attacher iks-charts/ibm-block-storage-attacher (For Helm 3)</pre>
 
    Example output:
    ```
