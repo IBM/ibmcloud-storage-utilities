@@ -1,40 +1,40 @@
 # What's new
-
 This chart has below new features added
-
-- Changing the API version of Daemon set to support kubernetes 1.16.5
-
+- Upgrading to use UBI base image and security changes for non-root user
 
 # Breaking Changes
 None
 
-
 # Fixes
-
-Please refer v1.1.4 changelog section.
-
+Please refer v2.0.0 changelog section.
 
 # Documentation
-<Link of IBM block attacher needs to be added here>
-
+https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_attacher
 
 # Prerequisites
-
 1. IKS cluster with kube version 1.10 or higher
-
 
 # Version History
 
-| Chart | Date | Kubernetes Required | Breaking Changes | Details                    |
-| ----- | ---------- | ------------ | ---------------- | --------------------------- |
-| 1.1.4 | 2020-02-19 | >=1.10       | None             | Refer Changelog v1.1.4      |
-| 1.1.3 | 2019-11-25 | >=1.10       | None             | Refer Changelog v1.1.3      |
-| 1.1.2 | 2019-09-12 | >=1.10       | None             | Refer Changelog v1.1.2      |
-| 1.1.1 | 2019-08-28 | >=1.10       | None             | Refer Changelog v1.1.1      |
-| 1.1.0 | 2019-06-20 | >=1.10       | None             | Refer Changelog v1.1.0      |
-| 1.0.2 | 2019-03-19 | >=1.10       | None             | Refer Changelog v1.0.2      |
-| 1.0.1 | 2019-01-23 | >=1.10       | None             | Refer Changelog v1.0.1      |
-| 1.0.0 | 2018-12-05 | >=1.10       | None             | Initial chart version       |
+| Chart | Date       | Kubernetes Required | Breaking Changes | Details                     |
+| ----- | ---------- | ------------------- | ---------------- | --------------------------- |
+| 2.0.0 | 2020-11-13 | >=1.10              | None             | Refer Changelog v2.0.0      |
+| 1.1.4 | 2020-02-19 | >=1.10              | None             | Refer Changelog v1.1.4      |
+| 1.1.3 | 2019-11-25 | >=1.10              | None             | Refer Changelog v1.1.3      |
+| 1.1.2 | 2019-09-12 | >=1.10              | None             | Refer Changelog v1.1.2      |
+| 1.1.1 | 2019-08-28 | >=1.10              | None             | Refer Changelog v1.1.1      |
+| 1.1.0 | 2019-06-20 | >=1.10              | None             | Refer Changelog v1.1.0      |
+| 1.0.2 | 2019-03-19 | >=1.10              | None             | Refer Changelog v1.0.2      |
+| 1.0.1 | 2019-01-23 | >=1.10              | None             | Refer Changelog v1.0.1      |
+| 1.0.0 | 2018-12-05 | >=1.10              | None             | Initial chart version       |
+
+## [v2.0.0] - 2020-11-13
+Upgrading to use UBI base image and security changes for non-root user
+
+### Changelog
+- We use UBI base image
+- We made changes for security context for non-root user_name
+- Use GO Lang 1.15.2 version
 
 ## [v1.1.4] - 2020-02-19
 Changing the API version of Daemon set to support kubernetes 1.16.5

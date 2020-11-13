@@ -6,6 +6,7 @@ keywords:
 - amd64
 - Storage
 - Beta
+- OpenShift
 maintainers:
 - name: akgunjal
   email: akgunjal@in.ibm.com
@@ -14,6 +15,6 @@ maintainers:
 - name: sikhlaqu
   email: sikhlaqu@in.ibm.com
 name: ibm-block-storage-attacher
-version: 1.1.4
+version: 2.0.0
 tillerVersion: ">=2.10.0"
 kubeVersion: ">=1.10"
