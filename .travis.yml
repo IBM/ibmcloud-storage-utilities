@@ -27,7 +27,7 @@ before_install:
   - sudo apt-get install bc
 
 before_script:
-  - make block-storage-attacher/deps
+#  - make block-storage-attacher/deps
   - go get github.com/pierrre/gotestcover
 
 script:
@@ -38,4 +38,3 @@ after_success:
   - ${TRAVIS_HOME}/gopath/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/publishCoverage.sh || travis_terminate 1;
 after_failure:
   - ${TRAVIS_HOME}/gopath/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/scripts/handleFailure.sh
-
