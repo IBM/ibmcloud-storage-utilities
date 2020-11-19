@@ -3,7 +3,7 @@ package watcher
 import (
 
 	//"encoding/json"
-	//"github.com/coreos/go-systemd/dbus"
+	//"github.com/coreos/go-systemd/v22/dbus"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/logger"
 	"go.uber.org/zap"

@@ -1,9 +1,10 @@
 package watcher
 
 import (
+	"context"
 	"fmt"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
-	"github.com/coreos/go-systemd/dbus"
+	"github.com/coreos/go-systemd/v22/dbus"
 	"go.uber.org/zap"
 	"golang.org/x/time/rate"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -64,10 +65,10 @@ func WatchPersistentVolumes(client kubernetes.Interface, log zap.Logger) {
 
 	volumeSource := &cache.ListWatch{
 		ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
-			return clientset.CoreV1().PersistentVolumes().List(options)
+			return clientset.CoreV1().PersistentVolumes().List(context.TODO(), options)
 		},
 		WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
-			return clientset.CoreV1().PersistentVolumes().Watch(options)
+			return clientset.CoreV1().PersistentVolumes().Watch(context.TODO(), options)
 		},
 	}
 	_, controller := cache.NewInformer(volumeSource, &v1.PersistentVolume{}, time.Second*0,
@@ -146,7 +147,7 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 	defer mutex.Unlock()
 
 	//Check if the PV exists using Kubernetes apiserver
-	_, volErr := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
+	_, volErr := clientset.CoreV1().PersistentVolumes().Get(context.TODO(), pv.Name, metav1.GetOptions{})
 	if volErr != nil {
 		lgr.Warn("Failed to fetch PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(volErr))
 		return false, fmt.Errorf("Error while fetching persistent volume %s. Error: %v", pv.Name, volErr)
@@ -212,7 +213,7 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 		time.Sleep(5 * time.Second)
 
 		//Fetch the latest version of the PV from Kubernetes apiserver
-		latestPV, pvErr := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
+		latestPV, pvErr := clientset.CoreV1().PersistentVolumes().Get(context.TODO(), pv.Name, metav1.GetOptions{})
 		if pvErr != nil {
 			lgr.Warn("Failed to fetch PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(pvErr))
 			continue
@@ -223,7 +224,7 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 		//patchData := "{\"metadata\": {\"annotations\":" + string(jsonAnnotations) + "}}"
 		//pv, err = clientset.CoreV1().PersistentVolumes().Patch(pv.ObjectMeta.Name, types.MergePatchType, []byte(patchData))
 		latestPV.Annotations[ATTACHSTATUS] = STATUS_ATTACHING
-		_, pvErr = clientset.CoreV1().PersistentVolumes().Update(latestPV)
+		_, pvErr = clientset.CoreV1().PersistentVolumes().Update(context.TODO(), latestPV, metav1.UpdateOptions{})
 		if pvErr == nil {
 			pvUpdated = true
 			break
@@ -362,7 +363,7 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 			time.Sleep(5 * time.Second)
 
 			//Fetch the latest version of the PV from Kubernetes apiserver
-			latestPV, pvErr := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
+			latestPV, pvErr := clientset.CoreV1().PersistentVolumes().Get(context.TODO(), pv.Name, metav1.GetOptions{})
 			if pvErr != nil {
 				lgr.Warn("Failed to fetch PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(pvErr))
 				continue
@@ -371,7 +372,7 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 			latestPV.Annotations[DMPATH] = devicepath
 			latestPV.Annotations[MULTIPATH] = mpath
 			latestPV.Annotations[ATTACHSTATUS] = STATUS_ATTACHED
-			_, pvErr = clientset.CoreV1().PersistentVolumes().Update(latestPV)
+			_, pvErr = clientset.CoreV1().PersistentVolumes().Update(context.TODO(), latestPV, metav1.UpdateOptions{})
 			if pvErr == nil {
 				pvUpdated = true
 				break
@@ -388,13 +389,13 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 		time.Sleep(5 * time.Second)
 
 		//Fetch the latest version of the PV from Kubernetes apiserver
-		latestPV, pvErr := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
+		latestPV, pvErr := clientset.CoreV1().PersistentVolumes().Get(context.TODO(), pv.Name, metav1.GetOptions{})
 		if pvErr != nil {
 			lgr.Warn("Failed to fetch PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(pvErr))
 			continue
 		}
 		latestPV.Annotations[ATTACHSTATUS] = STATUS_FAILED + " --- Issue in iscsi attach. Retrying..."
-		_, pvErr = clientset.CoreV1().PersistentVolumes().Update(latestPV)
+		_, pvErr = clientset.CoreV1().PersistentVolumes().Update(context.TODO(), latestPV, metav1.UpdateOptions{})
 		if pvErr == nil {
 			break
 		}
@@ -447,13 +448,13 @@ func Validate(pv *v1.PersistentVolume) (bool, error) {
 			time.Sleep(5 * time.Second)
 
 			//Fetch the latest version of the PV from Kubernetes apiserver
-			latestPV, err := clientset.CoreV1().PersistentVolumes().Get(pv.Name, metav1.GetOptions{})
+			latestPV, err := clientset.CoreV1().PersistentVolumes().Get(context.TODO(), pv.Name, metav1.GetOptions{})
 			if err != nil {
 				lgr.Warn("Failed to fetch PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(err))
 				continue
 			}
 			latestPV.Annotations[ATTACHSTATUS] = INVALID_PARAMS
-			_, err = clientset.CoreV1().PersistentVolumes().Update(latestPV)
+			_, err = clientset.CoreV1().PersistentVolumes().Update(context.TODO(), latestPV, metav1.UpdateOptions{})
 			if err == nil {
 				pvUpdated = true
 				break
