@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
-	"github.com/opencontainers/runc/libcontainer/selinux"
+	"github.com/opencontainers/selinux/go-selinux"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/pkg/api"
 	"k8s.io/client-go/pkg/api/resource"
@@ -307,10 +307,10 @@ func StartProvisionerDeployment(c clientset.Interface, ns string) (*v1.Service, 
 
 	tmpDir, err := ioutil.TempDir("", ProvisionerPodName+"-deployment")
 	Expect(err).NotTo(HaveOccurred())
-	if selinux.SelinuxEnabled() {
-		fcon, err := selinux.Getfilecon(tmpDir)
-		Expect(err).NotTo(HaveOccurred())
-		context := selinux.NewContext(fcon)
+	if selinux.GetEnabled() {
+		//fcon, err := selinux.Getfilecon(tmpDir)
+		//Expect(err).NotTo(HaveOccurred())
+		context := selinux.NewContext(ProvisionerPodName+"-deployment") //(fcon)
 		context["type"] = "svirt_sandbox_file_t"
 		err = selinux.Chcon(tmpDir, context.Get(), false)
 		Expect(err).NotTo(HaveOccurred())

@@ -1,3 +1,6 @@
+GOPRIVATE := github.ibm.com
+export
+
 IMAGE = ibmcloud-block-storage-attacher
 GOPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /cmd | grep -v /tests )
 GOFILES=$(shell find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./tests/e2e/*")
@@ -8,6 +11,7 @@ GIT_REMOTE_URL="$(shell git config --get remote.origin.url 2>/dev/null)"
 BUILD_DATE="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")"
 # Jenkins vars. Set to `unknown` if the variable is not yet defined
 BUILD_NUMBER?=unknown
+OSS_FILES := Dockerfile go.mod
 
 .PHONY: all
 all: deps gosec fmt vet buildgo test buildimage
@@ -18,7 +22,7 @@ driver: deps gosec buildimage
 .PHONY: deps
 deps:
 	echo "Installing dependencies ..."
-	glide install --strip-vendor
+#	glide install --strip-vendor
 	go get github.com/pierrre/gotestcover
 	go get -v github.com/securego/gosec/cmd/gosec
 
@@ -67,3 +71,7 @@ build-systemutil:
 	chmod 755 ./systemutil
 	mv systemutil images/
 
+.PHONY: oss
+oss:
+	go get github.ibm.com/alchemy-containers/armada-opensource-lib@v0.4
+	go run github.ibm.com/alchemy-containers/armada-opensource-lib/cmd/makeoss ${OSS_FILES}
