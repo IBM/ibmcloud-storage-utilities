@@ -1,8 +1,8 @@
 package watcher
 
 import (
-	"fmt"
 	"context"
+	"fmt"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
 	"github.com/coreos/go-systemd/v22/dbus"
 	"go.uber.org/zap"
