@@ -10,12 +10,6 @@
 shopt -s expand_aliases
 alias ic="ibmcloud"
 
-
-CLUSTER=$1
-CLUSTER_CHECK=$(kubectl -n kube-system get cm cluster-info -o jsonpath='{.data.cluster-config\.json}' | jq -r '.name')
-echo "${CLUSTER_CHECK}"
-[[ -z "$CLUSTER_CHECK" ]] && { echo "Unable to determine cluster name, Either the cluser does not exist or kube config is not set."; exit; }
-
 if ! which jq &>/dev/null
 then
         echo "Jq is not installed... exiting"
@@ -28,6 +22,13 @@ then
         echo "IBM Cloud is not installed. Please install ibmcloud..... exiting"
         exit 1
 fi
+
+
+CLUSTER=$1
+CLUSTER_CHECK=$(kubectl -n kube-system get cm cluster-info -o jsonpath='{.data.cluster-config\.json}' | jq -r '.name')
+echo "${CLUSTER_CHECK}"
+[[ -z "$CLUSTER_CHECK" ]] && { echo "Unable to determine cluster name, Either the cluser does not exist or kube config is not set."; exit; }
+
 
 echo "Gathering information for cluster ${CLUSTER} ..."
 CLUSTER_ID=$(ic cs cluster get --cluster ${CLUSTER} --json | jq -r '.id')

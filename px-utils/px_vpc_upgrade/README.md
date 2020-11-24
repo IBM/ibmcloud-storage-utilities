@@ -1,4 +1,4 @@
-# px-cleanup
+# px-vpc-upgrade   upgrade/replace
 
 The PX VPC Upgrade script  upgrade or replace the worker node sequentailly. It will accept the workerids or worker-pool as input
 
