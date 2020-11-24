@@ -1,4 +1,4 @@
 image:
   repository: icr.io/ibm/ibmcloud-block-storage-attacher
-  build: 174
+  build: xxxIMAGE_TAGxxx
   pullPolicy: Always
