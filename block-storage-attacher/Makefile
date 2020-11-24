@@ -11,6 +11,7 @@ GIT_REMOTE_URL="$(shell git config --get remote.origin.url 2>/dev/null)"
 BUILD_DATE="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")"
 # Jenkins vars. Set to `unknown` if the variable is not yet defined
 BUILD_NUMBER?=unknown
+TRAVIS_BUILD_NUMBER ?= unknown
 OSS_FILES := Dockerfile go.mod
 
 .PHONY: all
@@ -57,7 +58,10 @@ buildimage: build-systemutil
         --build-arg git_commit_id=${GIT_COMMIT_SHA} \
         --build-arg git_remote_url=${GIT_REMOTE_URL} \
         --build-arg build_date=${BUILD_DATE} \
-        --build-arg jenkins_build_number=${BUILD_NUMBER} \
+#        --build-arg jenkins_build_number=${BUILD_NUMBER} \
+				--build-arg travis_build_number=${TRAVIS_BUILD_NUMBER} \
+				--build-arg REPO_SOURCE_URL=${REPO_SOURCE_URL} \
+				--build-arg BUILD_URL=${BUILD_URL} \
 	-t $(IMAGE):$(VERSION) -f Dockerfile .
 
 

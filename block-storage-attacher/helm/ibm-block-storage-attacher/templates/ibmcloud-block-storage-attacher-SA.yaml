@@ -9,6 +9,9 @@ metadata:
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+  annotations:
+    razee.io/source-url: xxxREPO_SOURCE_URLxxx
+    razee.io/build-url: xxxBUILD_URLxxx
 imagePullSecrets:
   - name: bluemix-default-secret
   - name: bluemix-default-secret-regional
@@ -30,6 +33,9 @@ metadata:
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+  annotations:
+    razee.io/source-url: xxxREPO_SOURCE_URLxxx
+    razee.io/build-url: xxxBUILD_URLxxx
 rules:
 - apiGroups: [""]
   resources: ["persistentvolumes"]
@@ -45,6 +51,9 @@ metadata:
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+  annotations:
+    razee.io/source-url: xxxREPO_SOURCE_URLxxx
+    razee.io/build-url: xxxBUILD_URLxxx
 subjects:
 - kind: ServiceAccount
   name: {{ .Chart.Name }}
