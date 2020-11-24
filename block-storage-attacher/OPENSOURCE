@@ -1,4 +1,4 @@
-https://hub.docker.com/_/registry.access.redhat.com/ubi8/ubi-minimal,8.3-201
+https://hub.docker.com/_/wcp-alchemy-containers-team-access-redhat-docker-remote.artifactory.swg-devops.com/ubi8/ubi-minimal,8.3-201
 github.com/BurntSushi/toml,v0.3.1
 github.com/blang/semver,v3.5.1+incompatible
 github.com/coreos/go-systemd/v22,v22.1.0
