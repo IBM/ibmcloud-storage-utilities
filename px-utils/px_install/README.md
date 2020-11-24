@@ -13,7 +13,7 @@ Prerequisites
 Once the cluster config is set run the scirpt  
 
 
-sudo ./px_install.sh  clustename
+sudo ./px_install.sh  clustername
 
 
 
