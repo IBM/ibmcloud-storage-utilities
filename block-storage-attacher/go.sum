@@ -564,6 +564,8 @@ github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.ibm.com/alchemy-containers/armada-findmod v0.0.1/go.mod h1:V2kc8oi7X7YAmu5x/JU1AIZeLRRTzFUHuuw85kO8nBE=
 github.ibm.com/alchemy-containers/armada-opensource-lib v0.3.4/go.mod h1:NUS+lLiX1P5Y0RbnCNDW6tR/W8MuSPI2aiiKRH4DJq0=
+github.ibm.com/alchemy-containers/armada-opensource-lib v0.4.4 h1:NasHh4q77kxOKQD9C39zHQHDDP9Tc0hpu1X9QKpVB+c=
+github.ibm.com/alchemy-containers/armada-opensource-lib v0.4.4/go.mod h1:WpqsR4uRTZYK8/2drNp8aNsrR8fBVaNeWMhXfxeQizM=
 github.ibm.com/alchemy-containers/go-build-tools v0.1.18 h1:tIinHKPmtmtckc9ajLXjwdam9W1FoI/RXJqI81W/6CY=
 github.ibm.com/alchemy-containers/go-build-tools v0.1.18/go.mod h1:xHbWCqzugZasmbkPabOFAUhdp5bQIIhg+0dddFCIBB0=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
