@@ -6,12 +6,15 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/coreos/go-systemd/v22 v22.1.0
-	github.com/onsi/ginkgo v1.11.0
-	github.com/onsi/gomega v1.7.0
+	github.com/onsi/ginkgo v1.12.0
+	github.com/onsi/gomega v1.9.0
 	github.com/opencontainers/selinux v1.6.0
+	github.com/pierrre/gotestcover v0.0.0-20160517101806-924dca7d15f0 // indirect
 	github.com/satori/go.uuid v1.2.0
+	github.com/securego/gosec v0.0.0-20200401082031-e946c8c39989 // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.4.0
+	github.ibm.com/alchemy-containers/go-build-tools v0.1.18 // indirect
 	go.uber.org/zap v1.14.0
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
 	k8s.io/api v0.19.2
