@@ -90,7 +90,7 @@ SLEEP_TIME=60
    while [ $repeat -lt $LIMIT ] && [ "$ACTUALSTATE" != "$DESIREDSTATE" ]; do
       ACTUALSTATE=$(ic cs worker get --cluster   $CLUSTER  --worker $worker_id --json  | jq -r .lifecycle.actualState)
       DESIREDSTATE=$(ic cs worker get --cluster   $CLUSTER  --worker $worker_id --json  | jq -r .lifecycle.desiredState)
-      worker_ip=$(ic cs worker get --cluster   $CLUSTER  --worker $worker_id --json  | jq -r .[] | .ipAddress)
+      worker_ip=$(ic cs worker get --cluster   $CLUSTER  --worker $worker_id --json  | jq -r '.networkInterfaces[].ipAddress')
       if [[ $ACTUALSTATE == "Deployed" ]]; then
             echo "New worker Upgrade/Replace  is done and All worker nodes are in ready state...."
             if [ ! -z "${px_label_check}" ]; then
