@@ -1,6 +1,6 @@
 FROM golang:1.15.5
 
-ARG GOPROXY=off
+#ARG GOPROXY=off
 
 WORKDIR /go/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
 ADD . /go/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
