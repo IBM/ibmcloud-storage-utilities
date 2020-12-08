@@ -14,8 +14,6 @@ require (
 	github.com/securego/gosec v0.0.0-20200401082031-e946c8c39989 // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.4.0
-	github.ibm.com/alchemy-containers/armada-opensource-lib v0.4.4 // indirect
-	github.ibm.com/alchemy-containers/go-build-tools v0.1.18 // indirect
 	go.uber.org/zap v1.14.0
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
 	k8s.io/api v0.19.2

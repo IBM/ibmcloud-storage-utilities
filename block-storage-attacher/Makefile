@@ -26,7 +26,6 @@ deps:
 #	glide install --strip-vendor
 	go get github.com/pierrre/gotestcover
 	go get -v github.com/securego/gosec/cmd/gosec
-	go get github.ibm.com/alchemy-containers/go-build-tools@v0.1.18
 
 .PHONY: fmt
 fmt:
@@ -55,7 +54,7 @@ coverage:
 
 .PHONY: buildimage
 buildimage: build-systemutil
-	go run github.ibm.com/alchemy-containers/go-build-tools/cmd/goproxy -docker-build -- \
+	#go run github.ibm.com/alchemy-containers/go-build-tools/cmd/goproxy -docker-build -- 
 		docker build \
 			--build-arg git_commit_id=${GIT_COMMIT_SHA} \
 			--build-arg git_remote_url=${GIT_REMOTE_URL} \
@@ -69,8 +68,8 @@ buildimage: build-systemutil
 .PHONY: build-systemutil
 build-systemutil:
 	#Build executables like block-attacher and system util GO binaries
-	go mod download
-	go run github.ibm.com/alchemy-containers/go-build-tools/cmd/goproxy -docker-build -- \
+	#go mod download
+	#go run github.ibm.com/alchemy-containers/go-build-tools/cmd/goproxy -docker-build -- \
 		docker build -t common-lib-builder --pull -f Dockerfile.builder .
 	docker run common-lib-builder /bin/true
 	docker cp `docker ps -q -n=1`:/go/bin/systemutil ./systemutil
