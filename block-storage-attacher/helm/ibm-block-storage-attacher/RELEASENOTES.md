@@ -1,12 +1,12 @@
 # What's new
 This chart has below new features added
-- Upgrading to use UBI base image and security changes for non-root user
+- FS Cloud changes and update GO Lang
 
 # Breaking Changes
 None
 
 # Fixes
-Please refer v2.0.0 changelog section.
+Please refer v2.0.1 changelog section.
 
 # Documentation
 https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_attacher
@@ -16,17 +16,25 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
 
 # Version History
 
-| Chart | Date       | Kubernetes Required | Breaking Changes | Details                     |
-| ----- | ---------- | ------------------- | ---------------- | --------------------------- |
-| 2.0.0 | 2020-11-13 | >=1.10              | None             | Refer Changelog v2.0.0      |
-| 1.1.4 | 2020-02-19 | >=1.10              | None             | Refer Changelog v1.1.4      |
-| 1.1.3 | 2019-11-25 | >=1.10              | None             | Refer Changelog v1.1.3      |
-| 1.1.2 | 2019-09-12 | >=1.10              | None             | Refer Changelog v1.1.2      |
-| 1.1.1 | 2019-08-28 | >=1.10              | None             | Refer Changelog v1.1.1      |
-| 1.1.0 | 2019-06-20 | >=1.10              | None             | Refer Changelog v1.1.0      |
-| 1.0.2 | 2019-03-19 | >=1.10              | None             | Refer Changelog v1.0.2      |
-| 1.0.1 | 2019-01-23 | >=1.10              | None             | Refer Changelog v1.0.1      |
-| 1.0.0 | 2018-12-05 | >=1.10              | None             | Initial chart version       |
+| Chart  | Date       | Kubernetes Required | Breaking Changes | Details                     |
+| -----  | ---------- | ------------------- | ---------------- | --------------------------- |
+| v2.0.1 | 2020-12-09 | >=1.10              | None             | Refer Changelog v2.0.1      |
+| 2.0.0  | 2020-11-13 | >=1.10              | None             | Refer Changelog v2.0.0      |
+| 1.1.4  | 2020-02-19 | >=1.10              | None             | Refer Changelog v1.1.4      |
+| 1.1.3  | 2019-11-25 | >=1.10              | None             | Refer Changelog v1.1.3      |
+| 1.1.2  | 2019-09-12 | >=1.10              | None             | Refer Changelog v1.1.2      |
+| 1.1.1  | 2019-08-28 | >=1.10              | None             | Refer Changelog v1.1.1      |
+| 1.1.0  | 2019-06-20 | >=1.10              | None             | Refer Changelog v1.1.0      |
+| 1.0.2  | 2019-03-19 | >=1.10              | None             | Refer Changelog v1.0.2      |
+| 1.0.1  | 2019-01-23 | >=1.10              | None             | Refer Changelog v1.0.1      |
+| 1.0.0  | 2018-12-05 | >=1.10              | None             | Initial chart version       |
+
+## [v2.0.1] - 2020-12-09
+FS Cloud changes and update GO Lang
+
+### Changelog
+- Artifactory, image signing and linking resource
+- Use GO Lang 1.15.5 version
 
 ## [v2.0.0] - 2020-11-13
 Upgrading to use UBI base image and security changes for non-root user
