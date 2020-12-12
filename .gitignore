@@ -1,0 +1,6 @@
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+*.html
+
+/dependency-check/*.json
+/dependency-check/logfile
