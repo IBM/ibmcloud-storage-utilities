@@ -54,7 +54,7 @@ coverage:
 
 .PHONY: buildimage
 buildimage: build-systemutil
-	#go run github.ibm.com/alchemy-containers/go-build-tools/cmd/goproxy -docker-build -- 
+	#go run github.ibm.com/alchemy-containers/go-build-tools/cmd/goproxy -docker-build --
 		docker build \
 			--build-arg git_commit_id=${GIT_COMMIT_SHA} \
 			--build-arg git_remote_url=${GIT_REMOTE_URL} \
@@ -81,3 +81,18 @@ build-systemutil:
 oss:
 	go get github.ibm.com/alchemy-containers/armada-opensource-lib@v0.4
 	go run github.ibm.com/alchemy-containers/armada-opensource-lib/cmd/makeoss ${OSS_FILES}
+
+.PHONY: runanalyzedeps
+runanalyzedeps:
+	docker build --rm --build-arg ARTIFACTORY_API_KEY="${ARTIFACTORY_API_KEY}"  -t armada/analyze-deps -f Dockerfile.dependencycheck .
+	docker run -v `pwd`/dependency-check:/results armada/analyze-deps
+
+.PHONY: analyzedeps
+analyzedeps:
+	/tmp/dependency-check/bin/dependency-check.sh --enableExperimental --log /results/logfile --out /results --disableAssembly \
+		--suppress /src/dependency-check/suppression-file.xml --format JSON --prettyPrint --failOnCVSS 0 --scan /src
+
+.PHONY: showanalyzedeps
+showanalyzedeps:
+	grep "VULNERABILITY FOUND" dependency-check/logfile;
+	cat dependency-check/dependency-check-report.json |jq '.dependencies[] | select(.vulnerabilities | length>0)';
