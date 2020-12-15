@@ -84,7 +84,7 @@ oss:
 
 .PHONY: runanalyzedeps
 runanalyzedeps:
-	docker build --rm --build-arg ARTIFACTORY_API_KEY="${ARTIFACTORY_API_KEY}"  -t armada/analyze-deps -f Dockerfile.dependencycheck .
+	@docker build --rm --build-arg ARTIFACTORY_API_KEY="${ARTIFACTORY_API_KEY}"  -t armada/analyze-deps -f Dockerfile.dependencycheck .
 	docker run -v `pwd`/dependency-check:/results armada/analyze-deps
 
 .PHONY: analyzedeps
