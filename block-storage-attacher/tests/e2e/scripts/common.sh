@@ -507,6 +507,7 @@ function install_blockvolume_plugin {
         echo "helm chart not found. Hence exiting"
         exit 1
     fi
+        git version
 	PLUGIN_BUILD=$(git ls-remote --tags --sort=committerdate | grep -o 'v.*' | sort -r | head -1)
 	RELEASE_TAG=$PLUGIN_BUILD
 	CLONE_PATH=$GOPATH
