@@ -506,11 +506,12 @@ function install_blockvolume_plugin {
 	if [ -z $HELM_CHART ]; then
         echo "helm chart not found. Hence exiting"
         exit 1
-	RELEASE_TAG=v2.0.1_59
-	CLONE_PATH=$GOPATH
-	git clone -b ${RELEASE_TAG}  "git@github.ibm.com:alchemy-containers/block-storage-attacher.git" $CLONE_PATH
-	HELM_BLOCKATTCHER_PATH=$CLONE_PATH/block-storage-attacher/manifests/${RELEASE_TAG}/helm/ibm-block-storage-attacher
     fi
+	PLUGIN_BUILD=$(git ls-remote --tags --sort=committerdate | grep -o 'v.*' | sort -r | head -1)
+	RELEASE_TAG=$PLUGIN_BUILD
+	CLONE_PATH=$GOPATH
+	git clone -b ${RELEASE_TAG}  "https://github.com/IBM/ibmcloud-storage-utilities.git" $CLONE_PATH
+	HELM_BLOCKATTCHER_PATH=$CLONE_PATH/block-storage-attacher/manifests/${RELEASE_TAG}/helm/ibm-block-storage-attacher
     echo "Installing helm chart ibm-block-storage-attacher .."
 	# INSTALL HELM TILLER (Attempt again, if already installed)
 	echo "Initialize tiller AND Wait till running"
