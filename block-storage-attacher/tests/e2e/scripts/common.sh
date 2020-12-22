@@ -507,6 +507,11 @@ function install_blockvolume_plugin {
         echo "helm chart not found. Hence exiting"
         exit 1
     fi
+	PLUGIN_BUILD=$(git ls-remote --tags  | grep -o 'v.*' | sort -r | head -1)
+        RELEASE_TAG=$(git ls-remote --tags  git@github.ibm.com:alchemy-containers/block-storage-attacher.git| grep -o 'v.*' | sort -r | head -1)
+	CLONE_PATH=$GOPATH/helm
+	git clone -b ${RELEASE_TAG}  "git@github.ibm.com:alchemy-containers/block-storage-attacher.git" $CLONE_PATH
+	HELM_BLOCKATTCHER_PATH=$CLONE_PATH/manifests/${RELEASE_TAG}/helm/ibm-block-storage-attacher
     echo "Installing helm chart ibm-block-storage-attacher .."
 	# INSTALL HELM TILLER (Attempt again, if already installed)
 	echo "Initialize tiller AND Wait till running"
@@ -515,7 +520,7 @@ function install_blockvolume_plugin {
 
 	# INSTALL/UPGRADE HELM CHART
 	helm_values_override="--set image.repository=$IMAGE_REGISTRY/$USER_NAMESPACE/$PLUGIN_IMAGE --set image.build=$PLUGIN_BUILD"
-	helm_install_cmd="helm install blockattach $helm_values_override $HELM_CHART"
+	helm_install_cmd="helm install blockattach $helm_values_override $HELM_BLOCKATTCHER_PATH"
 
 	# CHECK FOR UPGRADE
 
