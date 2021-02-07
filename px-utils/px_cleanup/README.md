@@ -1,6 +1,11 @@
 # px-cleanup
 
-The PX Cleanup script  works in the following way.
+The PX cleanup script does the following
+
+- Removes Portworx from the cluster
+- Removes the portworx helm release
+- Removes the portworx IBM Cloud service from catalog
+
 
 When uninstalling Portworx from cluster, There are  2  options:
 
@@ -14,9 +19,12 @@ Stop Portworx and remove the Kubernetes specs and completely wipe the data.
 
 Prerequisites
 
-1) Set the cluster config using following command
+*   Helm version 3.0 or later.
 
-  export KUBECONFIG="Path to the config yaml file"
+
+### Installing the Helm client on your local machine
+Follow the instructions in the Helm documentation to [install the Helm client](https://docs.helm.sh/using_helm/#installing-helm) on your local machine. The Helm client is needed to execute Helm commands against your Helm server in your cluster.
+
 
 
 Once the cluster config is set run the scirpt  
