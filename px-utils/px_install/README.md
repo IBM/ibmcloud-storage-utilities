@@ -10,7 +10,7 @@ The PX  Intall  script  intall the portworx service in the cluster and create th
 Once the cluster config is set run the scirpt  
 
 
-sudo ./px_install.sh  clustername
+sudo ./px_install.sh  clustername 
 
 
 
