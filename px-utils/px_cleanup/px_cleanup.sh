@@ -18,35 +18,6 @@ then
         exit 1
 fi
 
-waitforportworxpodsdelete() {
-DELETED=0
-LIMIT=20
-SLEEP_TIME=30
-DESIRED=$(kubectl get ds/portworx -n kube-system -o json | jq .status.desiredNumberScheduled)
-repeat=0
-
-while [ $repeat -lt $LIMIT ] && [ $DESIRED -ne $DELETED ]; do
-    DELETED=$(kubectl get pods -n kube-system -l name=portworx --field-selector status.phase=Delete -o json | jq '.items | length')
-    if [ $DESIRED -eq $DELETED ]; then
-        echo "(Attempt $i of $LIMIT) Portworx pods: Desired $DESIRED, Running $DELETED"
-    else
-        echo "(Attempt $i of $LIMIT) Portworx pods: Desired $DESIRED, Running $DELETED, sleeping $SLEEP_TIME"
-        sleep $SLEEP_TIME
-    fi
-    repeat=$(( $repeat + 1 ))
-done
-echo "All the pods moved to running state"
-}
-
-
-rmpxservice () {
-
-	kubectl label nodes --all px/enabled=remove --overwrite
-	waitforportworxpodsdelete
-	VER=$(kubectl version --short | awk -Fv '/Server Version: /{print $3}')
-	kubectl delete -f "https://install.portworx.com?ctl=true&kbver=$VER"
-	kubectl label nodes --all px/enabled-
-}
 
 
 
@@ -89,7 +60,7 @@ CLUSTER_NAME=$(kubectl -n kube-system get cm cluster-info -o jsonpath='{.data.cl
       else
         if ! ask "The operation will delete Portworx components and metadata from the cluster. The operation is irreversible and will lead to DATA LOSS. Do you want to continue?" N; then
           logmessage "The operation will delete Portworx components and metadata from the cluster.The data will not be wiped out fromm the voluems..."
-          rmpxservice 
+          bash `pwd`/px-wipe.sh | bash -s -- --skipmetadata 
        else
         logmessage "The operation will delete Portworx components and metadata and the data on the volumes..."
 	bash `pwd`/px-wipe.sh -f 
