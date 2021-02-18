@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Adds portworx to a cluster using etcd as the kvdb database and optionally allows you to add
-# volumes to worker nodes (vpc).
+# Adds portworx to a cluster using etcd as the kvdb database. 
+# 
 #
 # Note: Currently only existing etcd services are supported.  If you don't have an etcd service
 #       instance, create one before running this tool.
@@ -36,13 +36,6 @@ CLUSTER_ID=$(ic cs cluster get --cluster ${CLUSTER} --json | jq -r '.id')
 
 APIKEY_NAME="pxtmpapikey"
 
-#create-attach-volumes-workers () {
-
- #     WORKER_IDS=$(ic cs workers --cluster $CLUSTER  --json | jq -r '.[] | .id')
- #     for id in ${WORKER_IDS}
- #     do
-#	   IFS='-' read -r -a WORKER_VALS <<< "$id"
-#	   zone=$(ic cs worker get --worker $id --cluster $CLUSTER --json | jq -r .location)
 
 
 px_svc_name=$(ic resource service-instances --service-name portworx --output json | jq -r --arg CLUSTERNAME $CLUSTER '.[]|select((.parameters.clusters==$CLUSTERNAME)) | .name')
@@ -51,10 +44,6 @@ px_svc_name=$(ic resource service-instances --service-name portworx --output jso
 read -p "About to install portworx on cluster $CLUSTER. Enter y to continue: " continue
 [[ ! "y" = "$continue" ]] && exit
 
-#read -p "Add volumes to worker nodes?  Enter y for yes: " add_vols
-#if [[ "y" = "$add_vols" ]]; then
-#  create-attach-volumes-workers 
-#fi
 
 echo "Gathering information for portworx service..."
 px_region=$(ic cs cluster get --cluster ${CLUSTER} --json | jq -r '.region')
@@ -135,6 +124,6 @@ parms=$(jq -n --arg cl "$CLUSTER" \
               --arg pxcluster "$px_cluster_name" \
               --arg etcd_ep $ep \
               --arg portworx_version "2.5.7" \
-              '{apikey: $apikey,cluster_name: $pxcluster,clusters: $cl,internal_kvdb: "external",etcd_endpoint: $etcd_ep,etcd_secret: "px-etcd-certs",secret_type: "k8s",portworx_version: "2.5.7"}')
+              '{apikey: $apikey,cluster_name: $pxcluster,clusters: $cl,internal_kvdb: "external",etcd_endpoint: $etcd_ep,etcd_secret: "px-etcd-certs",secret_type: "k8s",portworx_version: "2.6.2.1"}')
 
 ic resource service-instance-create "${px_name}" portworx px-enterprise $px_region -g $target_group --parameters "${parms}" 
