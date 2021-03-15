@@ -1,4 +1,4 @@
-FROM golang:1.15.5
+FROM golang:1.15.8
 
 #ARG GOPROXY=off
 
