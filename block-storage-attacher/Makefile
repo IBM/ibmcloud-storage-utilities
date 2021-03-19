@@ -81,7 +81,7 @@ build-systemutil:
 oss:
 	go run github.ibm.com/alchemy-containers/armada-opensource-lib/cmd/makeoss ${OSS_FILES}
 	go mod tidy
-	gsed -i '/armada-opensource-lib/d' ./OPENSOURCE
+	sed -i '/armada-opensource-lib/d' ./OPENSOURCE
 
 .PHONY: runanalyzedeps
 runanalyzedeps:
