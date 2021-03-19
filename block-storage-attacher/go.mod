@@ -4,7 +4,6 @@ go 1.15
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/blang/semver v3.5.1+incompatible
 	github.com/coreos/go-systemd/v22 v22.2.0
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.1 // indirect
@@ -12,13 +11,9 @@ require (
 	github.com/googleapis/gnostic v0.5.4 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
-	github.com/onsi/ginkgo v1.12.0
-	github.com/onsi/gomega v1.9.0
-	github.com/opencontainers/selinux v1.6.0
-	github.com/pierrre/gotestcover v0.0.0-20160517101806-924dca7d15f0 // indirect
+	github.com/onsi/ginkgo v1.12.0 // indirect
+	github.com/onsi/gomega v1.9.0 // indirect
 	github.com/satori/go.uuid v1.2.0
-	github.com/securego/gosec v0.0.0-20200401082031-e946c8c39989 // indirect
-	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.5.1
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.16.0
@@ -39,7 +34,6 @@ require (
 	k8s.io/apimachinery v0.20.5
 	k8s.io/client-go v1.5.2
 	k8s.io/klog/v2 v2.8.0 // indirect
-	k8s.io/kubernetes v1.19.4
 	k8s.io/utils v0.0.0-20210305010621-2afb4311ab10 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.0 // indirect
 )
