@@ -33,12 +33,12 @@ class IKS_clusters:
         self._token = IAMToken
 
         self._hdrs = {'Content-Type': 'application/json',
-                      'Authorization': self._token}
+                      'Authorization': self._token, 'User-Agent': 'mkpvyaml.py'}
 
         if not region:
             try:
                 request = urllib.request.Request(
-                    url="https://containers.bluemix.net/v1/regions",
+                    url="https://containers.cloud.ibm.com/v1/regions",
                     headers=self._hdrs)
                 contents = json.load(urllib.request.urlopen(request))
             except EnvironmentError:
@@ -52,16 +52,16 @@ class IKS_clusters:
 
         for r in self._region:
             self._hdrs = {'Content-Type': 'application/json',
-                          'X-Region': r, 'Authorization': self._token}
+                          'X-Region': r, 'User-Agent': 'mkpvyaml.py', 'Authorization': self._token}
             try:
                 if not cluster:
                     request = urllib.request.Request(
-                        url="https://containers.bluemix.net/v1/clusters",
+                        url="https://containers.cloud.ibm.com/v1/clusters",
                         headers=self._hdrs)
                     cl_contents = json.load(urllib.request.urlopen(request))
                 else:
                     request = urllib.request.Request(
-                        url="https://containers.bluemix.net/v1/clusters/" +
+                        url="https://containers.cloud.ibm.com/v1/clusters/" +
                         cluster,
                         headers=self._hdrs)
                     cl_contents = [json.load(urllib.request.urlopen(request))]
@@ -72,7 +72,7 @@ class IKS_clusters:
                     cls['workers'] = []
                     try:
                         request = urllib.request.Request(
-                            url="https://containers.bluemix.net/v1/clusters/" +
+                            url="https://containers.cloud.ibm.com/v1/clusters/" +
                             cl['name'] + "/workers", headers=self._hdrs)
                         w_contents = json.load(urllib.request.urlopen(request))
                     except EnvironmentError:

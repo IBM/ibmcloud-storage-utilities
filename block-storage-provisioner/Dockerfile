@@ -1,5 +1,4 @@
-FROM ubuntu:18.10
-
+FROM ubuntu:20.04
 RUN apt-get update
 RUN apt-get install -y python3.6 python3-pip git jq apt-transport-https curl wget gzip tar
 RUN pip3 install SoftLayer pyyaml 
