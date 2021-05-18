@@ -37,7 +37,7 @@ fi
        exit 1
     fi
   else
-     echo "Worker ids/worker pools  are not specified upgrade/replace done for all workers"
+     echo "Worker ids/worker pools are not specified, upgrade/replace will be done for all workers"
      WORKER_IDS=$(ic cs workers --cluster $CLUSTER  --json | jq -r '.[] | .id')
   fi
 
@@ -94,11 +94,11 @@ SLEEP_TIME=60
       if [[ $ACTUALSTATE == "Deployed" ]]; then
             echo "New worker Upgrade/Replace  is done and All worker nodes are in ready state...."
             if [ ! -z "${px_label_check}" ]; then
-               echo "Worker is  labled to restrict PX pods"
+               echo "Worker is labeled to restrict PX pods"
 	       kubectl label node $worker_ip px/enabled=false
              fi
        else
-         echo "The new  worker: $worker_id still in proviisoning state.... waiting for new worker provision to complete"
+         echo "The new  worker: $worker_id still in provisioning state.... waiting for new worker's provision to complete"
       fi
       sleep $SLEEP_TIME
       repeat=$(( $repeat + 1 ))
@@ -206,7 +206,7 @@ waitfortheworkerdelete() {
         sleep $SLEEP_TIME
          repeat=$(( $repeat + 1 ))
          if [ $repeat == $LIMIT ]; then
-           echo "Upgrade/replace of  the worker taking too long ..Exiting ......."
+           echo "Upgrade/replace of the worker taking too long ..Exiting ......."
            exit 1
          fi
      done
@@ -226,7 +226,7 @@ executereplaceorupgrade () {
     for vol_id in ${vol_ids[@]}; do
     volume_attch_check=$(ic is vol ${vol_id} --json | jq -r '.volume_attachments[] .instance | .name')
      if [ -z "$volume_attch_check" ]; then
-        echo "Volume: ${vol_id} is not attched to any node"
+        echo "Volume: ${vol_id} is not attached to any node"
         zone=$(ic cs worker get --worker $id --cluster $CLUSTER --json | jq -r .location) 
         echo "Attaching the volume ....cluster $CLUSTER_ID worker ${id} volid ${vol_id}"
 	volume_attched=""
@@ -236,7 +236,7 @@ executereplaceorupgrade () {
           ic cs storage attachment create --cluster ${CLUSTER_ID} --worker ${provisioning_worker_id} --volume ${vol_id}
           volume_attched=$(ic is vol ${vol_id} --json | jq -r '.volume_attachments[] .instance | .name')
 	  if [ -z "$volume_attched" ]; then
-                echo "Volume attchment failed .. retrying again"
+                echo "Volume attachment failed .. retrying again"
                 ((retry_count++))
           else
                 echo "Volume ${vol_id} is attached to the worker ${id}"
@@ -255,19 +255,19 @@ executereplaceorupgrade () {
 
 #####Before upgrade bring the volume ids using the worker id
 volindex=0
-for id in "${WORKER_IDS[@]}"
+for id in ${WORKER_IDS[@]}
 do
    IFS='-' read -r -a WORKER_VALS <<< "$id"
    echo "worker id : $id"
    zone=$(ic ks worker get --worker $id --cluster $CLUSTER --json | jq -r .location)
    volid_perworker=$(ic is vols --json | jq -r --arg WORKER_NAME "$id" '.[]|select(.volume_attachments[] .instance.name==$WORKER_NAME) | .id')
-   echo "volid :${volid_perworker[*]} is attched to the worker :${id}"
+   echo "volid :${volid_perworker[*]} is attached to the worker :${id}"
    vol_ids[volindex]=${volid_perworker[@]}
    ((volindex++))
   sleep 20
   px_label_check=$(kubectl get nodes -l px/enabled=false -o json |  grep  $id)
   ic cs worker $command_name  --cluster  $CLUSTER --worker $id
-  echo "The worker being deleted waiting for the new worker ............"
+  echo "The worker is being deleted, waiting for the new worker ............"
   executereplaceorupgrade 
 done
 
