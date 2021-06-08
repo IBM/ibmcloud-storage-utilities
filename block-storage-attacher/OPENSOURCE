@@ -1,4 +1,4 @@
-docker://wcp-alchemy-containers-team-access-redhat-docker-remote.artifactory.swg-devops.com/ubi8/ubi-minimal,8.4-200
+docker://wcp-alchemy-containers-team-access-redhat-docker-remote.artifactory.swg-devops.com/ubi8/ubi-minimal,8.4-200.1622548483
 github.com/BurntSushi/toml,v0.3.1,direct
 github.com/coreos/go-systemd/v22,v22.2.0,direct
 github.com/gogo/protobuf,v1.3.2,indirect
@@ -16,11 +16,9 @@ go.uber.org/zap,v1.16.0,direct
 golang.org/x/crypto,v0.0.0-20210317152858-513c2a44f670,indirect
 golang.org/x/lint,v0.0.0-20201208152925-83fdc39ff7b5,indirect
 golang.org/x/mod,v0.4.2,indirect
-golang.org/x/net,v0.0.0-20210316092652-d523dce5a7f4,indirect
+golang.org/x/net,v0.0.0-20210525063256-abc453219eb5,indirect
 golang.org/x/oauth2,v0.0.0-20210313182246-cd4f82c27b84,indirect
-golang.org/x/sys,v0.0.0-20210317225723-c4fcb01b228e,indirect
 golang.org/x/term,v0.0.0-20210317153231-de623e64d2a6,indirect
-golang.org/x/text,v0.3.5,indirect
 golang.org/x/time,v0.0.0-20210220033141-f8bda1e9f3ba,direct
 google.golang.org/appengine,v1.6.7,indirect
 gopkg.in/yaml.v2,v2.4.0,indirect
