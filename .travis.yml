@@ -1,7 +1,7 @@
 language: go
 
 go:
-  - 1.15.9
+  - 1.15.12
   - tip
 
 group: bluezone
