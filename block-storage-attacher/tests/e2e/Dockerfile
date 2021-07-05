@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.4-200.1622548483
+FROM registry.access.redhat.com/ubi8/ubi-minimal:8.4-205
 # Create Directory to hold all testing binaries
 RUN mkdir /pvg-tests
 

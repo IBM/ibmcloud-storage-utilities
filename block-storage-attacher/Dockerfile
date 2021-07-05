@@ -1,4 +1,4 @@
-FROM wcp-alchemy-containers-team-access-redhat-docker-remote.artifactory.swg-devops.com/ubi8/ubi-minimal:8.4-200.1622548483
+FROM wcp-alchemy-containers-team-access-redhat-docker-remote.artifactory.swg-devops.com/ubi8/ubi-minimal:8.4-205
 # Default values
 ARG git_commit_id=unknown
 ARG git_remote_url=unknown
