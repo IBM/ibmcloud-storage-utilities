@@ -1,4 +1,4 @@
-docker://wcp-alchemy-containers-team-access-redhat-docker-remote.artifactory.swg-devops.com/ubi8/ubi-minimal,8.4-205
+docker://wcp-alchemy-containers-team-access-redhat-docker-remote.artifactory.swg-devops.com/ubi8/ubi-minimal,8.4-205.1626828526
 github.com/BurntSushi/toml,v0.3.1,direct
 github.com/coreos/go-systemd/v22,v22.2.0,direct
 github.com/gogo/protobuf,v1.3.2,indirect
