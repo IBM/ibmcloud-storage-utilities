@@ -18,7 +18,7 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
 
 | Chart  | Date       | Kubernetes Required | Breaking Changes | Details                     |
 | -----  | ---------- | ------------------- | ---------------- | --------------------------- |
-| v2.0.10 | 2021-07-23 | >=1.10              | None             | Refer Changelog v2.0.10      |
+| v2.0.10 | 2021-07-26 | >=1.10              | None             | Refer Changelog v2.0.10      |
 | v2.0.9 | 2021-07-05 | >=1.10              | None             | Refer Changelog v2.0.9      |
 | v2.0.8 | 2021-06-08 | >=1.10              | None             | Refer Changelog v2.0.8      |
 | v2.0.7 | 2021-05-26 | >=1.10              | None             | Refer Changelog v2.0.7      |
@@ -37,11 +37,12 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
 | 1.0.1  | 2019-01-23 | >=1.10              | None             | Refer Changelog v1.0.1      |
 | 1.0.0  | 2018-12-05 | >=1.10              | None             | Initial chart version       |
 
-## [v2.0.10] - 2021-07-23
-UBI image update for VA issue
+## [v2.0.10] - 2021-07-26
+UBI image, golang update for VA issue
 
 ### Changelog
 - UBI image update for VA issue
+- Golang version update to 1.16.6
 
 ## [v2.0.9] - 2021-07-05
 UBI image update for VA issue
