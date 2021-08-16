@@ -1,4 +1,4 @@
-docker://wcp-alchemy-containers-team-access-redhat-docker-remote.artifactory.swg-devops.com/ubi8/ubi-minimal,8.4-205.1626828526
+docker://wcp-alchemy-containers-team-access-redhat-docker-remote.artifactory.swg-devops.com/ubi8/ubi-minimal,8.4-208
 github.com/BurntSushi/toml,v0.3.1,direct
 github.com/coreos/go-systemd/v22,v22.2.0,direct
 github.com/gogo/protobuf,v1.3.2,indirect
@@ -10,7 +10,7 @@ github.com/imdario/mergo,v0.3.12,indirect
 github.com/onsi/ginkgo,v1.12.0,indirect
 github.com/onsi/gomega,v1.9.0,indirect
 github.com/satori/go.uuid,v1.2.0,direct
-github.com/stretchr/testify,v1.5.1,direct
+github.com/stretchr/testify,v1.7.0,direct
 go.uber.org/multierr,v1.6.0,indirect
 go.uber.org/zap,v1.16.0,direct
 golang.org/x/crypto,v0.0.0-20210317152858-513c2a44f670,indirect
