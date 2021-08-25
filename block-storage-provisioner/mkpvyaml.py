@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 #
 #  MkPVYaml :  Generate PV yaml files for iSCSI external vols on IKS
 #
