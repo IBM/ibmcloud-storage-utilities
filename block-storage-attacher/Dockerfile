@@ -9,6 +9,7 @@ ARG REPO_SOURCE_URL=blank
 LABEL razee.io/source-url="${REPO_SOURCE_URL}"
 ARG BUILD_URL=blank
 LABEL razee.io/build-url="${BUILD_URL}"
+LABEL compliance.owner="ibm-armada-storage"
 
 # Add Labels to image to show build details
 LABEL git-commit-id=${git_commit_id}
