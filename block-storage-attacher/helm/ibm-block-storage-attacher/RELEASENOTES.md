@@ -40,10 +40,10 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
 | 1.0.0  | 2018-12-05 | >=1.10              | None             | Initial chart version       |
 
 ## [v2.0.12] - 2021-09-08
-Added comliance label
+Added compliance label
 
 ### Changelog
-- Added comliance label
+- Added compliance label
 
 ## [v2.0.11] - 2021-08-16
 UBI image, golang version updates for PSIRTS
