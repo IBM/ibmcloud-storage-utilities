@@ -14,6 +14,12 @@ BUILD_NUMBER?=unknown
 TRAVIS_BUILD_NUMBER ?= unknown
 OSS_FILES := Dockerfile go.mod
 
+PROXY_IMAGE_URL_DOCKERHUB:="docker.io"
+
+ifdef ARTIFACTORY_API_KEY
+PROXY_IMAGE_URL_DOCKERHUB="wcp-alchemy-containers-team-dockerhub-docker-remote.artifactory.swg-devops.com"
+endif
+
 .PHONY: all
 all: deps gosec fmt vet buildgo test buildimage
 
@@ -62,6 +68,7 @@ buildimage: build-systemutil
 			--build-arg travis_build_number=${TRAVIS_BUILD_NUMBER} \
 			--build-arg REPO_SOURCE_URL=${REPO_SOURCE_URL} \
 			--build-arg BUILD_URL=${BUILD_URL} \
+			--build-arg PROXY_IMAGE_URL_DOCKERHUB=${PROXY_IMAGE_URL_DOCKERHUB} \
 			-t $(IMAGE):$(VERSION) -f Dockerfile .
 
 
