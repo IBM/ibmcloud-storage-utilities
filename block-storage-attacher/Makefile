@@ -68,7 +68,6 @@ buildimage: build-systemutil
 			--build-arg travis_build_number=${TRAVIS_BUILD_NUMBER} \
 			--build-arg REPO_SOURCE_URL=${REPO_SOURCE_URL} \
 			--build-arg BUILD_URL=${BUILD_URL} \
-			--build-arg PROXY_IMAGE_URL_DOCKERHUB=${PROXY_IMAGE_URL_DOCKERHUB} \
 			-t $(IMAGE):$(VERSION) -f Dockerfile .
 
 
@@ -77,7 +76,9 @@ build-systemutil:
 	#Build executables like block-attacher and system util GO binaries
 	#go mod download
 	#go run github.ibm.com/alchemy-containers/go-build-tools/cmd/goproxy -docker-build -- \
-		docker build -t common-lib-builder --pull -f Dockerfile.builder .
+	docker build \
+	    --build-arg PROXY_IMAGE_URL_DOCKERHUB=${PROXY_IMAGE_URL_DOCKERHUB} \
+	-t common-lib-builder --pull -f Dockerfile.builder .
 	docker run common-lib-builder /bin/true
 	docker cp `docker ps -q -n=1`:/go/bin/systemutil ./systemutil
 	docker cp `docker ps -q -n=1`:/go/bin/block-storage-attacher ./block-storage-attacher
