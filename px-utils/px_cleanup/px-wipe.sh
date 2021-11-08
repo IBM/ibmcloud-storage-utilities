@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TALISMAN_IMAGE=portworx/talisman
-TALISMAN_TAG=1.1.0
+TALISMAN_TAG=1.1.3
 WIPE_CLUSTER="--wipecluster"
 MAX_RETRIES=60
 TIME_BEFORE_RETRY=5 #seconds
