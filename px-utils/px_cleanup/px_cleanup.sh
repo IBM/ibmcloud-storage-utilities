@@ -78,7 +78,7 @@ then
 else
   helm uninstall portworx || _rc=$?
   if [ $_rc -ne 0 ]; then
-    logmessage "error removing the helm relese"
+    logmessage "error removing the helm release"
     exit 1;
   fi
 fi
@@ -87,6 +87,6 @@ echo "Removing the Portworx secret if present"
 PX_SECRET_NAME=$(kubectl get secret -l name=portworx -n default)
 [[ ! -z "$PX_SECRET_NAME" ]] && { kubectl delete secret -n default "$PX_SECRET_NAME" ;}
 
-echo "Removing the Service from the catalog"
+echo "Removing the Portworx Service from the catalog"
 Bx_PX_svc_name=$(ibmcloud resource service-instances --service-name portworx --output json | jq -r --arg CLUSTERNAME $CLUSTER_NAME '.[]|select((.parameters.clusters==$CLUSTERNAME)) | .name')
 ibmcloud resource service-instance-delete "${Bx_PX_svc_name}" -f
