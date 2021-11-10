@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Usage: vpc_upgrade_util.sh  clustername  command_name  workerids
-#example : ./vpc_upgrade_util.sh  mycluster  replace/upgrade  worker/worker-pool (workerid1 workerid2) / (worker-pool-id1 worker-pool-id2) ....
+# Usage: px_vpc_upgrade.sh clustername  command_name  workerids
+#example : ./px_vpc_upgrade.sh  mycluster  replace/upgrade  worker/worker-pool (workerid1 workerid2) / (worker-pool-id1 worker-pool-id2) ....
 # If the worker ids not provided then all the workers in the cluster will be replaced/upgraded
 #
 shopt -s expand_aliases
@@ -10,38 +10,15 @@ alias ic="ibmcloud"
 CLUSTER=$1
 
 [[ -z "$1" ]] && { echo "Cluster name is empty, specify a cluster name."; exit; }
-[[ -z "$2" ]] && { echo "Command name is empty. specify the command"; exit; }
+[[ -z "$2" ]] && { echo "Command name is empty, specify the command"; exit; }
 vol_ids=()
 
 if [[ "$2" == "replace" || $2 == "upgrade" ]] ; then
        command_name=$2
 else
-        echo "Usage: vpc_upgrade_util.sh  clustername command_name  workerid1 workerid2 ......"
+        echo "Usage: px_vpc_upgrade.sh clustername command_name  workerid1 workerid2 ......"
         exit 1
 fi
-
-  if [[ "$3" == "worker" || $3 == "worker-pool" ]] ; then
-    if [ $#  -gt 3 ]; then
-      for ((argindex=4,index=0; argindex<=$#; argindex++,index++)); do
-	    if [[  $3 == "worker-pool" ]] ; then
-	      WORKER_IDS[index]=$(ic cs workers --cluster $CLUSTER --worker-pool ${!argindex} --json | jq -r '.[] | .id')
-	      len=${#WORKER_IDS[@]}
-	      index=$(( len + index ))
-	    else
-              WORKER_IDS[index]=${!argindex}
-	      ((index++))
-	    fi
-      done
-    else
-       echo "Usage: vpc_upgrade_util.sh  clustername command_name  workerid1 workerid2 ......"
-       exit 1
-    fi
-  else
-     echo "Worker ids/worker pools are not specified, upgrade/replace will be done for all workers"
-     WORKER_IDS=$(ic cs workers --cluster $CLUSTER  --json | jq -r '.[] | .id')
-  fi
-
-echo "worker ids = ${WORKER_IDS[*]}"
 
 ##Check JQ is intalled ot not 
 
@@ -60,12 +37,53 @@ fi
 
 px_label_check=""
 
+IC_LOGIN_CHECK=$(ic cs workers --cluster $CLUSTER 2>&1 > /dev/null)
+echo $IC_LOGIN_CHECK
+[[ "$IC_LOGIN_CHECK" ]] && { echo "Unable to run ibmcloud commands because you are not logged in.  Please run 'ibmcloud login' or 'ibmcloud login -sso' and rerun this script. "; exit; }
 
+echo "Logged into IBM Cloud successfully"
+echo ""
+echo "IBMCLOUD Plugin check:"
+IC_PLUGIN_VPC_CHECK=$(ic plugin list | grep vpc-infrastructure)
+s1=$(awk '{$3=$NF="";print}' <<< "$IC_PLUGIN_VPC_CHECK")
+echo $s1
+[[ -z "$IC_PLUGIN_VPC_CHECK" ]] && { echo "Unable to detect ibmcloud vpc-infrstructure plugin.  Please run 'ibmcloud plugin install vpc-infrastructure' and rerun this script. "; exit; }
 
+IC_PLUGIN_CONTAINER_SERVICE_CHECK=$(ic plugin list | grep container-service)
+s2=$(awk '{$3=$NF="";print}' <<< "$IC_PLUGIN_CONTAINER_SERVICE_CHECK")
+echo $s2
+[[ -z "$IC_PLUGIN_CONTAINER_SERVICE_CHECK" ]] && { echo "Unable to detect ibmcloud container-service plugin.  Please run 'ibmcloud plugin install container-service' and rerun this script. "; exit; }
+
+echo "All ibmcloud cli plugins required are installed"
+
+echo ""
+
+  if [[ "$3" == "worker" || $3 == "worker-pool" ]] ; then
+    if [ $#  -gt 3 ]; then
+      for ((argindex=4,index=0; argindex<=$#; argindex++,index++)); do
+            if [[  $3 == "worker-pool" ]] ; then
+              WORKER_IDS[index]=$(ic cs workers --cluster $CLUSTER --worker-pool ${!argindex} --json | jq -r '.[] | .id')
+              len=${#WORKER_IDS[@]}
+              index=$(( len + index ))
+            else
+              WORKER_IDS[index]=${!argindex}
+              ((index++))
+            fi
+      done
+    else
+       echo "Usage: px_vpc_upgrade.sh clustername command_name  workerid1 workerid2 ......"
+       exit 1
+    fi
+  else
+     echo "Worker ids/worker pools are not specified, upgrade/replace will be done for all workers"
+     WORKER_IDS=$(ic cs workers --cluster $CLUSTER  --json | jq -r '.[] | .id')
+  fi
+
+echo "worker ids = ${WORKER_IDS[*]}"
 
 CLUSTER_CHECK=$(kubectl -n kube-system get cm cluster-info -o jsonpath='{.data.cluster-config\.json}' | jq -r '.name')
 echo "${CLUSTER_CHECK}"
-[[ -z "$CLUSTER_CHECK" ]] && { echo "Unable to determine cluster name, Either the cluser does not exist or kube config is not set."; exit; }
+[[ -z "$CLUSTER_CHECK" ]] && { echo "Unable to determine cluster name, Either the cluser does not exist or kube config is not set. Use 'oc login' to login to the cluster, set kube config, and then rerun this script"; exit; }
 
 echo "Gathering information for cluster ${CLUSTER} ..."
 VPC_ID=$(ic cs cluster get --cluster $CLUSTER --json | jq -r '.vpcs[0]')
