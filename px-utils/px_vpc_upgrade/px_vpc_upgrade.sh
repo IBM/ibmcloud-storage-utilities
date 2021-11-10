@@ -279,16 +279,16 @@ do
    echo "worker id : $id"
    zone=$(ic ks worker get --worker $id --cluster $CLUSTER --json | jq -r .location)
    volid_perworker=$(ic is vols --json | jq -r --arg WORKER_NAME "$id" '.[]|select(.volume_attachments[] .instance.name==$WORKER_NAME) | .id')
-   echo "volid :${volid_perworker[*]} is attached to the worker :${id}"
+   echo "volid : ${volid_perworker[*]} is attached to the worker :${id}"
    vol_ids[volindex]=${volid_perworker[@]}
    ((volindex++))
   sleep 20
   px_label_check=$(kubectl get nodes -l px/enabled=false -o json |  grep  $id)
-  ic cs worker $command_name  --cluster  $CLUSTER --worker $id
+
+  IC_WORKER_ACTION_RESPONSE=$(ic cs worker $command_name  --cluster  $CLUSTER --worker $id 2>&1 > /dev/tty)
+  echo $IC_WORKER_ACTION_RESPONSE
+  [[ "$IC_WORKER_ACTION_RESPONSE" ]] && { echo "Action canceled. Exiting script "; exit; }
+
   echo "The worker is being deleted, waiting for the new worker ............"
   executereplaceorupgrade 
 done
-
-
-         
-
