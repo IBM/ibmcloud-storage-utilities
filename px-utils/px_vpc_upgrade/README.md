@@ -11,7 +11,7 @@
   Once the cluster config is set run the scirpt  
 
   ```
-  sudo ./px_vpc_upgrade.sh  mycluster  replace/upgrade  worker/worker-pool (workerid1 workerid2) / (worker-pool-id1 worker-pool-id2) ....
+  sudo ./px_vpc_upgrade.sh mycluster replace worker/worker-pool (workerid1 workerid2) / (worker-pool-id1 worker-pool-id2) ....
   ```
 
 - If the worker ids not provided then all the workers in the cluster will be replaced/upgraded 

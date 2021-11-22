@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Usage: px_vpc_upgrade.sh clustername  command_name  workerids
-#example : ./px_vpc_upgrade.sh  mycluster  replace/upgrade  worker/worker-pool (workerid1 workerid2) / (worker-pool-id1 worker-pool-id2) ....
-# If the worker ids not provided then all the workers in the cluster will be replaced/upgraded
+#example: ./px_vpc_upgrade.sh  mycluster replace worker/worker-pool (workerid1 workerid2) / (worker-pool-id1 worker-pool-id2) ....
+# If the worker ids not provided then all the workers in the cluster will be replaced/update
 #
 shopt -s expand_aliases
 alias ic="ibmcloud"
@@ -13,7 +13,7 @@ CLUSTER=$1
 [[ -z "$2" ]] && { echo "Command name is empty, specify the command"; exit; }
 vol_ids=()
 
-if [[ "$2" == "replace" || $2 == "upgrade" ]] ; then
+if [[ "$2" == "replace" ]] ; then
        command_name=$2
 else
         echo "Usage: px_vpc_upgrade.sh clustername command_name  workerid1 workerid2 ......"
@@ -75,7 +75,7 @@ echo ""
        exit 1
     fi
   else
-     echo "Worker ids/worker pools are not specified, upgrade/replace will be done for all workers"
+     echo "Worker ids/worker pools are not specified, replace/update will be done for all workers"
      WORKER_IDS=$(ic cs workers --cluster $CLUSTER  --json | jq -r '.[] | .id')
   fi
 
@@ -231,7 +231,7 @@ waitfortheworkerdelete() {
 }
 
 
-executereplaceorupgrade () {
+executereplaceorupdate () {
     
     waitfortheworkerdelete
     waitforthenode  $provisioning_worker_id
@@ -271,15 +271,15 @@ executereplaceorupgrade () {
 
 
 
-#####Before upgrade bring the volume ids using the worker id
+#####Before replace/update bring the volume ids using the worker id
 volindex=0
 for id in ${WORKER_IDS[@]}
 do
    IFS='-' read -r -a WORKER_VALS <<< "$id"
-   echo "worker id : $id"
+   echo "worker id: $id"
    zone=$(ic ks worker get --worker $id --cluster $CLUSTER --json | jq -r .location)
    volid_perworker=$(ic is vols --json | jq -r --arg WORKER_NAME "$id" '.[]|select(.volume_attachments[] .instance.name==$WORKER_NAME) | .id')
-   echo "volid : ${volid_perworker[*]} is attached to the worker :${id}"
+   echo "volid: ${volid_perworker[*]} is attached to the worker: ${id}"
    vol_ids[volindex]=${volid_perworker[@]}
    ((volindex++))
   sleep 20
@@ -290,5 +290,5 @@ do
   [[ "$IC_WORKER_ACTION_RESPONSE" ]] && { echo "Action canceled. Exiting script "; exit; }
 
   echo "The worker is being deleted, waiting for the new worker ............"
-  executereplaceorupgrade 
+  executereplaceorupdate
 done
