@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/crn"
-	uid "github.com/satori/go.uuid"
+	uid "github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
 )
 
 const (
@@ -155,7 +156,7 @@ func CreateZapPodNameKeyField() zapcore.Field {
 // Creates a context that contains a unique request ID
 func generateContextWithRequestID() context.Context {
 	//	requestID := uid.NewV4().String()
-	req_uuid := uid.NewV4()
-	requestID := req_uuid.String()
+	uuid, _ := uid.NewV4()
+	requestID := uuid.String()
 	return context.WithValue(context.Background(), RequestIDLabel, requestID)
 }
