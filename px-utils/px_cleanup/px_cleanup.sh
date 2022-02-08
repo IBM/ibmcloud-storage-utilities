@@ -18,6 +18,17 @@ then
         exit 1
 fi
 
+if ! which helm &>/dev/null
+then
+        echo "Helm is not installed... exiting"
+        exit 1
+fi
+
+if ! which kubectl &>/dev/null
+then
+        echo "Kubectl is not installed... exiting"
+        exit 1
+fi
 
 
 
@@ -83,9 +94,8 @@ else
   fi
 fi
 
-echo "Removing the Portworx secret if present"
-PX_SECRET_NAME=$(kubectl get secret -l name=portworx -n default)
-[[ ! -z "$PX_SECRET_NAME" ]] && { kubectl delete secret -n default "$PX_SECRET_NAME" ;}
+echo "Removing the Portworx helm secrets if present"
+kubectl delete secret -l name=portworx,owner=helm -n default
 
 echo "Removing the Portworx Service from the catalog"
 Bx_PX_svc_name=$(ibmcloud resource service-instances --service-name portworx --output json | jq -r --arg CLUSTERNAME $CLUSTER_NAME '.[]|select((.parameters.clusters==$CLUSTERNAME)) | .name')
