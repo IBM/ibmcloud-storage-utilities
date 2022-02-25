@@ -13,3 +13,7 @@ block-storage-attacher:
 	make gosec; \
 	make coverage
 
+.PHONY: showanalyzedeps
+showanalyzedeps:
+	cd block-storage-attacher; \
+	make showanalyzedeps

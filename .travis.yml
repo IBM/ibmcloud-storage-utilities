@@ -39,3 +39,4 @@ after_success:
 
 after_failure:
   - ./block-storage-attacher/scripts/handleFailure.sh
+  - make showanalyzedeps
