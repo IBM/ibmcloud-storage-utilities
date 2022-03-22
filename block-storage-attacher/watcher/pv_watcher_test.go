@@ -1,6 +1,9 @@
 package watcher
 
 import (
+	"io/ioutil"
+	"os"
+	"testing"
 
 	//"encoding/json"
 	//"github.com/coreos/go-systemd/v22/dbus"
@@ -19,9 +22,6 @@ import (
 	"k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/fake"
 	//"k8s.io/client-go/tools/cache"
-	"io/ioutil"
-	"os"
-	"testing"
 )
 
 var SUBNET_CONFIG = "subnetconfig"

@@ -1,15 +1,16 @@
+// Package main ...
 package main
 
 import (
 	"flag"
 	"fmt"
+
 	"github.com/coreos/go-systemd/v22/dbus"
 )
 
-const SYSTEMD_UNIT_FILE_PATH = "/host/systemd/system/"
+const SYSTEMD_UNIT_FILE_PATH = "/host/systemd/system/" //nolint readability
 
 func main() {
-
 	var target = flag.String("target", "kubelet.service", "The name of systemctl unit/ service")
 	var action = flag.String("action", "restart", "The action ( start/stop/restart/enable) for the service")
 	flag.Parse()
@@ -48,9 +49,8 @@ func main() {
 		if restartErr != nil {
 			fmt.Println("Error: Unable to restart target", restartErr)
 			return
-		} else {
-			fmt.Println("Unit Restarted !!")
 		}
+		fmt.Println("Unit Restarted !!")
 		job := <-reschan
 		if job != "done" {
 			fmt.Print("Error: Restart of service is not done:", job)
@@ -64,11 +64,8 @@ func main() {
 		if err != nil {
 			fmt.Println("Error: Unable to enable target ", unitFile, err)
 			return
-		} else {
-			fmt.Println("Unit  enabled  !!", *target, "Change:", change)
 		}
+		fmt.Println("Unit  enabled  !!", *target, "Change:", change)
 	}
-
 	dbConn.Close()
-	return
 }

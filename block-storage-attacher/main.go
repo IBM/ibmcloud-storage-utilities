@@ -1,7 +1,9 @@
+// Package main ...
 package main
 
 import (
 	"flag"
+
 	cfg "github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/logger"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/watcher"
@@ -12,7 +14,6 @@ import (
 )
 
 func main() {
-
 	var err error
 
 	// Logger
@@ -20,8 +21,8 @@ func main() {
 	loggerLevel := zap.NewAtomicLevel()
 
 	//Enable debug trace
-	debug_trace := cfg.GetConfigBool("DEBUG_TRACE", false, *logger)
-	if debug_trace {
+	debugTrace := cfg.GetConfigBool("DEBUG_TRACE", false, *logger)
+	if debugTrace {
 		loggerLevel.SetLevel(zap.DebugLevel)
 	}
 

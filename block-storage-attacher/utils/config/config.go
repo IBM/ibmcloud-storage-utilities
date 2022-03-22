@@ -1,11 +1,13 @@
+// Package config ...
 package config
 
 import (
-	"github.com/BurntSushi/toml"
-	"go.uber.org/zap"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/BurntSushi/toml"
+	"go.uber.org/zap"
 )
 
 func getEnv(key string) string {
@@ -70,8 +72,9 @@ func GetConfigStringList(envKey string, defaultConf string, logger zap.Logger) [
 	return strings.Split(val, ",")
 }
 
+// Volume ...
 type Volume struct {
-	VolId    string `json:"volID,omitempty"`
+	VolID    string `json:"volID,omitempty"`
 	Iqn      string `json:"iqn,omitempty"`
 	Username string `json:"username,omitempty"`
 	Password string `json:"password,omitempty"`

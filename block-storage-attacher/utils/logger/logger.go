@@ -1,3 +1,4 @@
+// Package logger ...
 package logger
 
 import (
@@ -53,7 +54,7 @@ func GetZapContextLogger(ctx context.Context) (*zap.Logger, error) {
 	return globalLogger, nil
 }
 
-// GetZapContextLogger Creates a new logger based from the global logger and adds RequestID from the
+// GetZapDefaultContextLogger Creates a new logger based from the global logger and adds RequestID from the
 // context as logging field.
 func GetZapDefaultContextLogger() (*zap.Logger, error) {
 	var contextLogger *zap.Logger
@@ -158,5 +159,5 @@ func generateContextWithRequestID() context.Context {
 	//	requestID := uid.NewV4().String()
 	uuid, _ := uid.NewV4()
 	requestID := uuid.String()
-	return context.WithValue(context.Background(), RequestIDLabel, requestID)
+	return context.WithValue(context.Background(), RequestIDLabel, requestID) //nolint refactoring required
 }

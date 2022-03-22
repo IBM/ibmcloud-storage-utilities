@@ -14,6 +14,10 @@ BUILD_NUMBER?=unknown
 TRAVIS_BUILD_NUMBER ?= unknown
 OSS_FILES := Dockerfile go.mod
 
+LINT_VERSION="1.42.1"
+GOSEC_VERSION="v2.8.1"
+NANCY_VERSION := 1.0.20
+
 PROXY_IMAGE_URL_DOCKERHUB:="docker.io"
 
 ifdef ARTIFACTORY_API_KEY
@@ -23,13 +27,17 @@ endif
 .PHONY: all
 all: deps gosec fmt vet buildgo test buildimage
 
+install-bt: ## Install 'bt' via git clone + installer script. Set BT_VERSION to install a custom version.
+@V=$${BT_VERSION:-master} C=~/.cache/bt/repo && if ! git -C "$$C" status >/dev/null; then mkdir -p "$$C" && rm -rf "$$C" && git clone https://github.ibm.com/alchemy-containers/go-build-tools.git "$$C"; fi && pushd "$$C" && git fetch && { git reset --hard "$$V" || git reset --hard origin/"$$V"; } && popd && "$$C"/scripts/install.sh "$$V"
+
 .PHONY: driver
 driver: deps gosec buildimage
 
 .PHONY: deps
-deps:
+deps: install-bt
 	echo "Installing dependencies ..."
 #	glide install --strip-vendor
+	@V=$${BT_VERSION:-master} C=~/.cache/bt/repo && if ! git -C "$$C" status >/dev/null; then mkdir -p "$$C" && rm -rf "$$C" && git clone git@github.ibm.com:alchemy-containers/go-build-tools.git "$$C"; fi && pushd "$$C" && git fetch && { git reset --hard "$$V" || git reset --hard origin/"$$V"; } && popd && "$$C"/scripts/install.sh "$$V"
 	go get github.com/pierrre/gotestcover
 	go get -v github.com/securego/gosec/cmd/gosec
 
@@ -87,9 +95,9 @@ build-systemutil:
 
 .PHONY: oss
 oss:
-	go run github.ibm.com/alchemy-containers/armada-opensource-lib/cmd/makeoss ${OSS_FILES}
+	bt lint opensource -generate ${OSS_FILES}
 	go mod tidy
-	sed -i '/armada-opensource-lib/d' ./OPENSOURCE
+	grep -v "armada-opensource-lib" ./OPENSOURCE > temp && mv temp ./OPENSOURCE
 
 .PHONY: runanalyzedeps
 runanalyzedeps:
@@ -105,3 +113,19 @@ analyzedeps:
 showanalyzedeps:
 	grep "VULNERABILITY FOUND" dependency-check/logfile;
 	cat dependency-check/dependency-check-report.json |jq '.dependencies[] | select(.vulnerabilities | length>0)';
+
+.PHONY: lint
+ lint: install-bt
+	bt lint golangci --version="v${LINT_VERSION}" -- --timeout 5m
+	bt lint opensource ${OSS_FILES}
+	bt lint copyright
+	bt lint semver-deps -prefix github.ibm.com/alchemy-containers
+	bt lint shellcheck
+	bt lint nancy --version="v${NANCY_VERSION}"
+	bt lint gosec -config .gosec.json -version ${GOSEC_VERSION}
+
+.PHONY: lint-fix
+ lint-fix: install-bt
+	bt lint golangci --version="v${LINT_VERSION}" -- --fix
+	bt lint opensource -generate ${OSS_FILES}
+	bt lint copyright -generate
