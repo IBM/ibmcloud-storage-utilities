@@ -98,21 +98,6 @@ oss:
 	go mod tidy
 	grep -v "armada-opensource-lib" ./OPENSOURCE > temp && mv temp ./OPENSOURCE
 
-.PHONY: runanalyzedeps
-runanalyzedeps:
-	@docker build --rm --build-arg ARTIFACTORY_API_KEY="${ARTIFACTORY_API_KEY}"  -t armada/analyze-deps -f Dockerfile.dependencycheck .
-	docker run -v `pwd`/dependency-check:/results armada/analyze-deps
-
-.PHONY: analyzedeps
-analyzedeps:
-	/tmp/dependency-check/bin/dependency-check.sh --enableExperimental --log /results/logfile --out /results --disableAssembly \
-		--suppress /src/dependency-check/suppression-file.xml --format JSON --prettyPrint --failOnCVSS 0 --scan /src
-
-.PHONY: showanalyzedeps
-showanalyzedeps:
-	grep "VULNERABILITY FOUND" dependency-check/logfile;
-	cat dependency-check/dependency-check-report.json |jq '.dependencies[] | select(.vulnerabilities | length>0)';
-
 .PHONY: lint
  lint: install-bt
 	bt lint golangci --version="v${LINT_VERSION}" -- --timeout 5m
