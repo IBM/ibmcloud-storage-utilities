@@ -1,12 +1,13 @@
 #!/bin/bash
+# shellcheck disable=SC2002
 
 if [ "$TRAVIS_GO_VERSION" == "tip" ]; then
 	echo "Coverage information is not required for tip version."
 	exit 0
 fi
 
-mkdir $TRAVIS_BUILD_DIR/gh-pages
-cd $TRAVIS_BUILD_DIR/gh-pages
+mkdir "$TRAVIS_BUILD_DIR"/gh-pages
+cd "$TRAVIS_BUILD_DIR"/gh-pages || exit
 
 OLD_COVERAGE=0
 NEW_COVERAGE=0
@@ -17,7 +18,7 @@ GREEN_THRESHOLD=85
 YELLOW_THRESHOLD=50
 
 # clone and prepare gh-pages branch
-git clone -b gh-pages https://$GHE_USER:$GHE_TOKEN@github.com/$TRAVIS_REPO_SLUG.git .
+git clone -b gh-pages https://"$GHE_USER":"$GHE_TOKEN"@github.com/"$TRAVIS_REPO_SLUG".git .
 git config user.name "travis"
 git config user.email "travis"
 
@@ -35,10 +36,10 @@ fi
 
 
 # Compute overall coverage percentage
-OLD_COVERAGE=$(cat $TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_BRANCH/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
-cp $TRAVIS_BUILD_DIR/block-storage-attacher/cover.html $TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_BRANCH
-cp $TRAVIS_BUILD_DIR/block-storage-attacher/cover.html $TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_COMMIT
-NEW_COVERAGE=$(cat $TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_BRANCH/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
+OLD_COVERAGE=$(cat "$TRAVIS_BUILD_DIR"/gh-pages/block-storage-attacher/coverage/"$TRAVIS_BRANCH"/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
+cp "$TRAVIS_BUILD_DIR"/block-storage-attacher/cover.html "$TRAVIS_BUILD_DIR"/gh-pages/block-storage-attacher/coverage/"$TRAVIS_BRANCH"
+cp "$TRAVIS_BUILD_DIR"/block-storage-attacher/cover.html "$TRAVIS_BUILD_DIR"/gh-pages/block-storage-attacher/coverage/"$TRAVIS_COMMIT"
+NEW_COVERAGE=$(cat "$TRAVIS_BUILD_DIR"/gh-pages/block-storage-attacher/coverage/"$TRAVIS_BRANCH"/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
 
 if (( $(echo "$NEW_COVERAGE > $GREEN_THRESHOLD" | bc -l) )); then
 	BADGE_COLOR="green"
@@ -47,9 +48,9 @@ elif (( $(echo "$NEW_COVERAGE > $YELLOW_THRESHOLD" | bc -l) )); then
 fi
 
 # Generate badge for coverage
-curl https://img.shields.io/badge/Coverage-$NEW_COVERAGE-$BADGE_COLOR.svg > $TRAVIS_BUILD_DIR/gh-pages/block-storage-attacher/coverage/$TRAVIS_BRANCH/badge.svg
+curl https://img.shields.io/badge/Coverage-"$NEW_COVERAGE"-$BADGE_COLOR.svg > "$TRAVIS_BUILD_DIR"/gh-pages/block-storage-attacher/coverage/"$TRAVIS_BRANCH"/badge.svg
 
-COMMIT_RANGE=(${TRAVIS_COMMIT_RANGE//.../ })
+COMMIT_RANGE=("${TRAVIS_COMMIT_RANGE//.../ }")
 
 # Generate result message for log and PR
 if (( $(echo "$OLD_COVERAGE > $NEW_COVERAGE" | bc -l) )); then
@@ -68,5 +69,5 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 	git push origin
 else
         # Updates PR with coverage
-        curl -i -H "Authorization: token $GHE_API_TOKEN" https://github.com/api/v3/repos/$TRAVIS_REPO_SLUG/issues/$TRAVIS_PULL_REQUEST/comments --data '{"body": "'"$RESULT_MESSAGE"'"}'
+        curl -i -H "Authorization: token $GHE_API_TOKEN" https://github.com/api/v3/repos/"$TRAVIS_REPO_SLUG"/issues/"$TRAVIS_PULL_REQUEST"/comments --data '{"body": "'"$RESULT_MESSAGE"'"}'
 fi

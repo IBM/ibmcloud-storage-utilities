@@ -1,6 +1,7 @@
 #!/bin/bash
+# shellcheck disable=SC1009,SC1079,SC1073,SC1072,SC1078
 
-### Build the sample Test Report 
+### Build the sample Test Report
 set -x
 echo "BlockVolumeAttacherTest: Cluster-Creation: NA" >finalReport.txt
 echo "BlockVolumeAttacherTest: Plugin-Installation: NA" >>finalReport.txt
@@ -42,7 +43,7 @@ then
             break
         else
             sed -i "s/BlockVolumeAttacherTest: $i: .*$/BlockVolumeAttacherTest: $i: PASS/g" finalReport.txt
-        fi   
+        fi
     done
 fi
 
@@ -62,5 +63,5 @@ then
         fi
     done
 fi
-    
+
 set +x

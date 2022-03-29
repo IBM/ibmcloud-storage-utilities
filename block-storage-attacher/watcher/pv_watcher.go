@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Kubernetes Service, 5737-D43
+ * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+ * The source code for this program is not published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
 // Package watcher ...
 package watcher
 
@@ -186,7 +196,11 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 	volume.Username = pv.Annotations[USERNAME]
 	volume.Password = pv.Annotations[PASSWORD]
 	volume.Target = pv.Annotations[TARGET]
-	volume.Lunid, _ = strconv.Atoi(pv.Annotations[LUNID])
+	lunid, errConv := strconv.Atoi(pv.Annotations[LUNID])
+	if errConv != nil {
+		return false, errConv
+	}
+	volume.Lunid = lunid
 	volume.Nodeip = pv.Annotations[NODEIP]
 
 	workerNode := os.Getenv("NODE_IP")
@@ -325,7 +339,11 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 					// Parse the LUN ID from output
 					lun := strings.Split(lineParts[1], ":")
 					if len(lun) == 4 {
-						if lunid, _ = strconv.Atoi(lun[3]); lunid == volume.Lunid {
+						lunid, err = strconv.Atoi(lun[3])
+						if err != nil {
+							return true, err
+						}
+						if lunid == volume.Lunid {
 							mpath = lineParts[0]
 							break
 						}

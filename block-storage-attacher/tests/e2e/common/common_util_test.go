@@ -15,16 +15,14 @@ import (
 	"time"
 
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
-	"github.com/opencontainers/selinux/go-selinux"
 	clientset "k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/pkg/api"
-	"k8s.io/client-go/pkg/api/resource"
-	"k8s.io/client-go/pkg/api/unversioned"
-	"k8s.io/client-go/pkg/api/v1"
-	extensions "k8s.io/client-go/pkg/apis/extensions/v1beta1"
-	"k8s.io/client-go/pkg/apis/storage/v1beta1"
-	"k8s.io/client-go/pkg/runtime"
-	utilyaml "k8s.io/client-go/pkg/util/yaml"
+	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/api/core/v1"
+	extensions "k8s.io/client-go/kubernetes/typed/extensions/v1beta1"
+	"k8s.io/api/storage/v1beta1"
+	"k8s.io/apimachinery/pkg/runtime"
+	utilyaml "k8s.io/apimachinery/pkg/util/yaml"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -161,7 +159,7 @@ func NewClaim(ns string, storageClassName string, requestedStorageSize string) *
 // RunInPodWithVolume runs a command in a pod with given claim mounted to /mnt directory.
 func RunInPodWithVolume(c clientset.Interface, ns, claimName, command string) {
 	pod := &v1.Pod{
-		TypeMeta: unversioned.TypeMeta{
+		TypeMeta: metav1.TypeMeta{
 			Kind:       "Pod",
 			APIVersion: "v1",
 		},
@@ -207,7 +205,7 @@ func RunInPodWithVolume(c clientset.Interface, ns, claimName, command string) {
 
 func NewStorageClass(storageClassName string, storageClassType string, iopsPerGB string, sizeRange string, mountOptions string, billingType string) *v1beta1.StorageClass {
 	return &v1beta1.StorageClass{
-		TypeMeta: unversioned.TypeMeta{
+		TypeMeta: metav1.TypeMeta{
 			Kind: "StorageClass",
 		},
 		ObjectMeta: v1.ObjectMeta{
@@ -224,7 +222,7 @@ func StartProvisionerPod(c clientset.Interface, ns string) *v1.Pod {
 	podClient := c.Core().Pods(ns)
 	By("startProvisionerPod: Init")
 	provisionerPod := &v1.Pod{
-		TypeMeta: unversioned.TypeMeta{
+		TypeMeta: metav1.TypeMeta{
 			Kind:       "Pod",
 			APIVersion: "v1",
 		},
@@ -339,7 +337,7 @@ func StartProvisionerDeployment(c clientset.Interface, ns string) (*v1.Service, 
 // SvcFromManifest reads a .json/yaml file and returns the json of the desired
 func SvcFromManifest(fileName string) *v1.Service {
 	var service v1.Service
-	data, err := ioutil.ReadFile(fileName)
+	data, err := ioutil.ReadFile(fileName) //#nosec G304 test file
 	Expect(err).NotTo(HaveOccurred())
 
 	r := ioutil.NopCloser(bytes.NewReader(data))
@@ -357,7 +355,7 @@ func SvcFromManifest(fileName string) *v1.Service {
 
 	json, err := utilyaml.ToJSON(chunk)
 	Expect(err).NotTo(HaveOccurred())
-	Expect(runtime.DecodeInto(api.Codecs.UniversalDecoder(), json, &service)).NotTo(HaveOccurred())
+	Expect(runtime.DecodeInto(runtime.Codecs.UniversalDecoder(), json, &service)).NotTo(HaveOccurred())
 
 	return &service
 }
@@ -365,7 +363,7 @@ func SvcFromManifest(fileName string) *v1.Service {
 // deployFromManifest reads a .json/yaml file and returns the json of the desired
 func DeployFromManifest(fileName string) *extensions.Deployment {
 	var deployment extensions.Deployment
-	data, err := ioutil.ReadFile(fileName)
+	data, err := ioutil.ReadFile(fileName) //#nosec G304 test file
 	Expect(err).NotTo(HaveOccurred())
 
 	r := ioutil.NopCloser(bytes.NewReader(data))
@@ -383,7 +381,7 @@ func DeployFromManifest(fileName string) *extensions.Deployment {
 
 	json, err := utilyaml.ToJSON(chunk)
 	Expect(err).NotTo(HaveOccurred())
-	Expect(runtime.DecodeInto(api.Codecs.UniversalDecoder(), json, &deployment)).NotTo(HaveOccurred())
+	Expect(runtime.DecodeInto(runtime.Codecs.UniversalDecoder(), json, &deployment)).NotTo(HaveOccurred())
 
 	return &deployment
 }

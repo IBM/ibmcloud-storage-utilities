@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2162,SC2181,SC2086,SC2236,SC2162,SC2068,SC2004,SC2002,SC2178,SC2034,SC2034,SC2069,SC2154,SC2124
 
 # Usage: px_vpc_upgrade.sh clustername  command_name  workerids
 #example: ./px_vpc_upgrade.sh  mycluster replace worker/worker-pool (workerid1 workerid2) / (worker-pool-id1 worker-pool-id2) ....
@@ -20,7 +21,7 @@ else
         exit 1
 fi
 
-##Check JQ is intalled ot not 
+##Check JQ is intalled ot not
 
 if ! which jq &>/dev/null
 then
@@ -120,7 +121,7 @@ SLEEP_TIME=60
       fi
       sleep $SLEEP_TIME
       repeat=$(( $repeat + 1 ))
-    done 
+    done
 }
 
 restartPortworxService () {
@@ -180,17 +181,17 @@ SLEEP_TIME=30
 DESIRED=$(kubectl get ds/portworx -n kube-system -o json | jq .status.desiredNumberScheduled)
 repeat=0
 
-while [ $repeat -lt $LIMIT ] && [ $DESIRED -ne $RUNNING ]; do 
-    RUNNING=$(kubectl get pods -n kube-system -l name=portworx --field-selector status.phase=Running -o json | jq '.items | length') 
-    if [ $DESIRED -eq $RUNNING ]; then 
+while [ $repeat -lt $LIMIT ] && [ $DESIRED -ne $RUNNING ]; do
+    RUNNING=$(kubectl get pods -n kube-system -l name=portworx --field-selector status.phase=Running -o json | jq '.items | length')
+    if [ $DESIRED -eq $RUNNING ]; then
         echo "(Attempt $i of $LIMIT) Portworx pods: Desired $DESIRED, Running $RUNNING"
-    else 
+    else
         echo "(Attempt $i of $LIMIT) Portworx pods: Desired $DESIRED, Running $RUNNING, sleeping $SLEEP_TIME"
         sleep $SLEEP_TIME
-    fi 
+    fi
     repeat=$(( $repeat + 1 ))
 done
-echo "All the pods moved to running state" 
+echo "All the pods moved to running state"
 }
 
 waitfortheworkerdelete() {
@@ -204,7 +205,7 @@ waitfortheworkerdelete() {
     repeat=0
 
 
-    #### retrive the new worker id 
+    #### retrive the new worker id
     while [ $NODE_DEPLOYING -ne $DESIRED  ] && [  $repeat -lt $LIMIT ]; do
        WORKER_IDS_NEW=$(ic cs workers --cluster $CLUSTER  --json | jq -r '.[] | .id')
        for id in ${WORKER_IDS_NEW}
@@ -219,7 +220,7 @@ waitfortheworkerdelete() {
 		break
            else
 		echo "Worker deletion is in progress...sleeping"
-	   fi 
+	   fi
        done
         sleep $SLEEP_TIME
          repeat=$(( $repeat + 1 ))
@@ -232,7 +233,7 @@ waitfortheworkerdelete() {
 
 
 executereplaceorupdate () {
-    
+
     waitfortheworkerdelete
     waitforthenode  $provisioning_worker_id
     if [  -z "${px_label_check}" ]; then
@@ -245,7 +246,7 @@ executereplaceorupdate () {
     volume_attch_check=$(ic is vol ${vol_id} --json | jq -r '.volume_attachments[] .instance | .name')
      if [ -z "$volume_attch_check" ]; then
         echo "Volume: ${vol_id} is not attached to any node"
-        zone=$(ic cs worker get --worker $id --cluster $CLUSTER --json | jq -r .location) 
+        zone=$(ic cs worker get --worker $id --cluster $CLUSTER --json | jq -r .location)
         echo "Attaching the volume ....cluster $CLUSTER_ID worker ${id} volid ${vol_id}"
 	volume_attched=""
 	retry_count=0
@@ -260,14 +261,14 @@ executereplaceorupdate () {
                 echo "Volume ${vol_id} is attached to the worker ${id}"
                 break
           fi
-        done	
+        done
 	 if [ -z "${px_label_check}" ]; then
           restartPortworxService $provisioning_worker_id
 	 fi
     fi
    done
 }
-         
+
 
 
 

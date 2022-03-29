@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2068,SC2034,SC2124,SC2069
 #. ./connect_worker.sh  worker private ip bash
 if [ $# -lt 3 ]; then
   echo "runon [node IP] [Job_Name] [command]"
@@ -6,11 +7,11 @@ if [ $# -lt 3 ]; then
 fi
 
 function cleanup {
-  rm -rf ${TEMP_DIR}
+  rm -rf "${TEMP_DIR}"
 }
 
 function pod_status {
-  kubectl get pods $1 -n ${NAMESPACE} -o json | jq '.status.conditions[] | select(.type == "Ready") | .status ' | sed 's/\"//g'
+  kubectl get pods "$1" -n "${NAMESPACE}" -o json | jq '.status.conditions[] | select(.type == "Ready") | .status ' | sed 's/\"//g'
 }
 
 # create a random pod name
@@ -55,29 +56,29 @@ spec:
       hostPID: true
       restartPolicy: Never
 EOF
-) > ${TEMP_DIR}/job.yml
+) > "${TEMP_DIR}"/job.yml
 
-if ! kubectl apply -f ${TEMP_DIR}/job.yml 2>&1 > /dev/null; then
+if ! kubectl apply -f "${TEMP_DIR}"/job.yml 2>&1 > /dev/null; then
   echo "unable to create job, bailing out"
   exit 1
 fi
 
 
 # get the uid
-ID=$(kubectl get job ${JOB_NAME} -n ${NAMESPACE} -o 'jsonpath={.metadata.uid}')
+ID=$(kubectl get job "${JOB_NAME}" -n ${NAMESPACE} -o 'jsonpath={.metadata.uid}')
 if [ -z "${ID}" ]; then
   echo "ERR unable to get job id"
   exit 1
 fi
 
 
-POD=$(kubectl get pods -n ${NAMESPACE} -l controller-uid=${ID},job-name=${JOB_NAME} -o 'jsonpath={.items[].metadata.name}')
+POD=$(kubectl get pods -n ${NAMESPACE} -l controller-uid="${ID}",job-name="${JOB_NAME}" -o 'jsonpath={.items[].metadata.name}')
 
 SUCCESS=
 current_time=$(date +%s)
 stop_time=$((current_time + 60)) # this shouldn't take that long, give it 60 seconds
 
-status=$(pod_status ${POD})
+status=$(pod_status "${POD}")
 while [[ $current_time -lt $stop_time ]]; do
   if [ "${status}" = "True" ]; then
     SUCCESS=true
@@ -85,7 +86,7 @@ while [[ $current_time -lt $stop_time ]]; do
   else
     sleep 1
   fi
-  status=$(pod_status ${POD})
+  status=$(pod_status "${POD}")
 done
 
 if [ "${SUCCESS}" = "true" ]; then

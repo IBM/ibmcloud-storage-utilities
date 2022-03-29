@@ -23,9 +23,9 @@ import (
 
 	"github.com/onsi/ginkgo/config"
 	"github.com/spf13/viper"
-	"k8s.io/client-go/pkg/apis/componentconfig"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/kubernetes/pkg/cloudprovider"
+	"k8s.io/kubernetes/pkg/kubelet/apis/config"
 )
 
 type TestContextType struct {
@@ -110,7 +110,7 @@ type NodeTestContextType struct {
 	// PrepullImages indicates whether node e2e framework should prepull images.
 	PrepullImages bool
 	// KubeletConfig is the kubelet configuration the test is running against.
-	KubeletConfig componentconfig.KubeletConfiguration
+	KubeletConfig config.KubeletConfiguration
 }
 
 type CloudConfig struct {
@@ -213,7 +213,7 @@ func RegisterNodeFlags() {
 func overwriteFlagsWithViperConfig() {
 	viperFlagSetter := func(f *flag.Flag) {
 		if viper.IsSet(f.Name) {
-			f.Value.Set(viper.GetString(f.Name))
+			f.Value.Set(viper.GetString(f.Name)) //#nosec G104 test file
 		}
 	}
 	flag.VisitAll(viperFlagSetter)

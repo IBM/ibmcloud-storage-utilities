@@ -26,19 +26,17 @@ import (
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/dynamic"
 	clientset "k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/pkg/api"
-	apierrs "k8s.io/client-go/pkg/api/errors"
-	"k8s.io/client-go/pkg/api/unversioned"
-	"k8s.io/client-go/pkg/api/v1"
-	"k8s.io/client-go/pkg/fields"
-	"k8s.io/client-go/pkg/labels"
-	"k8s.io/client-go/pkg/master/ports"
-	"k8s.io/client-go/pkg/runtime"
-	"k8s.io/client-go/pkg/util/sets"
-	"k8s.io/client-go/pkg/util/uuid"
-	"k8s.io/client-go/pkg/util/wait"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/fields"
+	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/sets"
+	"k8s.io/apimachinery/pkg/util/uuid"
+	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/pkg/version"
-	"k8s.io/client-go/pkg/watch"
+	"k8s.io/client-go/tools/watch"
 	restclient "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
@@ -60,6 +58,10 @@ const (
 
 	// How long claims have to become dynamically provisioned
 	ClaimProvisionTimeout = 35 * time.Minute
+
+	// KubeletPort is the default port for the kubelet server on each host machine.
+	// May be overridden by a flag at startup.
+	KubeletPort = 10250
 )
 
 var (
@@ -313,7 +315,7 @@ func deleteNS(c clientset.Interface, clientPool dynamic.ClientPool, namespace st
 		logNamespaces(c, namespace)
 
 		// if we can, check if there were pods remaining with no timestamp.
-		remainingPods, missingTimestamp, _ = countRemainingPods(c, namespace)
+		remainingPods, missingTimestamp, _ = countRemainingPods(c, namespace) //#nosec G104 test file
 	}
 
 	// a timeout waiting for namespace deletion happened!
@@ -429,7 +431,7 @@ func hasRemainingContent(c clientset.Interface, clientPool dynamic.ClientPool, n
 			continue
 		}
 		// get the api resource
-		apiResource := unversioned.APIResource{Name: gvr.Resource, Namespaced: true}
+		apiResource := metav1.APIResource{Name: gvr.Resource, Namespaced: true}
 		// TODO: temporary hack for https://github.com/kubernetes/kubernetes/issues/31798
 		if ignoredResources.Has(apiResource.Name) {
 			Logf("namespace: %s, resource: %s, ignored listing per whitelist", namespace, apiResource.Name)
@@ -493,7 +495,7 @@ var ErrPodCompleted = fmt.Errorf("pod ran to completion")
 func PodRunning(event watch.Event) (bool, error) {
 	switch event.Type {
 	case watch.Deleted:
-		return false, apierrs.NewNotFound(unversioned.GroupResource{Resource: "pods"}, "")
+		return false, apierrs.NewNotFound(metav1.GroupResource{Resource: "pods"}, "")
 	}
 	switch t := event.Object.(type) {
 	case *v1.Pod:
@@ -711,7 +713,7 @@ func getNodeEvents(c clientset.Interface, nodeName string) []v1.Event {
 		"source":                   "kubelet",
 	}.AsSelector()
 	options := v1.ListOptions{FieldSelector: selector.String()}
-	events, err := c.Core().Events(api.NamespaceSystem).List(options)
+	events, err := c.Core().Events(metav1.NamespaceSystem).List(options)
 	if err != nil {
 		Logf("Unexpected error retrieving node events %v", err)
 		return []v1.Event{}
@@ -842,7 +844,7 @@ func NodeProxyRequest(c clientset.Interface, node, endpoint string) (restclient.
 			result = c.Core().RESTClient().Get().
 				Resource("nodes").
 				SubResource("proxy").
-				Name(fmt.Sprintf("%v:%v", node, ports.KubeletPort)).
+				Name(fmt.Sprintf("%v:%v", node, KubeletPort)).
 				Suffix(endpoint).
 				Do()
 
@@ -850,7 +852,7 @@ func NodeProxyRequest(c clientset.Interface, node, endpoint string) (restclient.
 			result = c.Core().RESTClient().Get().
 				Prefix("proxy").
 				Resource("nodes").
-				Name(fmt.Sprintf("%v:%v", node, ports.KubeletPort)).
+				Name(fmt.Sprintf("%v:%v", node, KubeletPort)).
 				Suffix(endpoint).
 				Do()
 		}

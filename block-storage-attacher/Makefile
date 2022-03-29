@@ -14,7 +14,7 @@ BUILD_NUMBER?=unknown
 TRAVIS_BUILD_NUMBER ?= unknown
 OSS_FILES := Dockerfile go.mod
 
-LINT_VERSION="1.42.1"
+LINT_VERSION="1.45.2"
 GOSEC_VERSION="v2.8.1"
 NANCY_VERSION := 1.0.20
 
@@ -118,11 +118,14 @@ showanalyzedeps:
  lint: install-bt
 	bt lint golangci --version="v${LINT_VERSION}" -- --timeout 5m
 	bt lint opensource ${OSS_FILES}
-	bt lint copyright
 	bt lint semver-deps -prefix github.ibm.com/alchemy-containers
-	bt lint shellcheck
 	bt lint nancy --version="v${NANCY_VERSION}"
 	bt lint gosec -config .gosec.json -version ${GOSEC_VERSION}
+
+.PHONY: lint-root-repo
+ lint-root-repo:
+	bt lint copyright
+	bt lint shellcheck
 
 .PHONY: lint-fix
  lint-fix: install-bt

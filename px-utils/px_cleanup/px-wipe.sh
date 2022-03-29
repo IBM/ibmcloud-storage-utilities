@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2162,SC2181,SC2086,SC2236,SC2162,SC2206,SC2128
 
 TALISMAN_IMAGE=portworx/talisman
 TALISMAN_TAG=1.1.3

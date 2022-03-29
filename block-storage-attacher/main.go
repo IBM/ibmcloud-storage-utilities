@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Kubernetes Service, 5737-D43
+ * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+ * The source code for this program is not published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
 // Package main ...
 package main
 
@@ -17,7 +27,7 @@ func main() {
 	var err error
 
 	// Logger
-	logger, _ := logger.GetZapLogger()
+	logger, _ := logger.GetZapLogger() //#nosec G104 notCritical
 	loggerLevel := zap.NewAtomicLevel()
 
 	//Enable debug trace
@@ -26,7 +36,7 @@ func main() {
 		loggerLevel.SetLevel(zap.DebugLevel)
 	}
 
-	_ = flag.Set("logtostderr", "true")
+	_ = flag.Set("logtostderr", "true") //#nosec G104 notCritical
 	flag.Parse()
 
 	var config *rest.Config

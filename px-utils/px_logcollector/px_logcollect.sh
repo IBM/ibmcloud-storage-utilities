@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2162,SC2181,SC2086,SC2236,SC2162,SC2068,SC2002,SC2006,SC2001,SC2034,SC2069
 
 ALLWORKERS="false"
 NoOfWorkers=""
@@ -9,7 +10,7 @@ if [ $# -lt 1 ]; then
 elif [ $1 = --worker ]; then
    WORKER_IP=$2
    NoOfWorkers=$#
-   echo "WORKER_IP = $WORKER_IP" 
+   echo "WORKER_IP = $WORKER_IP"
 fi
 
 
@@ -183,6 +184,5 @@ else
     deployJob
     sleep 20
     kubectl delete job $JOB_NAME -n $NAMESPACE
-  done 
+  done
 fi
-

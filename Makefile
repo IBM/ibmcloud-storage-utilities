@@ -10,10 +10,11 @@ block-storage-attacher:
 	make vet; \
 	make fmt; \
 	make test; \
-	make gosec; \
-	make coverage
+	make lint; \
+	cd ../ && pwd && make lint-root-repo; \
+	cd block-storage-attacher && make coverage
 
-.PHONY: showanalyzedeps
-showanalyzedeps:
-	cd block-storage-attacher; \
-	make showanalyzedeps
+.PHONY: lint-root-repo
+ lint-root-repo:
+	bt lint copyright
+	bt lint shellcheck

@@ -1,8 +1,9 @@
 #!/bin/bash
+# shellcheck disable=SC2028,SC1091,SC2086,SC2129,SC2153,SC1090,SC2046,SC2155
 # Load e2e config file
 set -a
 set -xe
-source $1
+source "$1"
 set +a
 
 # check mandatory variables
@@ -20,7 +21,7 @@ NOOF_WORKERS=1
 
 if [ "$PVG_CLUSTER_TYPE" == "classic" ]; then
 
-    if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
+    if [ $(echo "$PVG_CLUSTER_KUBE_VERSION" | grep -c  "openshift" ) -gt 0 ]; then
        CLUSTERTYPE="ROKS Classic"
        NOOF_WORKERS=2
     else
@@ -28,14 +29,14 @@ if [ "$PVG_CLUSTER_TYPE" == "classic" ]; then
     fi
 elif [ "$PVG_CLUSTER_TYPE" == "vpc-classic" ]; then
 
-    if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
+    if [ $(echo "$PVG_CLUSTER_KUBE_VERSION" | grep -c  "openshift" ) -gt 0 ]; then
        CLUSTERTYPE="ROKS VPC Gen1"
        NOOF_WORKERS=2
     else
        CLUSTERTYPE="IKS VPC Gen1"
     fi
 else
-    if [ `echo $PVG_CLUSTER_KUBE_VERSION | grep -c  "openshift" ` -gt 0 ]; then
+    if [ $(echo "$PVG_CLUSTER_KUBE_VERSION" | grep -c  "openshift" ) -gt 0 ]; then
        CLUSTERTYPE="ROKS VPC Gen2"
        NOOF_WORKERS=2
     else
@@ -46,19 +47,19 @@ fi
 
 
 CLUSTERDETAILS=" Cluster Type:$CLUSTERTYPE \n Region:$ARMADA_REGION \n Cluster Location:$PVG_CLUSTER_LOCATION \n Kube-Version:$PVG_CLUSTER_KUBE_VERSION \n"
-echo -e "$CLUSTERDETAILS" > $E2E_PATH/setupDetails.txt
+echo -e "$CLUSTERDETAILS" > "$E2E_PATH"/setupDetails.txt
 
 # Load common functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/scripts
-. $SCRIPT_DIR/common.sh
+. "$SCRIPT_DIR"/common.sh
 
 
 # Do a bx login, user can also opt to skip this during dev-test
 if [[ $TEST_BLUEMIX_LOGIN == "true" ]]; then
         echo "Bluemix Login DOne"
 	bx_login
-        if [ $ARMADA_REGION == "us-south" ]; then
-           bx cr api  $IMAGE_REGISTRY
+        if [ "$ARMADA_REGION" == "us-south" ]; then
+           bx cr api  "$IMAGE_REGISTRY"
           echo "Us South"
         fi
         ibmcloud cr login
@@ -71,8 +72,8 @@ cluster_id=$(ibmcloud ks clusters | awk "/$PVG_CLUSTER_CRUISER/"'{print $2}')
 if [[ -n "$cluster_id" && "$TEST_CLUSTER_CREATE" == "always" ]]; then
 	# Delete the PVG_CLUSTER_CRUISER if it exists
 	set +e
-	rm_cluster $PVG_CLUSTER_CRUISER
-	check_cluster_deleted $PVG_CLUSTER_CRUISER
+	rm_cluster "$PVG_CLUSTER_CRUISER"
+	check_cluster_deleted "$PVG_CLUSTER_CRUISER"
 	cluster_id=""
 	set -e
 fi
@@ -81,86 +82,85 @@ fi
 if [[ -z "$cluster_id" && "$TEST_CLUSTER_CREATE" != "never" ]]; then
 
 	# Create a cruiser
-	cruiser_create $PVG_CLUSTER_CRUISER $PVG_CLUSTER_MACHINE_TYPE $NOOF_WORKERS
-	
+	cruiser_create "$PVG_CLUSTER_CRUISER" $PVG_CLUSTER_MACHINE_TYPE $NOOF_WORKERS
+
 	# Put a small delay to let things settle
 	sleep 30
-	
-        ibmcloud ks clusters	
-	
+
+        ibmcloud ks clusters
+
 	# Verify cluster is up and running
 	echo "Checking the cluster for deployed state..."
-	check_cluster_state $PVG_CLUSTER_CRUISER
-	
+	check_cluster_state "$PVG_CLUSTER_CRUISER"
+
 	echo "Checking the workers for deployed state..."
-	check_worker_state $PVG_CLUSTER_CRUISER
-	
+	check_worker_state "$PVG_CLUSTER_CRUISER"
+
 	# Run sniff tests against cluster
 	ibmcloud ks clusters
-	ibmcloud ks cluster get --cluster $PVG_CLUSTER_CRUISER
-	ibmcloud ks workers --cluster $PVG_CLUSTER_CRUISER
-	
+	ibmcloud ks cluster get --cluster "$PVG_CLUSTER_CRUISER"
+	ibmcloud ks workers --cluster "$PVG_CLUSTER_CRUISER"
+
 	echo "Cluster creation is successful and ready to use"
 fi
 
-        echo "BlockVolumeAttacher-Volume-Test: Cluster-Creation: PASS" > $E2E_PATH/e2eTests.txt
+        echo "BlockVolumeAttacher-Volume-Test: Cluster-Creation: PASS" > "$E2E_PATH"/e2eTests.txt
 
 # Setup the kube configs, user can also opt to skip this during dev-test
 if [[ $TEST_CLUSTER_CONFIG_DOWNLOAD == "true" ]]; then
-	setKubeConfig $PVG_CLUSTER_CRUISER
-	cat $KUBECONFIG
+	setKubeConfig "$PVG_CLUSTER_CRUISER"
+	cat "$KUBECONFIG"
 	echo "Kubeconfig file download was successful"
 fi
 
 # Update certpath from relative to full path, without which the golang test fail
 addFullPathToCertsInKubeConfig
-cat $KUBECONFIG
+cat "$KUBECONFIG"
 echo "Kubeclient has been configured successfully to access the cluster"
 
 
 # Install helm chart (if configured). During dev-test, user might skip this, if doesn't want an override
 if [[ $TEST_HELM_INSTALL == "true" ]]; then
 	install_blockvolume_plugin
-	check_pod_state "ibm-block-storage-attacher" 
+	check_pod_state "ibm-block-storage-attacher"
 	#check_daemonset_state "ibmcloud-block-storage-driver"
 fi
-       
 
-echo "BlockVolumeAttacher-Volume-Test: Plugin-Installation: PASS" >> $E2E_PATH/e2eTests.txt
+
+echo "BlockVolumeAttacher-Volume-Test: Plugin-Installation: PASS" >> "$E2E_PATH"/e2eTests.txt
 
 # Build binary (if configured), Otherwise conf must have the binary file location
 if [[ $TEST_CODE_BUILD == "true" ]]; then
-	cd $BLOCK_PLUGIN_HOME
+	cd "$BLOCK_PLUGIN_HOME"
         make deps
-        set -oa 
+        set -oa
         export SL_API_KEY=$PVG_SL_API_KEY
         export  SL_USERNAME=$PVG_SL_USERNAME
         bx_login
         #bx cs credentials-set  --infrastructure-username  $PVG_SL_USERNAME  --infrastructure-api-key $PVG_SL_API_KEY
         #bx sl init -u   $PVG_SL_USERNAME  -p  $PVG_SL_API_KEY
         #bx cs init --host  $ARMADA_API_ENDPOINT
-	setKubeConfig $PVG_CLUSTER_CRUISER
+	setKubeConfig "$PVG_CLUSTER_CRUISER"
         export API_SERVER=$(kubectl config view | grep server | cut -f 2- -d ":" | tr -d " ")
         addFullPathToCertsInKubeConfig
-	cat $KUBECONFIG
+	cat "$KUBECONFIG"
         echo "Bluemix COnfig"
         cat ~/.bluemix/config.json
-        sed -i "s/$OLD_CLUUSTER_NAME/$NEW_CLUSTER_NAME/" $YAMLPATH
-        sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" $MKPVYAML
-        sed -i "s/$OLD_REGION/$NEW_REGION/" $YAMLPATH
-	make KUBECONFIGPATH=$KUBECONFIG PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
+        sed -i "s/$OLD_CLUUSTER_NAME/$NEW_CLUSTER_NAME/" "$YAMLPATH"
+        sed -i "s/$OLD_REQUEST_URL/$NEW_REQUEST_URL/" "$MKPVYAML"
+        sed -i "s/$OLD_REGION/$NEW_REGION/" "$YAMLPATH"
+	make KUBECONFIGPATH="$KUBECONFIG" PVG_PHASE="$PVG_PHASE" armada-portworx-e2e-test | tee "$E2E_PATH"/log.txt
 	#make  PVG_PHASE=$PVG_PHASE armada-portworx-e2e-test | tee $E2E_PATH/log.txt
         exitStatus=$?
 fi
 
-echo "--- Cluster Details ---" >  $E2E_PATH/setupDetails.txt
-echo "$CLUSTERDETAILS" >> $E2E_PATH/setupDetails.txt
-echo "$CLUSTERDETAILS" >> $E2E_PATH/setupDetails.txt
-echo "${PLUGINDETAILS}" >> $E2E_PATH/setupDetails.txt
-echo "$CLUSTER_ID" >> $E2E_PATH/setupDetails.txt
+echo "--- Cluster Details ---" >  "$E2E_PATH"/setupDetails.txt
+echo "$CLUSTERDETAILS" >> "$E2E_PATH"/setupDetails.txt
+echo "$CLUSTERDETAILS" >> "$E2E_PATH"/setupDetails.txt
+echo "${PLUGINDETAILS}" >> "$E2E_PATH"/setupDetails.txt
+echo "$CLUSTER_ID" >> "$E2E_PATH"/setupDetails.txt
 
 
 echo "Finished ibmcloud block storage plugin e2e tests"
 echo "In e2e script  existStatus = $exitStatus"
 exit $exitStatus
-
