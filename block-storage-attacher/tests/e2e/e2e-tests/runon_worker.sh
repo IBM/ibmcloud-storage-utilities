@@ -1,4 +1,12 @@
 #!/bin/bash
+# ******************************************************************************
+# * Licensed Materials - Property of IBM
+# * IBM Cloud Kubernetes Service, 5737-D43
+# * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# ******************************************************************************
+
 # shellcheck disable=SC2068,SC2034,SC2124,SC2069
 #. ./connect_worker.sh  worker private ip bash
 if [ $# -lt 3 ]; then

@@ -1,4 +1,12 @@
 #!/bin/bash
+# ******************************************************************************
+# * Licensed Materials - Property of IBM
+# * IBM Cloud Kubernetes Service, 5737-D43
+# * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# ******************************************************************************
+
 # shellcheck disable=SC1091,SC2126,SC2153,SC2068,SC2116,SC2002,SC2155,SC2207,SC2010,SC2154
 # Licensed Materials - Property of IBM
 #

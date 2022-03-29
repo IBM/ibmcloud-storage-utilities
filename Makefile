@@ -10,9 +10,13 @@ block-storage-attacher:
 	make vet; \
 	make fmt; \
 	make test; \
+	make coverage
+
+.PHONY: lint
+ lint:
+	cd block-storage-attacher; \
 	make lint; \
-	cd ../ && pwd && make lint-root-repo; \
-	cd block-storage-attacher && make coverage
+	cd ../ && make lint-root-repo
 
 .PHONY: lint-root-repo
  lint-root-repo:

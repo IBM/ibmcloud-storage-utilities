@@ -37,7 +37,6 @@ driver: deps gosec buildimage
 deps: install-bt
 	echo "Installing dependencies ..."
 #	glide install --strip-vendor
-	@V=$${BT_VERSION:-master} C=~/.cache/bt/repo && if ! git -C "$$C" status >/dev/null; then mkdir -p "$$C" && rm -rf "$$C" && git clone git@github.ibm.com:alchemy-containers/go-build-tools.git "$$C"; fi && pushd "$$C" && git fetch && { git reset --hard "$$V" || git reset --hard origin/"$$V"; } && popd && "$$C"/scripts/install.sh "$$V"
 	go get github.com/pierrre/gotestcover
 	go get -v github.com/securego/gosec/cmd/gosec
 

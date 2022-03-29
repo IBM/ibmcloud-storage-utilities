@@ -1,4 +1,12 @@
 #!/bin/bash
+# ******************************************************************************
+# * Licensed Materials - Property of IBM
+# * IBM Cloud Kubernetes Service, 5737-D43
+# * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# ******************************************************************************
+
 # shellcheck disable=SC2162,SC2181,SC2086,SC2236,SC2162,SC2068,SC2004,SC2002,SC2178,SC2034,SC2034,SC2069,SC2154,SC2124
 
 # Usage: px_vpc_upgrade.sh clustername  command_name  workerids
