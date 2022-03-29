@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Kubernetes Service, 5737-D43
+ * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+ * The source code for this program is not published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
 /*
 Copyright 2016 The Kubernetes Authors.
 
@@ -23,9 +33,9 @@ import (
 
 	"github.com/onsi/ginkgo/config"
 	"github.com/spf13/viper"
-	"k8s.io/client-go/pkg/apis/componentconfig"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/kubernetes/pkg/cloudprovider"
+	"k8s.io/kubernetes/pkg/kubelet/apis/config"
 )
 
 type TestContextType struct {
@@ -110,7 +120,7 @@ type NodeTestContextType struct {
 	// PrepullImages indicates whether node e2e framework should prepull images.
 	PrepullImages bool
 	// KubeletConfig is the kubelet configuration the test is running against.
-	KubeletConfig componentconfig.KubeletConfiguration
+	KubeletConfig config.KubeletConfiguration
 }
 
 type CloudConfig struct {
@@ -213,7 +223,7 @@ func RegisterNodeFlags() {
 func overwriteFlagsWithViperConfig() {
 	viperFlagSetter := func(f *flag.Flag) {
 		if viper.IsSet(f.Name) {
-			f.Value.Set(viper.GetString(f.Name))
+			f.Value.Set(viper.GetString(f.Name)) //#nosec G104 test file
 		}
 	}
 	flag.VisitAll(viperFlagSetter)

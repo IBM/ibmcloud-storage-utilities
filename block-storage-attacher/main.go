@@ -1,7 +1,19 @@
+/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Kubernetes Service, 5737-D43
+ * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+ * The source code for this program is not published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+// Package main ...
 package main
 
 import (
 	"flag"
+
 	cfg "github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/logger"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/watcher"
@@ -12,20 +24,19 @@ import (
 )
 
 func main() {
-
 	var err error
 
 	// Logger
-	logger, _ := logger.GetZapLogger()
+	logger, _ := logger.GetZapLogger() //#nosec G104 notCritical
 	loggerLevel := zap.NewAtomicLevel()
 
 	//Enable debug trace
-	debug_trace := cfg.GetConfigBool("DEBUG_TRACE", false, *logger)
-	if debug_trace {
+	debugTrace := cfg.GetConfigBool("DEBUG_TRACE", false, *logger)
+	if debugTrace {
 		loggerLevel.SetLevel(zap.DebugLevel)
 	}
 
-	_ = flag.Set("logtostderr", "true")
+	_ = flag.Set("logtostderr", "true") //#nosec G104 notCritical
 	flag.Parse()
 
 	var config *rest.Config

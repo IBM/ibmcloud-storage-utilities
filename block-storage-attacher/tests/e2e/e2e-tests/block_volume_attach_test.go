@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Kubernetes Service, 5737-D43
+ * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+ * The source code for this program is not published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
 /*
 # Licensed Materials - Property of IBM
 #
@@ -21,7 +31,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	clientset "k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/pkg/api/v1"
+	"k8s.io/api/core/v1"
 	"os"
 	"os/exec"
 	"strings"
@@ -71,11 +81,11 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			By("Volume Creation")
 			gopath := os.Getenv("GOPATH")
 			testfilepath = gopath + "/" + testfilepath
-			fpointer, perr = os.OpenFile(testfilepath, os.O_APPEND|os.O_WRONLY, 0644)
+			fpointer, perr = os.OpenFile(testfilepath, os.O_APPEND|os.O_WRONLY, 0644) //#nosec G302 test file
 			if perr != nil {
 				panic(perr)
 			}
-			defer fpointer.Close()
+			defer fpointer.Close() //#nosec G307 test file
 			clusterName, err := getCluster(gopath + "/" + ymlgenpath)
 			if err != nil {
 				logResult("BlockVolumeAttacher-Volume-Test: Getting Cluster Details: FAIL\n")
@@ -86,7 +96,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			pvfilepath = gopath + "/" + e2epath + "pv-" + clusterName + ".yaml"
 			filestatus, err := fileExists(pvfilepath)
 			if filestatus == true {
-				os.Remove(pvfilepath)
+				os.Remove(pvfilepath) //#nosec G104 test file
 			}
 			ymlscriptpath = gopath + "/" + ymlscriptpath
 			cmd := exec.Command(ymlscriptpath)
@@ -94,7 +104,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			cmd.Env = os.Environ()
 			cmd.Stderr = os.Stderr
 			By("Volume Creation1")
-			cmd.Run()
+			cmd.Run() //#nosec G104 test file
 
 			filestatus, err = fileExists(pvfilepath)
 			if err != nil {
@@ -108,7 +118,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 
 			By("Static PV  Creation")
 			if filestatus == true {
-				expvname, _ := getPVName(pvfilepath)
+				expvname, _ := getPVName(pvfilepath) //#nosec G104 test file
 				fmt.Printf("expvname:\n%s\n", expvname)
 				pvscriptpath = gopath + "/" + pvscriptpath
 				filepatharg := fmt.Sprintf("%s", pvfilepath)
@@ -116,7 +126,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 				if err == nil {
 					cleanUP(expvname, expv)
 				}
-				cmd := exec.Command(pvscriptpath, filepatharg, "pvcreate")
+				cmd := exec.Command(pvscriptpath, filepatharg, "pvcreate") //#nosec G204 test file
 				var stdout, stderr bytes.Buffer
 				cmd.Stdout = &stdout
 				cmd.Stderr = &stderr
@@ -163,7 +173,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			filestatus, err = fileExists(portworxscpath)
 			if filestatus == true {
 				filepatharg2 := fmt.Sprintf("%s", portworxscpath)
-				cmd := exec.Command(pvscriptpath, filepatharg2, "portworxpvcreate")
+				cmd := exec.Command(pvscriptpath, filepatharg2, "portworxpvcreate") //#nosec G204 test file
 				var stdout, stderr bytes.Buffer
 				cmd.Stdout = &stdout
 				cmd.Stderr = &stderr
@@ -208,7 +218,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			filepatharg := fmt.Sprintf("%s", portworxclassname)
 			nodeip := pv.ObjectMeta.Annotations["ibm.io/nodeip"]
 			nodeiparg := fmt.Sprintf("%s", nodeip)
-			cmd = exec.Command(pvscriptpath, filepatharg, "portworxdelete", nodeiparg)
+			cmd = exec.Command(pvscriptpath, filepatharg, "portworxdelete", nodeiparg) //#nosec G204 test file
 			var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
@@ -232,7 +242,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 			volidarg := fmt.Sprintf("%s", volumeid)
 			nodeip = pv.ObjectMeta.Annotations["ibm.io/nodeip"]
 			nodeiparg = fmt.Sprintf("%s", nodeip)
-			cmd = exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg)
+			cmd = exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg) //#nosec G204 test file
 			//var stdout, stderr bytes.Buffer
 			cmd.Stdout = &stdout
 			cmd.Stderr = &stderr
@@ -248,7 +258,7 @@ var _ = framework.KubeDescribe("[Feature:Block_Volume_Attach_E2E]", func() {
 
 			filestatus, err = fileExists(pvfilepath)
 			if filestatus == true {
-				os.Remove(pvfilepath)
+				os.Remove(pvfilepath) //#nosec G104 test file
 			}
 
 		})
@@ -294,11 +304,11 @@ func getCluster(filename string) (string, error) {
 	var line = ""
 	var clustername = ""
 
-	file, err := os.Open(filename)
+	file, err := os.Open(filename) //#nosec G304 test file
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	defer file.Close() //#nosec G307 test file
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line = scanner.Text()
@@ -325,11 +335,11 @@ func getPVName(filename string) (string, error) {
 	var line = ""
 	var pvname = ""
 
-	file, err := os.Open(filename)
+	file, err := os.Open(filename) //#nosec G304 test file
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
+	defer file.Close() //#nosec G307 test file
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line = scanner.Text()
@@ -351,11 +361,11 @@ func cleanUP(expvname string, pvobj *v1.PersistentVolume) {
 	volidarg := fmt.Sprintf("%s", volumeid)
 	nodeip := pvobj.ObjectMeta.Annotations["ibm.io/nodeip"]
 	nodeiparg := fmt.Sprintf("%s", nodeip)
-	cmd := exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg)
+	cmd := exec.Command(pvscriptpath, volidarg, "voldelete", nodeiparg) //#nosec G204 test file
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
-	cmd.Run()
+	cmd.Run() //#nosec G104 test file
 	outStr, errStr := string(stdout.Bytes()), string(stderr.Bytes())
 	fmt.Printf("CleanUP: out:\n%s\n CleanUP err:\n%s\n", outStr, errStr)
 	c.Core().PersistentVolumes().Delete(expvname, nil)
@@ -365,6 +375,6 @@ func cleanUP(expvname string, pvobj *v1.PersistentVolume) {
 func portworxcleanup(classname string) {
 
 	filepatharg := fmt.Sprintf("%s", classname)
-	cmd := exec.Command(pvscriptpath, filepatharg, "portworxdelete")
-	cmd.Run()
+	cmd := exec.Command(pvscriptpath, filepatharg, "portworxdelete") //#nosec G204 test file
+	cmd.Run() //#nosec G104 test file
 }

@@ -1,4 +1,13 @@
 #!/bin/bash
+# ******************************************************************************
+# * Licensed Materials - Property of IBM
+# * IBM Cloud Kubernetes Service, 5737-D43
+# * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# ******************************************************************************
+
+# shellcheck disable=SC2162,SC2181,SC2086,SC2236,SC2162,SC2006,SC2046
 
 logmessage() {
   echo "" 2>&1
@@ -58,7 +67,7 @@ ask() {
     N*|n*) return 1 ;;
     * )    echo "invalid reply: $reply"; return 1 ;;
   esac
-} 
+}
 CLUSTER_NAME=$(kubectl -n kube-system get cm cluster-info -o jsonpath='{.data.cluster-config\.json}' | jq -r '.name')
 
     if ! ask "The operation will delete Portworx components and metadata from the cluster. Do you want to continue?" N; then
@@ -67,14 +76,14 @@ CLUSTER_NAME=$(kubectl -n kube-system get cm cluster-info -o jsonpath='{.data.cl
     else
       if ! ask "Do you want to wipeout the data also from the volumes . Please enter?" N; then
           logmessage "The operation will delete Portworx components and metadata from the cluster.The data will not be wiped out fromm the voluems..."
-           bash `pwd`/px-wipe.sh | bash -s -- --skipmetadata 
+           bash `pwd`/px-wipe.sh | bash -s -- --skipmetadata
       else
         if ! ask "The operation will delete Portworx components and metadata from the cluster. The operation is irreversible and will lead to DATA LOSS. Do you want to continue?" N; then
           logmessage "The operation will delete Portworx components and metadata from the cluster.The data will not be wiped out fromm the voluems..."
-          bash `pwd`/px-wipe.sh | bash -s -- --skipmetadata 
+          bash `pwd`/px-wipe.sh | bash -s -- --skipmetadata
        else
         logmessage "The operation will delete Portworx components and metadata and the data on the volumes..."
-	bash `pwd`/px-wipe.sh -f 
+	bash `pwd`/px-wipe.sh -f
        fi
       fi
    fi

@@ -1,11 +1,23 @@
+/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Kubernetes Service, 5737-D43
+ * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+ * The source code for this program is not published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+// Package config ...
 package config
 
 import (
-	"github.com/BurntSushi/toml"
-	"go.uber.org/zap"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/BurntSushi/toml"
+	"go.uber.org/zap"
 )
 
 func getEnv(key string) string {
@@ -70,8 +82,9 @@ func GetConfigStringList(envKey string, defaultConf string, logger zap.Logger) [
 	return strings.Split(val, ",")
 }
 
+// Volume ...
 type Volume struct {
-	VolId    string `json:"volID,omitempty"`
+	VolID    string `json:"volID,omitempty"`
 	Iqn      string `json:"iqn,omitempty"`
 	Username string `json:"username,omitempty"`
 	Password string `json:"password,omitempty"`

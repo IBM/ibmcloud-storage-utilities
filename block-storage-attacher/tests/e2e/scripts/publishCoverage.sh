@@ -1,12 +1,21 @@
 #!/bin/bash
+# ******************************************************************************
+# * Licensed Materials - Property of IBM
+# * IBM Cloud Kubernetes Service, 5737-D43
+# * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# ******************************************************************************
+
+# shellcheck disable=SC2002,SC2206,SC2128
 set -x
 if [ "$TRAVIS_GO_VERSION" == "tip" ]; then
 	echo "Coverage information is not required for tip version."
 	exit 0
 fi
 
-mkdir $TRAVIS_BUILD_DIR/gh-pages
-cd $TRAVIS_BUILD_DIR/gh-pages
+mkdir "$TRAVIS_BUILD_DIR"/gh-pages
+cd "$TRAVIS_BUILD_DIR"/gh-pages || exit
 
 OLD_COVERAGE=0
 NEW_COVERAGE=0
@@ -16,15 +25,15 @@ BADGE_COLOR=red
 GREEN_THRESHOLD=85
 YELLOW_THRESHOLD=50
 
-echo $TRAVIS_BUILD_DIR
-echo $TRAVIS_BRANCH
-echo $TRAVIS_COMMIT
-echo $GHE_USER ":::" $GHE_TOKEN
-echo $TRAVIS_REPO_SLUG
+echo "$TRAVIS_BUILD_DIR"
+echo "$TRAVIS_BRANCH"
+echo "$TRAVIS_COMMIT"
+echo "$GHE_USER" ":::" "$GHE_TOKEN"
+echo "$TRAVIS_REPO_SLUG"
 
 # clone and prepare gh-pages branch
 
-git clone -b gh-pages https://$GHE_USER1:$GHE_TOKEN@github.ibm.com/$TRAVIS_REPO_SLUG.git .
+git clone -b gh-pages https://"$GHE_USER1":"$GHE_TOKEN"@github.ibm.com/"$TRAVIS_REPO_SLUG".git .
 git config user.name "travis"
 git config user.email "travis"
 
@@ -41,10 +50,10 @@ if [ ! -d "$TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT" ]; then
 fi
 
 # Compute overall coverage percentage
-OLD_COVERAGE=$(cat $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
-cp $TRAVIS_BUILD_DIR/cover.html $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH
-cp $TRAVIS_BUILD_DIR/cover.html $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_COMMIT
-NEW_COVERAGE=$(cat $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
+OLD_COVERAGE=$(cat "$TRAVIS_BUILD_DIR"/gh-pages/coverage/"$TRAVIS_BRANCH"/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
+cp "$TRAVIS_BUILD_DIR"/cover.html "$TRAVIS_BUILD_DIR"/gh-pages/coverage/"$TRAVIS_BRANCH"
+cp "$TRAVIS_BUILD_DIR"/cover.html "$TRAVIS_BUILD_DIR"/gh-pages/coverage/"$TRAVIS_COMMIT"
+NEW_COVERAGE=$(cat "$TRAVIS_BUILD_DIR"/gh-pages/coverage/"$TRAVIS_BRANCH"/cover.html  | grep "%)"  | sed 's/[][()><%]/ /g' | awk '{ print $4 }' | awk '{s+=$1}END{print s/NR}')
 
 if (( $(echo "$NEW_COVERAGE > $GREEN_THRESHOLD" | bc -l) )); then
 	BADGE_COLOR="green"
@@ -53,11 +62,11 @@ elif (( $(echo "$NEW_COVERAGE > $YELLOW_THRESHOLD" | bc -l) )); then
 fi
 
 # Generate badge for coverage
-curl https://img.shields.io/badge/Coverage-$NEW_COVERAGE%-$BADGE_COLOR.svg > $TRAVIS_BUILD_DIR/gh-pages/coverage/$TRAVIS_BRANCH/badge.svg
+curl https://img.shields.io/badge/Coverage-"$NEW_COVERAGE"%-$BADGE_COLOR.svg > "$TRAVIS_BUILD_DIR"/gh-pages/coverage/"$TRAVIS_BRANCH"/badge.svg
 
 COMMIT_RANGE=(${TRAVIS_COMMIT_RANGE//.../ })
 
-echo $COMMIT_RANGE
+echo "$COMMIT_RANGE"
 # Generate result message for log and PR
 if (( $(echo "$OLD_COVERAGE > $NEW_COVERAGE" | bc -l) )); then
 	RESULT_MESSAGE=":red_circle: Coverage decreased from [$OLD_COVERAGE%](https://pages.github.ibm.com/$TRAVIS_REPO_SLUG/coverage/${COMMIT_RANGE[0]}/cover.html) to [$NEW_COVERAGE%](https://pages.github.ibm.com/$TRAVIS_REPO_SLUG/coverage/${COMMIT_RANGE[1]}/cover.html)"
@@ -67,14 +76,14 @@ else
 	RESULT_MESSAGE=":thumbsup: Coverage increased from [$OLD_COVERAGE%](https://pages.github.ibm.com/$TRAVIS_REPO_SLUG/coverage/${COMMIT_RANGE[0]}/cover.html) to [$NEW_COVERAGE%](https://pages.github.ibm.com/$TRAVIS_REPO_SLUG/coverage/${COMMIT_RANGE[1]}/cover.html)"
 fi
 
-echo $RESULT_MESSAGE
+echo "$RESULT_MESSAGE"
 # Update gh-pages branch or PR
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-        echo "TRAVISSSSS" $TRAVIS_PULL_REQUEST
+        echo "TRAVISSSSS" "$TRAVIS_PULL_REQUEST"
 	git status
 	git add .
 	git commit -m "Coverage result for commit $TRAVIS_COMMIT from build $TRAVIS_BUILD_NUMBER"
 	git push origin
 else
-	curl -X POST -H "Authorization: token $GHE_TOKEN" https://github.ibm.com/alchemy-containers/armada-slclient-lib/repos/$TRAVIS_REPO_SLUG/issues/$TRAVIS_PULL_REQUEST/comments -H 'Content-Type: application/json' --data '{"body": "'"$RESULT_MESSAGE"'"}'
+	curl -X POST -H "Authorization: token $GHE_TOKEN" https://github.ibm.com/alchemy-containers/armada-slclient-lib/repos/"$TRAVIS_REPO_SLUG"/issues/"$TRAVIS_PULL_REQUEST"/comments -H 'Content-Type: application/json' --data '{"body": "'"$RESULT_MESSAGE"'"}'
 fi

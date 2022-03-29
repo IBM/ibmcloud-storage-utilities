@@ -1,52 +1,80 @@
+/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Kubernetes Service, 5737-D43
+ * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+ * The source code for this program is not published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+// Package watcher ...
 package watcher
 
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"regexp"
+	"strconv"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
 	"github.com/coreos/go-systemd/v22/dbus"
 	"go.uber.org/zap"
 	"golang.org/x/time/rate"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/util/workqueue"
-	"sync"
-	//types "k8s.io/apimachinery/pkg/types"
-	//"k8s.io/client-go/pkg/api/v1"
-	"io/ioutil"
-	"k8s.io/api/core/v1"
 	"k8s.io/client-go/tools/cache"
-	"os"
-	"regexp"
-	"strconv"
-	"strings"
-	"time"
+	"k8s.io/client-go/util/workqueue"
 )
 
 const (
-	VOLID        = "ibm.io/volID"
+	//VOLID ...
+	VOLID = "ibm.io/volID"
+	//ATTACHSTATUS ..
 	ATTACHSTATUS = "ibm.io/attachstatus"
-	IQN          = "ibm.io/iqn"
-	USERNAME     = "ibm.io/username"
-	PASSWORD     = "ibm.io/password"
-	TARGET       = "ibm.io/targetip"
-	LUNID        = "ibm.io/lunid"
-	NODEIP       = "ibm.io/nodeip"
-	DMPATH       = "ibm.io/dm"
-	MULTIPATH    = "ibm.io/mpath"
-	ATTACH       = "attach"
-	DETACH       = "detach"
-
-	STORAGECLASS     = "ibmc-block-attacher"
-	STATUS_ATTACHING = "attaching"
-	STATUS_ATTACHED  = "attached"
-	STATUS_FAILED    = "failed"
-	INVALID_PARAMS   = "invalid_params"
-	BLOCK_CONF       = "/host/etc/iscsi-block-volume.conf"
-	ATTACHER_SERVICE = "ibmc-block-attacher.service"
+	// IQN ..
+	IQN = "ibm.io/iqn"
+	//USERNAME ...
+	USERNAME = "ibm.io/username"
+	//PASSWORD ...
+	PASSWORD = "ibm.io/password"
+	//TARGET ...
+	TARGET = "ibm.io/targetip"
+	//LUNID ...
+	LUNID = "ibm.io/lunid"
+	//NODEIP ...
+	NODEIP = "ibm.io/nodeip"
+	//DMPATH ...
+	DMPATH = "ibm.io/dm"
+	//MULTIPATH ...
+	MULTIPATH = "ibm.io/mpath"
+	//ATTACH ...
+	ATTACH = "attach"
+	//DETACH ...
+	DETACH = "detach"
+	//STORAGECLASS ...
+	STORAGECLASS = "ibmc-block-attacher"
+	//STATUS_ATTACHING ...
+	STATUS_ATTACHING = "attaching" //nolint readability
+	//STATUS_ATTACHED ...
+	STATUS_ATTACHED = "attached" //nolint readability
+	//STATUS_FAILED ...
+	STATUS_FAILED = "failed" //nolint readability
+	//INVALID_PARAMS ...
+	INVALID_PARAMS = "invalid_params" //nolint readability
+	//BLOCK_CONF ...
+	BLOCK_CONF = "/host/etc/iscsi-block-volume.conf" //nolint readability
+	//ATTACHER_SERVICE ...
+	ATTACHER_SERVICE = "ibmc-block-attacher.service" //nolint readability
 )
 
 var clientset kubernetes.Interface
@@ -54,6 +82,7 @@ var lgr zap.Logger
 var mutex = &sync.Mutex{}
 var volumeQueue workqueue.RateLimitingInterface
 
+//WatchPersistentVolumes ...
 func WatchPersistentVolumes(client kubernetes.Interface, log zap.Logger) {
 	clientset = client
 	lgr = log
@@ -105,13 +134,13 @@ func processNextVolume() bool {
 		var ok bool
 		if key, ok = obj.(*v1.PersistentVolume); !ok {
 			volumeQueue.Forget(obj)
-			return fmt.Errorf("Expected string in workqueue but got %#v", obj)
+			return fmt.Errorf("expected string in workqueue but got %#v", obj)
 		}
 
 		if isRetryRequired, err := ModifyAttachConfig(key); isRetryRequired {
 			volumeQueue.AddRateLimited(obj)
 			lgr.Info("Retrying to attach storage", zap.String("Name", key.Name))
-			return fmt.Errorf("Retrying to attach storage %q: %s", key, err.Error())
+			return fmt.Errorf("retrying to attach storage %q: %s", key, err.Error())
 		}
 
 		volumeQueue.Forget(obj)
@@ -124,6 +153,7 @@ func processNextVolume() bool {
 	return true
 }
 
+//AttachVolume ...
 func AttachVolume(obj interface{}) {
 	pv, ok := obj.(*v1.PersistentVolume)
 	if !ok {
@@ -140,6 +170,7 @@ func AttachVolume(obj interface{}) {
 	}
 }
 
+//ModifyAttachConfig ...
 func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 	lgr.Info("Waiting for mutex lock in ATTACH", zap.String("Name", pv.Name))
 	mutex.Lock()
@@ -150,61 +181,64 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 	_, volErr := clientset.CoreV1().PersistentVolumes().Get(context.TODO(), pv.Name, metav1.GetOptions{})
 	if volErr != nil {
 		lgr.Warn("Failed to fetch PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(volErr))
-		return false, fmt.Errorf("Error while fetching persistent volume %s. Error: %v", pv.Name, volErr)
+		return false, fmt.Errorf("error while fetching persistent volume %s. Error: %v", pv.Name, volErr)
 	}
 	lgr.Info("Volume to be attached: ", zap.String("Name", pv.Name))
 
 	retry, validateErr := Validate(pv)
 	if validateErr != nil {
 		lgr.Error("Validation Error", zap.Error(validateErr))
-		return retry, fmt.Errorf("Error while validating PV attributes %s. Error: %v", pv.Name, validateErr)
+		return retry, fmt.Errorf("error while validating PV attributes %s. Error: %v", pv.Name, validateErr)
 	}
 	volume := config.Volume{}
-	volume.VolId = pv.Annotations[VOLID]
+	volume.VolID = pv.Annotations[VOLID]
 	volume.Iqn = pv.Annotations[IQN]
 	volume.Username = pv.Annotations[USERNAME]
 	volume.Password = pv.Annotations[PASSWORD]
 	volume.Target = pv.Annotations[TARGET]
-	volume.Lunid, _ = strconv.Atoi(pv.Annotations[LUNID])
+	lunid, errConv := strconv.Atoi(pv.Annotations[LUNID])
+	if errConv != nil {
+		return false, errConv
+	}
+	volume.Lunid = lunid
 	volume.Nodeip = pv.Annotations[NODEIP]
 
-	worker_node := os.Getenv("NODE_IP")
-	if worker_node != volume.Nodeip {
+	workerNode := os.Getenv("NODE_IP")
+	if workerNode != volume.Nodeip {
 		lgr.Info("The volume attach is not requested for this worker node")
-		return false, fmt.Errorf("The volume attach is not requested for this worker node")
+		return false, fmt.Errorf("the volume attach is not requested for this worker node")
 	}
 	var input []byte
 	var err error
 	if input, err = ioutil.ReadFile(BLOCK_CONF); err != nil {
 		lgr.Error("Could not read iscsi-block-volume.conf file")
-		return false, fmt.Errorf("Could not read iscsi-block-volume.conf file. Error: %v", err)
-	} else {
-		lines := strings.Split(string(input), "\n")
-		for i, line := range lines {
-			if strings.Contains(line, "iqn=") {
-				lines[i] = "iqn=" + strings.TrimSpace(volume.Iqn)
-			} else if strings.Contains(line, "username=") {
-				lines[i] = "username=" + strings.TrimSpace(volume.Username)
-			} else if strings.Contains(line, "password=") {
-				lines[i] = "password=" + strings.TrimSpace(volume.Password)
-			} else if strings.Contains(line, "target_ip=") {
-				lines[i] = "target_ip=" + strings.TrimSpace(volume.Target)
-			} else if strings.Contains(line, "lunid=") {
-				lines[i] = "lunid=" + strconv.Itoa(volume.Lunid)
-			} else if strings.Contains(line, "node_ip=") {
-				lines[i] = "node_ip=" + strings.TrimSpace(volume.Nodeip)
-			} else if strings.Contains(line, "op=") {
-				lines[i] = "op=" + strings.TrimSpace(ATTACH)
-			}
+		return false, fmt.Errorf("could not read iscsi-block-volume.conf file. Error: %v", err)
+	}
+	lines := strings.Split(string(input), "\n")
+	for i, line := range lines {
+		if strings.Contains(line, "iqn=") {
+			lines[i] = "iqn=" + strings.TrimSpace(volume.Iqn)
+		} else if strings.Contains(line, "username=") {
+			lines[i] = "username=" + strings.TrimSpace(volume.Username)
+		} else if strings.Contains(line, "password=") {
+			lines[i] = "password=" + strings.TrimSpace(volume.Password)
+		} else if strings.Contains(line, "target_ip=") {
+			lines[i] = "target_ip=" + strings.TrimSpace(volume.Target)
+		} else if strings.Contains(line, "lunid=") {
+			lines[i] = "lunid=" + strconv.Itoa(volume.Lunid)
+		} else if strings.Contains(line, "node_ip=") {
+			lines[i] = "node_ip=" + strings.TrimSpace(volume.Nodeip)
+		} else if strings.Contains(line, "op=") {
+			lines[i] = "op=" + strings.TrimSpace(ATTACH)
 		}
+	}
 
-		modifiedlines := []string{}
-		modifiedlines = append(modifiedlines, lines...)
-		output := strings.Join(modifiedlines, "\n")
-		if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0600); err != nil {
-			lgr.Error("Could not write to iscsi-block-volume.conf file")
-			return false, fmt.Errorf("Could not write to iscsi-block-volume.conf file. Error: %v", err)
-		}
+	modifiedlines := []string{}
+	modifiedlines = append(modifiedlines, lines...)
+	output := strings.Join(modifiedlines, "\n")
+	if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0600); err != nil {
+		lgr.Error("Could not write to iscsi-block-volume.conf file")
+		return false, fmt.Errorf("could not write to iscsi-block-volume.conf file. Error: %v", err)
 	}
 
 	pvUpdated := false
@@ -232,32 +266,32 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 		lgr.Warn("Failed to update PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(pvErr))
 	}
 	if !pvUpdated {
-		return true, fmt.Errorf("Failed to update PV %s", pv.Name)
+		return true, fmt.Errorf("failed to update PV %s", pv.Name)
 	}
 
 	// Restart ibmc-block-attacher service so volume can be attached
 	dbConn, connErr := dbus.New()
 	if connErr != nil {
 		lgr.Error("Error: Unable to connect!", zap.Error(connErr))
-		return true, fmt.Errorf("Error: Unable to connect. %v", connErr)
+		return true, fmt.Errorf("error: Unable to connect. %v", connErr)
 	}
 	reschan := make(chan string)
 	_, restartErr := dbConn.RestartUnit(ATTACHER_SERVICE, "fail", reschan)
 	if restartErr != nil {
 		lgr.Error("Error: Unable to restart target", zap.Error(restartErr))
-		return true, fmt.Errorf("Error: Unable to restart target. %v", restartErr)
-	} else {
-		lgr.Info("Unit Restarted !!")
+		return true, fmt.Errorf("error: Unable to restart target. %v", restartErr)
 	}
+	lgr.Info("Unit Restarted !!")
 	job := <-reschan
 	if job != "done" {
 		lgr.Error("Error: Restart of service is not done: " + job)
-		return true, fmt.Errorf("Error: Restart of service is not done.")
+		return true, fmt.Errorf("error: Restart of service is not done")
 	}
 	retry, attErr := UpdatePersistentVolume(volume, pv)
 	return retry, attErr
 }
 
+//UpdatePersistentVolume ...
 func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool, error) {
 	folder := "/host/lib/ibmc-block-attacher"
 	if val := os.Getenv("service_dir"); val != "" {
@@ -298,15 +332,19 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 			for _, line := range lines {
 				space := regexp.MustCompile(`\s+`)
 				line = space.ReplaceAllString(line, " ")
-				line_parts := strings.Split(string(line), " ")
-				lgr.Info("Line: ", zap.Strings("LINE", line_parts))
+				lineParts := strings.Split(line, " ")
+				lgr.Info("Line: ", zap.Strings("LINE", lineParts))
 				// We ignore the orphan multipaths
-				if (len(line_parts) >= 3) && (strings.TrimSpace(line_parts[2]) != "orphan") {
+				if (len(lineParts) >= 3) && (strings.TrimSpace(lineParts[2]) != "orphan") {
 					// Parse the LUN ID from output
-					lun := strings.Split(string(line_parts[1]), ":")
+					lun := strings.Split(lineParts[1], ":")
 					if len(lun) == 4 {
-						if lunid, _ = strconv.Atoi(lun[3]); lunid == volume.Lunid {
-							mpath = line_parts[0]
+						lunid, err = strconv.Atoi(lun[3])
+						if err != nil {
+							return true, err
+						}
+						if lunid == volume.Lunid {
+							mpath = lineParts[0]
 							break
 						}
 					}
@@ -315,7 +353,7 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 		}
 		if len(mpath) == 0 {
 			lgr.Error("Multipaths are taking time to load")
-			return true, fmt.Errorf("Multipaths are taking time to load for storage %s", volume.VolId)
+			return true, fmt.Errorf("multipaths are taking time to load for storage %s", volume.VolID)
 		}
 
 		// Parse multipaths to fetch device path
@@ -330,31 +368,31 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 			for _, line := range lines {
 				space := regexp.MustCompile(`\s+`)
 				line = space.ReplaceAllString(line, " ")
-				line_parts := strings.Split(string(line), " ")
-				lgr.Info("Mpath Line: ", zap.Strings("LINE", line_parts))
+				lineParts := strings.Split(line, " ")
+				lgr.Info("Mpath Line: ", zap.Strings("LINE", lineParts))
 				lgr.Info("MPath: ", zap.String("MPATH", mpath))
-				if line_parts[0] == mpath {
+				if lineParts[0] == mpath {
 					// Device path sample is /dev/dm-0
-					devicepath = "/dev/" + line_parts[1]
+					devicepath = "/dev/" + lineParts[1]
 					break
 				}
 			}
 		}
 		if len(devicepath) == 0 {
 			lgr.Error("Device path is taking time to load")
-			return true, fmt.Errorf("Device path is taking time to load for storage %s", volume.VolId)
+			return true, fmt.Errorf("device path is taking time to load for storage %s", volume.VolID)
 		}
 		lgr.Info("Device path and volume lun ID: ", zap.String("LUN_Id", strconv.Itoa(volume.Lunid)), zap.String("Device_Path", devicepath))
 
 		// Delete the output files
-		del_err := os.Remove(pathsFile)
-		if del_err != nil {
-			lgr.Error("Delete of "+pathsFile+" file failed ", zap.Error(del_err))
+		delErr := os.Remove(pathsFile)
+		if delErr != nil {
+			lgr.Error("Delete of "+pathsFile+" file failed ", zap.Error(delErr))
 		}
 
-		del_err = os.Remove(mpathsFile)
-		if del_err != nil {
-			lgr.Error("Delete of "+mpathsFile+" file failed ", zap.Error(del_err))
+		delErr = os.Remove(mpathsFile)
+		if delErr != nil {
+			lgr.Error("Delete of "+mpathsFile+" file failed ", zap.Error(delErr))
 		}
 
 		pvUpdated := false
@@ -380,7 +418,7 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 			lgr.Warn("Failed to update PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(pvErr))
 		}
 		if !pvUpdated {
-			return true, fmt.Errorf("Failed to update PV %s", pv.Name)
+			return true, fmt.Errorf("failed to update PV %s", pv.Name)
 		}
 		return false, nil
 	}
@@ -401,9 +439,10 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 		}
 		lgr.Warn("Failed to update PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(pvErr))
 	}
-	return true, fmt.Errorf("Error while attaching storage %s", volume.VolId)
+	return true, fmt.Errorf("error while attaching storage %s", volume.VolID)
 }
 
+//Validate ...
 func Validate(pv *v1.PersistentVolume) (bool, error) {
 	volDetails := make([]string, 0)
 	if pv.Annotations == nil {
@@ -462,13 +501,14 @@ func Validate(pv *v1.PersistentVolume) (bool, error) {
 			lgr.Error("Failed to update PV from apiserver:", zap.String("pvname", pv.Name), zap.Error(err))
 		}
 		if !pvUpdated {
-			return true, fmt.Errorf("Failed to update PV %s", pv.Name)
+			return true, fmt.Errorf("failed to update PV %s", pv.Name)
 		}
-		return false, fmt.Errorf("Error while validating the PV annotations %s", pv.Name)
+		return false, fmt.Errorf("error while validating the PV annotations %s", pv.Name)
 	}
 	return false, nil
 }
 
+//DetachVolume ...
 func DetachVolume(obj interface{}) {
 	pv, ok := obj.(*v1.PersistentVolume)
 	if !ok {
@@ -482,6 +522,7 @@ func DetachVolume(obj interface{}) {
 	ModifyDetachConfig(pv)
 }
 
+//ModifyDetachConfig ...
 func ModifyDetachConfig(pv *v1.PersistentVolume) {
 	lgr.Info("Waiting for mutex lock in DETACH", zap.String("Name", pv.Name))
 	mutex.Lock()
@@ -494,52 +535,50 @@ func ModifyDetachConfig(pv *v1.PersistentVolume) {
 	if pv.Annotations == nil {
 		lgr.Error("The PV has no volume details given to perform detach.")
 		return
-	} else {
-		if _, present := pv.Annotations[DMPATH]; !present {
-			volDetails = append(volDetails, DMPATH)
-		}
-		if _, present := pv.Annotations[MULTIPATH]; !present {
-			volDetails = append(volDetails, MULTIPATH)
-		}
-		if len(volDetails) > 0 {
-			lgr.Error("Either no annotations are given or the following volume attributes are not valid in the PV:", zap.Strings("vol_detach_attrs", volDetails))
-			return
-		}
+	}
+	if _, present := pv.Annotations[DMPATH]; !present {
+		volDetails = append(volDetails, DMPATH)
+	}
+	if _, present := pv.Annotations[MULTIPATH]; !present {
+		volDetails = append(volDetails, MULTIPATH)
+	}
+	if len(volDetails) > 0 {
+		lgr.Error("Either no annotations are given or the following volume attributes are not valid in the PV:", zap.Strings("vol_detach_attrs", volDetails))
+		return
 	}
 
 	volume := config.Volume{}
 	volume.Nodeip = pv.Annotations[NODEIP]
-	worker_node := os.Getenv("NODE_IP")
-	if worker_node != volume.Nodeip {
+	workerNode := os.Getenv("NODE_IP")
+	if workerNode != volume.Nodeip {
 		lgr.Info("The volume detach is not requested for this worker node")
 		return
 	}
 
-	dev_path := strings.Split(pv.Annotations[DMPATH], "/")
+	devPath := strings.Split(pv.Annotations[DMPATH], "/")
 	var input []byte
 	var err error
 	if input, err = ioutil.ReadFile(BLOCK_CONF); err != nil {
 		lgr.Error("Could not read iscsi-block-volume.conf file")
 		return
-	} else {
-		lines := strings.Split(string(input), "\n")
-		for i, line := range lines {
-			if strings.Contains(line, "dm=") {
-				lines[i] = "dm=" + strings.TrimSpace(dev_path[2])
-			} else if strings.Contains(line, "mpath=") {
-				lines[i] = "mpath=" + strings.TrimSpace(pv.Annotations[MULTIPATH])
-			} else if strings.Contains(line, "op=") {
-				lines[i] = "op=" + strings.TrimSpace(DETACH)
-			}
+	}
+	lines := strings.Split(string(input), "\n")
+	for i, line := range lines {
+		if strings.Contains(line, "dm=") {
+			lines[i] = "dm=" + strings.TrimSpace(devPath[2])
+		} else if strings.Contains(line, "mpath=") {
+			lines[i] = "mpath=" + strings.TrimSpace(pv.Annotations[MULTIPATH])
+		} else if strings.Contains(line, "op=") {
+			lines[i] = "op=" + strings.TrimSpace(DETACH)
 		}
+	}
 
-		modifiedlines := []string{}
-		modifiedlines = append(modifiedlines, lines...)
-		output := strings.Join(modifiedlines, "\n")
-		if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0600); err != nil {
-			lgr.Error("Could not write to iscsi-block-volume.conf file")
-			return
-		}
+	modifiedlines := []string{}
+	modifiedlines = append(modifiedlines, lines...)
+	output := strings.Join(modifiedlines, "\n")
+	if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0600); err != nil {
+		lgr.Error("Could not write to iscsi-block-volume.conf file")
+		return
 	}
 
 	// Restart ibmc-block-attacher service so volume can be attached
@@ -553,9 +592,8 @@ func ModifyDetachConfig(pv *v1.PersistentVolume) {
 	if restartErr != nil {
 		lgr.Error("Error: Unable to restart target", zap.Error(restartErr))
 		return
-	} else {
-		lgr.Info("Unit Restarted !!")
 	}
+	lgr.Info("Unit Restarted !!")
 	job := <-reschan
 	if job != "done" {
 		lgr.Error("Error: Restart of service is not done: " + job)

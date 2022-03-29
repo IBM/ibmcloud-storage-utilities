@@ -1,6 +1,19 @@
+/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Kubernetes Service, 5737-D43
+ * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+ * The source code for this program is not published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
 package watcher
 
 import (
+	"io/ioutil"
+	"os"
+	"testing"
 
 	//"encoding/json"
 	//"github.com/coreos/go-systemd/v22/dbus"
@@ -19,9 +32,6 @@ import (
 	"k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/fake"
 	//"k8s.io/client-go/tools/cache"
-	"io/ioutil"
-	"os"
-	"testing"
 )
 
 var SUBNET_CONFIG = "subnetconfig"

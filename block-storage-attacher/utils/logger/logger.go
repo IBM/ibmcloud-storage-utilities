@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * IBM Confidential
+ * OCO Source Materials
+ * IBM Cloud Kubernetes Service, 5737-D43
+ * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+ * The source code for this program is not published or otherwise divested of
+ * its trade secrets, irrespective of what has been deposited with
+ * the U.S. Copyright Office.
+ ******************************************************************************/
+
+// Package logger ...
 package logger
 
 import (
@@ -45,7 +56,10 @@ func GetZapLogger() (*zap.Logger, error) {
 // returns the global logger
 func GetZapContextLogger(ctx context.Context) (*zap.Logger, error) {
 	var contextLogger *zap.Logger
-	globalLogger, _ := GetZapLogger()
+	globalLogger, err := GetZapLogger()
+	if err != nil {
+		return nil, err
+	}
 	if ctx != nil {
 		contextLogger = addContextFields(ctx, globalLogger)
 		return contextLogger, nil
@@ -53,11 +67,14 @@ func GetZapContextLogger(ctx context.Context) (*zap.Logger, error) {
 	return globalLogger, nil
 }
 
-// GetZapContextLogger Creates a new logger based from the global logger and adds RequestID from the
+// GetZapDefaultContextLogger Creates a new logger based from the global logger and adds RequestID from the
 // context as logging field.
 func GetZapDefaultContextLogger() (*zap.Logger, error) {
 	var contextLogger *zap.Logger
-	globalLogger, _ := GetZapLogger()
+	globalLogger, err := GetZapLogger()
+	if err != nil {
+		return nil, err
+	}
 	contextLogger = addContextFields(generateContextWithRequestID(), globalLogger)
 	return contextLogger, nil
 }
@@ -93,8 +110,14 @@ func addContextFields(ctx context.Context, origLogger *zap.Logger) *zap.Logger {
 func NewZapLogger() (*zap.Logger, error) {
 	productionConfig := zap.NewProductionConfig()
 	productionConfig.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-	lgr, _ := productionConfig.Build()
-	lgr, _ = CreateZapCRNLogger(lgr)
+	lgr, err := productionConfig.Build()
+	if err != nil {
+		return nil, err
+	}
+	lgr, err = CreateZapCRNLogger(lgr)
+	if err != nil {
+		return nil, err
+	}
 	ZapLogger = lgr
 	return ZapLogger, nil
 }
@@ -156,7 +179,7 @@ func CreateZapPodNameKeyField() zapcore.Field {
 // Creates a context that contains a unique request ID
 func generateContextWithRequestID() context.Context {
 	//	requestID := uid.NewV4().String()
-	uuid, _ := uid.NewV4()
+	uuid, _ := uid.NewV4() //#nosec G104 notCritical
 	requestID := uuid.String()
-	return context.WithValue(context.Background(), RequestIDLabel, requestID)
+	return context.WithValue(context.Background(), RequestIDLabel, requestID) //nolint refactoring required
 }

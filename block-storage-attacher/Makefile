@@ -14,6 +14,10 @@ BUILD_NUMBER?=unknown
 TRAVIS_BUILD_NUMBER ?= unknown
 OSS_FILES := Dockerfile go.mod
 
+LINT_VERSION="1.45.2"
+GOSEC_VERSION="v2.8.1"
+NANCY_VERSION := 1.0.20
+
 PROXY_IMAGE_URL_DOCKERHUB:="docker.io"
 
 ifdef ARTIFACTORY_API_KEY
@@ -23,11 +27,14 @@ endif
 .PHONY: all
 all: deps gosec fmt vet buildgo test buildimage
 
+install-bt: ## Install 'bt' via git clone + installer script. Set BT_VERSION to install a custom version.
+@V=$${BT_VERSION:-master} C=~/.cache/bt/repo && if ! git -C "$$C" status >/dev/null; then mkdir -p "$$C" && rm -rf "$$C" && git clone https://github.ibm.com/alchemy-containers/go-build-tools.git "$$C"; fi && pushd "$$C" && git fetch && { git reset --hard "$$V" || git reset --hard origin/"$$V"; } && popd && "$$C"/scripts/install.sh "$$V"
+
 .PHONY: driver
 driver: deps gosec buildimage
 
 .PHONY: deps
-deps:
+deps: install-bt
 	echo "Installing dependencies ..."
 #	glide install --strip-vendor
 	go get github.com/pierrre/gotestcover
@@ -87,21 +94,25 @@ build-systemutil:
 
 .PHONY: oss
 oss:
-	go run github.ibm.com/alchemy-containers/armada-opensource-lib/cmd/makeoss ${OSS_FILES}
+	bt lint opensource -generate ${OSS_FILES}
 	go mod tidy
-	sed -i '/armada-opensource-lib/d' ./OPENSOURCE
+	grep -v "armada-opensource-lib" ./OPENSOURCE > temp && mv temp ./OPENSOURCE
 
-.PHONY: runanalyzedeps
-runanalyzedeps:
-	@docker build --rm --build-arg ARTIFACTORY_API_KEY="${ARTIFACTORY_API_KEY}"  -t armada/analyze-deps -f Dockerfile.dependencycheck .
-	docker run -v `pwd`/dependency-check:/results armada/analyze-deps
+.PHONY: lint
+ lint: install-bt
+	bt lint golangci --version="v${LINT_VERSION}" -- --timeout 5m
+	bt lint opensource ${OSS_FILES}
+	bt lint semver-deps -prefix github.ibm.com/alchemy-containers
+	bt lint nancy --version="v${NANCY_VERSION}"
+	bt lint gosec -config .gosec.json -version ${GOSEC_VERSION}
 
-.PHONY: analyzedeps
-analyzedeps:
-	/tmp/dependency-check/bin/dependency-check.sh --enableExperimental --log /results/logfile --out /results --disableAssembly \
-		--suppress /src/dependency-check/suppression-file.xml --format JSON --prettyPrint --failOnCVSS 0 --scan /src
+.PHONY: lint-root-repo
+ lint-root-repo:
+	bt lint copyright
+	bt lint shellcheck
 
-.PHONY: showanalyzedeps
-showanalyzedeps:
-	grep "VULNERABILITY FOUND" dependency-check/logfile;
-	cat dependency-check/dependency-check-report.json |jq '.dependencies[] | select(.vulnerabilities | length>0)';
+.PHONY: lint-fix
+ lint-fix: install-bt
+	bt lint golangci --version="v${LINT_VERSION}" -- --fix
+	bt lint opensource -generate ${OSS_FILES}
+	bt lint copyright -generate

@@ -1,4 +1,13 @@
 #!/bin/bash
+# ******************************************************************************
+# * Licensed Materials - Property of IBM
+# * IBM Cloud Kubernetes Service, 5737-D43
+# * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# ******************************************************************************
+
+# shellcheck disable=SC2162,SC2181,SC2086,SC2236,SC2162,SC2206,SC2128
 
 TALISMAN_IMAGE=portworx/talisman
 TALISMAN_TAG=1.1.3

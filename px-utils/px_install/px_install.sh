@@ -1,7 +1,16 @@
 #!/bin/bash
+# ******************************************************************************
+# * Licensed Materials - Property of IBM
+# * IBM Cloud Kubernetes Service, 5737-D43
+# * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+# * US Government Users Restricted Rights - Use, duplication or
+# * disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+# ******************************************************************************
 
-# Adds portworx to a cluster using etcd as the kvdb database. 
-# 
+# shellcheck disable=SC2162,SC2181,SC2086,SC2236,SC2162,SC2068,SC2006,SC2001,SC2034,SC2207,SC2184,SC2069
+
+# Adds portworx to a cluster using etcd as the kvdb database.
+#
 #
 # Note: Currently only existing etcd services are supported.  If you don't have an etcd service
 #       instance, create one before running this tool.
@@ -80,7 +89,7 @@ etcd_svc_name=${etcd_svc%% *}
 
 echo "Gathering etcd information for $etcd_svc_name..."
 crn=$(ic resource service-instance "$etcd_svc_name" --output json | jq -r '.[0] | .crn')
-conn=$(ic resource service-keys --output json | jq -r --arg crn "$crn" '.[] | select(.source_crn==$crn) | .credentials.connection.grpc.composed[0]') 
+conn=$(ic resource service-keys --output json | jq -r --arg crn "$crn" '.[] | select(.source_crn==$crn) | .credentials.connection.grpc.composed[0]')
 ep="etcd:https://${conn#*@}"
 uid_pwd=${conn%@*}
 pwd=${uid_pwd##*:}
@@ -96,7 +105,7 @@ pwd="${string_array[0]}${string_array[1]}"
 
 
 echo "Creating etcd secret in the kube-system namespace..."
-(cat << EOF 
+(cat << EOF
 ---
 apiVersion: v1
 kind: Secret
@@ -126,4 +135,4 @@ parms=$(jq -n --arg cl "$CLUSTER" \
               --arg portworx_version "2.5.7" \
               '{apikey: $apikey,cluster_name: $pxcluster,clusters: $cl,internal_kvdb: "external",etcd_endpoint: $etcd_ep,etcd_secret: "px-etcd-certs",secret_type: "k8s",portworx_version: "2.6.2.1"}')
 
-ic resource service-instance-create "${px_name}" portworx px-enterprise $px_region -g $target_group --parameters "${parms}" 
+ic resource service-instance-create "${px_name}" portworx px-enterprise $px_region -g $target_group --parameters "${parms}"
