@@ -1,6 +1,6 @@
 module github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e
 
-go 1.16
+go 1.17
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
