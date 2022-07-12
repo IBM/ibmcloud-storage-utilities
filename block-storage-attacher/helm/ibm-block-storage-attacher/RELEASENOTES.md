@@ -59,7 +59,7 @@ Golang and UBI image Update
 
 ### Changelog
 - Golang updated to 1.18.3
-- UBI image Update to ubi-minimal:8.6-854
+- UBI image Updated to ubi-minimal:8.6-854
 
 ## [v2.0.26] - 2022-06-21
 UBI image Update
