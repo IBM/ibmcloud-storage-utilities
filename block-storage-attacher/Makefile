@@ -37,8 +37,8 @@ driver: deps gosec buildimage
 deps: install-bt
 	echo "Installing dependencies ..."
 #	glide install --strip-vendor
-	go get github.com/pierrre/gotestcover
-	go get -v github.com/securego/gosec/cmd/gosec
+	go install github.com/pierrre/gotestcover
+	go install -v github.com/securego/gosec/cmd/gosec
 
 .PHONY: fmt
 fmt:

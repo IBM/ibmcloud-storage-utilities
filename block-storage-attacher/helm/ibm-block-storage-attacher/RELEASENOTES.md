@@ -6,7 +6,7 @@ This chart has below new features added
 None
 
 # Fixes
-Please refer v2.0.26 changelog section.
+Please refer v2.0.27 changelog section.
 
 # Documentation
 https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_attacher
@@ -18,6 +18,7 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
 
 | Chart  | Date       | Kubernetes Required | Breaking Changes | Details                     |
 | -----  | ---------- | ------------------- | ---------------- | --------------------------- |
+| v2.0.27 | 2022-07-14 | >=1.10              | None             | Refer Changelog v2.0.27      |
 | v2.0.26 | 2022-06-21 | >=1.10              | None             | Refer Changelog v2.0.26      |
 | v2.0.25 | 2022-05-17 | >=1.10              | None             | Refer Changelog v2.0.25      |
 | v2.0.24 | 2022-05-03 | >=1.10              | None             | Refer Changelog v2.0.24      |
@@ -52,6 +53,13 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
 | 1.0.2  | 2019-03-19 | >=1.10              | None             | Refer Changelog v1.0.2      |
 | 1.0.1  | 2019-01-23 | >=1.10              | None             | Refer Changelog v1.0.1      |
 | 1.0.0  | 2018-12-05 | >=1.10              | None             | Initial chart version       |
+
+# [v2.0.27] - 2022-07-12
+ Golang and UBI image Update
+
+### Changelog
+- Golang updated to 1.18.3
+- UBI image Updated to ubi-minimal:8.6-854
 
 ## [v2.0.26] - 2022-06-21
 UBI image Update
