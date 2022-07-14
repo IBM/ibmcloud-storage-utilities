@@ -14,9 +14,9 @@ BUILD_NUMBER?=unknown
 TRAVIS_BUILD_NUMBER ?= unknown
 OSS_FILES := Dockerfile go.mod
 
-LINT_VERSION="1.45.2"
-GOSEC_VERSION="v2.8.1"
-NANCY_VERSION := 1.0.20
+LINT_VERSION="1.46.2"
+GOSEC_VERSION="v2.11.0"
+NANCY_VERSION := 1.0.37
 
 PROXY_IMAGE_URL_DOCKERHUB:="docker.io"
 
@@ -37,7 +37,9 @@ driver: deps gosec buildimage
 deps: install-bt
 	echo "Installing dependencies ..."
 #	glide install --strip-vendor
+  go get github.com/pierrre/gotestcover
 	go install github.com/pierrre/gotestcover
+	go get -v github.com/securego/gosec/cmd/gosec
 	go install -v github.com/securego/gosec/cmd/gosec
 
 .PHONY: fmt
