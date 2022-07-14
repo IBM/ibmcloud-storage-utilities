@@ -1,6 +1,6 @@
 module github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
 
-go 1.17
+go 1.18
 
 require (
 	github.com/BurntSushi/toml v0.3.1
@@ -12,6 +12,9 @@ require (
 	k8s.io/api v0.20.5
 	k8s.io/apimachinery v0.20.5
 	k8s.io/client-go v1.5.2
+)
+
+require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/evanphx/json-patch v4.9.0+incompatible // indirect
 	github.com/go-logr/logr v0.4.0 // indirect
