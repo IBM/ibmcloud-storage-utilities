@@ -60,7 +60,7 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
  UBI image update
 
 ### Changelog
-- UBI image patch update
+- UBI image patch update 8.6-902.1661794353
 
 # [v2.0.28] - 2022-08-17
  Golang update
