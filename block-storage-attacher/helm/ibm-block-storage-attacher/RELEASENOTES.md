@@ -18,6 +18,7 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
 
 | Chart  | Date       | Kubernetes Required | Breaking Changes | Details                     |
 | -----  | ---------- | ------------------- | ---------------- | --------------------------- |
+| v2.0.31 | 2022-11-02 | >=1.10              | None             | Refer Changelog v2.0.31      |
 | v2.0.30 | 2022-09-16 | >=1.10              | None             | Refer Changelog v2.0.30      |
 | v2.0.29 | 2022-09-01 | >=1.10              | None             | Refer Changelog v2.0.29      |
 | v2.0.28 | 2022-08-17 | >=1.10              | None             | Refer Changelog v2.0.28      |
@@ -56,6 +57,13 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
 | 1.0.2  | 2019-03-19 | >=1.10              | None             | Refer Changelog v1.0.2      |
 | 1.0.1  | 2019-01-23 | >=1.10              | None             | Refer Changelog v1.0.1      |
 | 1.0.0  | 2018-12-05 | >=1.10              | None             | Initial chart version       |
+
+# [v2.0.31] - 2022-11-02
+ UBI image update
+
+### Changelog
+- UBI image Updated to ubi-minimal:8.6-994
+
 
 # [v2.0.30] - 2022-09-16
  Golang, UBI image update
