@@ -63,7 +63,7 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
  UBI image update
 
 ### Changelog
-- UBI image Updated to ubi-minimal:8.7-923
+- UBI image Updated - ubi-minimal:8.7-923
 
 # [v2.0.31] - 2022-11-02
  UBI image update
