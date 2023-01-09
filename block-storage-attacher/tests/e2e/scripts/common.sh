@@ -83,6 +83,7 @@ function setKubeConfig {
 
 }
 
+# shellcheck disable=SC2317
 function slack_commentary {
     # NOTE(cjschaef): we don't want to perform any slack comment calls
     echo "Ignoring 'slack comment' call"
@@ -383,6 +384,7 @@ function bx_login {
 
 }
 
+# shellcheck disable=SC2317
 function setupKubernetes {
     # NOTE(cjschaef): we want to prevent using the IBM built kubectl
     echo "Ignoring install of IBM built kubectl"
@@ -412,13 +414,13 @@ function addFullPathToCertsInKubeConfig {
     # to be in the kube confg. Prior to calling this function.
     # it is expected to have a `KUBECONFIG` variable defined
 
-    CONFIG_DIR=$(dirname $KUBECONFIG)
+    CONFIG_DIR=$(dirname "$KUBECONFIG")
     pushd "${CONFIG_DIR}"
 
     for certFile in $(ls | grep -E ".*.pem"); do
         certFilePATH=${CONFIG_DIR}/${certFile}
         # Replace the certs with full path unless they already have the full path
-        sed "s|[^\/]$certFile| $certFilePATH|g" $KUBECONFIG > /tmp/kubeconfig.yml;mv /tmp/kubeconfig.yml $KUBECONFIG
+        sed "s|[^\/]$certFile| $certFilePATH|g" "$KUBECONFIG" > /tmp/kubeconfig.yml;mv /tmp/kubeconfig.yml "$KUBECONFIG"
     done
     popd
 }

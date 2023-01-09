@@ -79,9 +79,9 @@ func GetZapDefaultContextLogger() (*zap.Logger, error) {
 	return contextLogger, nil
 }
 
-//GetZapContextLoggerFromLogger creates a new logger based from an existing logger and adds values from the
-//context as logging fields. If the context passed in is null then it
-//returns the global logger
+// GetZapContextLoggerFromLogger creates a new logger based from an existing logger and adds values from the
+// context as logging fields. If the context passed in is null then it
+// returns the global logger
 func GetZapContextLoggerFromLogger(ctx context.Context, origLogger *zap.Logger) (*zap.Logger, error) {
 	var contextLogger *zap.Logger
 	if origLogger == nil {
@@ -143,9 +143,9 @@ func CreatePodNameLogger(logger *zap.Logger) (*zap.Logger, error) {
 	return logger.With(podNameField), nil
 }
 
-//CreateZapRequestIDField Creates a zap logger field containing the request ID, convenience method for creating the
-//field in cases where the ContextLogger can't be used and the field needs to be passed
-//in as a parameter in the logging statements
+// CreateZapRequestIDField Creates a zap logger field containing the request ID, convenience method for creating the
+// field in cases where the ContextLogger can't be used and the field needs to be passed
+// in as a parameter in the logging statements
 func CreateZapRequestIDField(ctx context.Context) zapcore.Field {
 	if ctx != nil {
 		if requestID, ok := ctx.Value(RequestIDLabel).(string); ok {
@@ -155,9 +155,9 @@ func CreateZapRequestIDField(ctx context.Context) zapcore.Field {
 	return zapcore.Field{Key: RequestIDLabel, Type: zapcore.StringType, String: ""}
 }
 
-//CreateZapTiggerKeyField Creates a zap logger field containing the trigger key for a job, convenience method for creating the
-//field in cases where the ContextLogger can't be used and the field needs to be passed
-//in as a parameter in the logging statements
+// CreateZapTiggerKeyField Creates a zap logger field containing the trigger key for a job, convenience method for creating the
+// field in cases where the ContextLogger can't be used and the field needs to be passed
+// in as a parameter in the logging statements
 func CreateZapTiggerKeyField(ctx context.Context) zapcore.Field {
 	if ctx != nil {
 		if triggerKey, ok := ctx.Value(TriggerKeyLabel).(string); ok {
@@ -167,9 +167,9 @@ func CreateZapTiggerKeyField(ctx context.Context) zapcore.Field {
 	return zapcore.Field{Key: TriggerKeyLabel, Type: zapcore.StringType, String: ""}
 }
 
-//CreateZapPodNameKeyField Creates a zap logger field containing the pod name that the container is in,
+// CreateZapPodNameKeyField Creates a zap logger field containing the pod name that the container is in,
 // convenience method for creating the field so it can be passed
-//in as a parameter in the logging statements
+// in as a parameter in the logging statements
 func CreateZapPodNameKeyField() zapcore.Field {
 	pod := os.Getenv(PodNameEnvVar)
 	// if the pod name isn't set then the value will be empty

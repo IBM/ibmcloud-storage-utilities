@@ -32,12 +32,12 @@ import (
 	"strings"
 	"time"
 
+	"k8s.io/api/core/v1"
+	apierrs "k8s.io/apimachinery/pkg/api/errors"
+	registered "k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/dynamic"
 	clientset "k8s.io/client-go/kubernetes"
-	apierrs "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/api/core/v1"
-	registered "k8s.io/apimachinery/pkg/api/meta"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

@@ -207,7 +207,7 @@ func getCRNValueFromEnvVar(name string, defaultValue string) string {
 	return value
 }
 
-//Sanitize removes characters from a string that aren't supported by metrics collection
+// Sanitize removes characters from a string that aren't supported by metrics collection
 func Sanitize(metric string) string {
 	if metric == "" {
 		return metric

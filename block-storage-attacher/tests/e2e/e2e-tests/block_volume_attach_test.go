@@ -30,8 +30,8 @@ import (
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/api/core/v1"
+	clientset "k8s.io/client-go/kubernetes"
 	"os"
 	"os/exec"
 	"strings"
@@ -376,5 +376,5 @@ func portworxcleanup(classname string) {
 
 	filepatharg := fmt.Sprintf("%s", classname)
 	cmd := exec.Command(pvscriptpath, filepatharg, "portworxdelete") //#nosec G204 test file
-	cmd.Run() //#nosec G104 test file
+	cmd.Run()                                                        //#nosec G104 test file
 }
