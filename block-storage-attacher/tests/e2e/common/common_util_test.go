@@ -25,14 +25,14 @@ import (
 	"time"
 
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
-	clientset "k8s.io/client-go/kubernetes"
+	"k8s.io/api/core/v1"
+	"k8s.io/api/storage/v1beta1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/api/core/v1"
-	extensions "k8s.io/client-go/kubernetes/typed/extensions/v1beta1"
-	"k8s.io/api/storage/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilyaml "k8s.io/apimachinery/pkg/util/yaml"
+	clientset "k8s.io/client-go/kubernetes"
+	extensions "k8s.io/client-go/kubernetes/typed/extensions/v1beta1"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -318,7 +318,7 @@ func StartProvisionerDeployment(c clientset.Interface, ns string) (*v1.Service, 
 	if selinux.GetEnabled() {
 		//fcon, err := selinux.Getfilecon(tmpDir)
 		//Expect(err).NotTo(HaveOccurred())
-		context := selinux.NewContext(ProvisionerPodName+"-deployment") //(fcon)
+		context := selinux.NewContext(ProvisionerPodName + "-deployment") //(fcon)
 		context["type"] = "svirt_sandbox_file_t"
 		err = selinux.Chcon(tmpDir, context.Get(), false)
 		Expect(err).NotTo(HaveOccurred())

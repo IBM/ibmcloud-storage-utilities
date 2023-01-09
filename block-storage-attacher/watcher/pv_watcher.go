@@ -82,7 +82,7 @@ var lgr zap.Logger
 var mutex = &sync.Mutex{}
 var volumeQueue workqueue.RateLimitingInterface
 
-//WatchPersistentVolumes ...
+// WatchPersistentVolumes ...
 func WatchPersistentVolumes(client kubernetes.Interface, log zap.Logger) {
 	clientset = client
 	lgr = log
@@ -153,7 +153,7 @@ func processNextVolume() bool {
 	return true
 }
 
-//AttachVolume ...
+// AttachVolume ...
 func AttachVolume(obj interface{}) {
 	pv, ok := obj.(*v1.PersistentVolume)
 	if !ok {
@@ -170,7 +170,7 @@ func AttachVolume(obj interface{}) {
 	}
 }
 
-//ModifyAttachConfig ...
+// ModifyAttachConfig ...
 func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 	lgr.Info("Waiting for mutex lock in ATTACH", zap.String("Name", pv.Name))
 	mutex.Lock()
@@ -291,7 +291,7 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 	return retry, attErr
 }
 
-//UpdatePersistentVolume ...
+// UpdatePersistentVolume ...
 func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool, error) {
 	folder := "/host/lib/ibmc-block-attacher"
 	if val := os.Getenv("service_dir"); val != "" {
@@ -442,7 +442,7 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 	return true, fmt.Errorf("error while attaching storage %s", volume.VolID)
 }
 
-//Validate ...
+// Validate ...
 func Validate(pv *v1.PersistentVolume) (bool, error) {
 	volDetails := make([]string, 0)
 	if pv.Annotations == nil {
@@ -508,7 +508,7 @@ func Validate(pv *v1.PersistentVolume) (bool, error) {
 	return false, nil
 }
 
-//DetachVolume ...
+// DetachVolume ...
 func DetachVolume(obj interface{}) {
 	pv, ok := obj.(*v1.PersistentVolume)
 	if !ok {
@@ -522,7 +522,7 @@ func DetachVolume(obj interface{}) {
 	ModifyDetachConfig(pv)
 }
 
-//ModifyDetachConfig ...
+// ModifyDetachConfig ...
 func ModifyDetachConfig(pv *v1.PersistentVolume) {
 	lgr.Info("Waiting for mutex lock in DETACH", zap.String("Name", pv.Name))
 	mutex.Lock()
