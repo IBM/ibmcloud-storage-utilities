@@ -18,6 +18,7 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
 
 | Chart  | Date       | Kubernetes Required | Breaking Changes | Details                     |
 | -----  | ---------- | ------------------- | ---------------- | --------------------------- |
+| v2.0.35 | 2023-02-14 | >=1.10              | None             | Refer Changelog v2.0.35      |
 | v2.0.34 | 2023-01-04 | >=1.10              | None             | Refer Changelog v2.0.34      |
 | v2.0.33 | 2022-12-05 | >=1.10              | None             | Refer Changelog v2.0.33      |
 | v2.0.32 | 2022-11-14 | >=1.10              | None             | Refer Changelog v2.0.32      |
