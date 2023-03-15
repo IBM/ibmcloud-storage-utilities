@@ -9,7 +9,7 @@
 	You need [go](https://golang.org/doc/install) in your path (see [here](development.md#go-versions) for supported versions), please make sure it is installed and in your ``$PATH``.
 
 	```sh
-	GO_VERSION=1.18.9
+	GO_VERSION=1.19.6
 	curl -o go${GO_VERSION}.linux-amd64.tar.gz https://storage.googleapis.com/golang/go${GO_VERSION}.linux-amd64.tar.gz
 	tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
 	export GOPATH=<Go Path location>
