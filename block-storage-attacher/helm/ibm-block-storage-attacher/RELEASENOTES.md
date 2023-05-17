@@ -68,7 +68,7 @@ https://cloud.ibm.com/docs/containers?topic=containers-utilities#block_storage_a
 | 1.0.1  | 2019-01-23 | >=1.10              | None             | Refer Changelog v1.0.1      |
 | 1.0.0  | 2018-12-05 | >=1.10              | None             | Initial chart version       |
 
-# [v2.0.41] - 2023-05-17
+# [v2.0.42] - 2023-05-17
 - Golang updated to 1.20.3
 
 # [v2.0.41] - 2023-05-09
