@@ -21,7 +21,7 @@ NANCY_VERSION := 1.0.42
 PROXY_IMAGE_URL_DOCKERHUB:="docker.io"
 
 ifdef ARTIFACTORY_API_KEY
-PROXY_IMAGE_URL_DOCKERHUB="wcp-alchemy-containers-team-dockerhub-docker-remote.artifactory.swg-devops.com"
+PROXY_IMAGE_URL_DOCKERHUB="docker-na.artifactory.swg-devops.com/wcp-alchemy-containers-team-dockerhub-docker-remote"
 endif
 
 .PHONY: all
