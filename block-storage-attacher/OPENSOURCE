@@ -1,4 +1,4 @@
-docker://docker-na.artifactory.swg-devops.com/wcp-alchemy-containers-team-access-redhat-docker-remote/ubi8/ubi-minimal,8.8-1072.1697626218
+docker://docker-na.artifactory.swg-devops.com/wcp-alchemy-containers-team-access-redhat-docker-remote/ubi8/ubi-minimal,8.9-1029
 github.com/BurntSushi/toml,v0.3.1,direct
 github.com/coreos/go-systemd/v22,v22.2.0,direct
 github.com/gofrs/uuid,v4.2.0+incompatible,direct
