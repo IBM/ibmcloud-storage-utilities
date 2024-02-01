@@ -68,16 +68,27 @@ coverage:
 
 
 .PHONY: buildimage
-buildimage: build-systemutil
-	#go run github.ibm.com/alchemy-containers/go-build-tools/cmd/goproxy -docker-build --
-		docker build \
+buildimage: login-registry deps
+	@ set -x; \
+	ASSETURL="$$(curl -X GET -H "Authorization: token ${GHE_TOKEN}" "https://github.ibm.com/api/v3/repos/alchemy-registry/base/releases/latest" | jq -r '.assets[0].url')"; \
+	curl -H "Authorization: token ${GHE_TOKEN}" -H "Accept: application/octet-stream" -L $$ASSETURL > base.image
+	set -a
+	source base.image && \
+	IMAGE_TAG="$$(echo $$COMMON_ARMADA_golang_builder | cut -d':' -f2)" && \
+	BUILDER="${PROXY_IMAGE_URL}/armada-master/ibm-storage-golang:$$IMAGE_TAG" && \
+	bt build image -goproxy -- docker build --rm \
 			--build-arg git_commit_id=${GIT_COMMIT_SHA} \
-			--build-arg git_remote_url=${GIT_REMOTE_URL} \
+        	--build-arg git_remote_url=${GIT_REMOTE_URL} \
 			--build-arg build_date=${BUILD_DATE} \
-			--build-arg travis_build_number=${TRAVIS_BUILD_NUMBER} \
+        	--build-arg travis_build_number=${TRAVIS_BUILD_NUMBER} \
 			--build-arg REPO_SOURCE_URL=${REPO_SOURCE_URL} \
-			--build-arg BUILD_URL=${BUILD_URL} \
-			-t $(IMAGE):$(VERSION) -f Dockerfile .
+			--build-arg BUILD_URL="${BUILD_URL}" \
+			--build-arg IMAGE_TAG=$$IMAGE_TAG \
+			--build-arg BUILDER=$$BUILDER \
+			--build-arg GOOS="linux" \
+			--build-arg GOARCH="amd64" \
+			-t $(IMAGE):$(TRAVIS_COMMIT) -f Dockerfile .
+	set +a
 
 
 .PHONY: build-systemutil
@@ -118,3 +129,7 @@ oss:
 	bt lint golangci --version="v${LINT_VERSION}" -- --fix
 	bt lint opensource -generate ${OSS_FILES}
 	bt lint copyright -generate
+
+.PHONY: login-registry
+login-registry: install-bt
+	bt build login-registry -artifactory-username "${ARTIFACTORY_USER}" -all-artifactory -iam-key "${registry_iam_api_key}" -all-icr
