@@ -75,7 +75,7 @@ buildimage: login-registry deps
 	set -a
 	source base.image && \
 	IMAGE_TAG="$$(echo $$COMMON_ARMADA_golang_builder | cut -d':' -f2)" && \
-	BUILDER="${PROXY_IMAGE_URL}/armada-master/ibm-storage-golang:$$IMAGE_TAG" && \
+	BUILDER="docker-na.artifactory.swg-devops.com/wcp-alchemy-containers-team-icr-docker-remote/armada-master/ibm-storage-golang:$$IMAGE_TAG" && \
 	bt build image -goproxy -- docker build --rm \
 			--build-arg git_commit_id=${GIT_COMMIT_SHA} \
         	--build-arg git_remote_url=${GIT_REMOTE_URL} \
@@ -87,7 +87,9 @@ buildimage: login-registry deps
 			--build-arg BUILDER=$$BUILDER \
 			--build-arg GOOS="linux" \
 			--build-arg GOARCH="amd64" \
-			-t $(IMAGE):$(TRAVIS_COMMIT) -f Dockerfile .
+			--platform=linux/amd64 \
+			--output type=docker \
+			-t $(IMAGE):latest -f Dockerfile .
 	set +a
 
 

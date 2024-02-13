@@ -21,7 +21,7 @@ RUN install-packages nfs-utils \
 RUN extend-image /usr/bin/mount* \
      /usr/sbin/mount* \
      /usr/lib64/libgcrypt* \
-     /usr/bin/bash /usr/bin/ls /usr/bin/curl /usr/bin/jq /usr/bin/nc
+     /usr/bin/bash /usr/bin/ls /usr/bin/curl /usr/bin/jq /usr/bin/nc /usr/bin/mkdir
 
 RUN set -ex; cd /go/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/ && \
 CC=$(which musl-gcc) go build -o /go/bin/systemutil --ldflags '-w -linkmode external -extldflags "-static"' utils/systemutil.go
@@ -48,8 +48,14 @@ LABEL build-date=${build_date}
 #LABEL jenkins-build-number=${jenkins_build_number}
 LABEL travis_build_number=${travis_build_number}
 
-RUN mkdir -p /home/armada-storage/
-RUN mkdir -p /host
+COPY --from=builder --chown=2000 /image /
+
+WORKDIR /home/armada-storage/
+
+COPY --from=builder --chown=2000 /go/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/ /app/
+
+USER 2000:2000
+
 ADD images/systemutil /home/armada-storage
 ADD images/iscsi-attach.sh /home/armada-storage
 ADD images/iscsi-block-volume.conf /home/armada-storage
