@@ -3,7 +3,7 @@ ARG BUILDER
 FROM $BUILDER as builder
 
 WORKDIR /go/src/github.ibm.com/alchemy-containers/block-storage-attacher
-ADD . /go/src/github.ibm.com/alchemy-containers/block-storage-attacher
+ADD . .
 
 ARG GOPROXY=off
 ARG GOOS=linux
@@ -12,6 +12,8 @@ ARG GOARCH=amd64
 # GOPRIVATE is set by the base image, but needs to be unset for `bt build image` to work with the `-goproxy` flag
 ENV GOPRIVATE=
 RUN make buildgo
+RUN make buildbsa
+RUN make buildsu
 RUN validate-go-binary armada-block-storage-attacher
 
 RUN install-packages nfs-utils \
@@ -23,10 +25,18 @@ RUN extend-image /usr/bin/mount* \
      /usr/lib64/libgcrypt* \
      /usr/bin/bash /usr/bin/ls /usr/bin/curl /usr/bin/jq /usr/bin/nc /usr/bin/mkdir
 
-RUN set -ex; cd /go/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/ && \
-CC=$(which musl-gcc) go build -o /go/bin/systemutil --ldflags '-w -linkmode external -extldflags "-static"' utils/systemutil.go
-
-RUN set -ex; cd /go/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/ && CGO_ENABLED=0 go install -v github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
+RUN mkdir -p /home/armada-storage/
+RUN mkdir -p /host
+ADD /go/bin/systemutil /home/armada-storage
+ADD images/iscsi-attach.sh /home/armada-storage
+ADD images/iscsi-block-volume.conf /home/armada-storage
+ADD images/ibmc-block-attacher.service /home/armada-storage
+ADD images/run.sh /home/armada-storage
+RUN chmod 775 /home/armada-storage/systemutil
+RUN chmod 775 /home/armada-storage/run.sh
+RUN chmod 775 /home/armada-storage/iscsi-attach.sh
+ADD /go/bin/block-storage-attacher /home/armada-storage
+RUN chmod +x /home/armada-storage/block-storage-attacher
 
 FROM scratch
 # Default values
@@ -52,21 +62,7 @@ COPY --from=builder --chown=2000 /image /
 
 WORKDIR /home/armada-storage/
 
-COPY --from=builder --chown=2000 /go/src/github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/ /app/
-
 USER 2000:2000
-
-ADD images/systemutil /home/armada-storage
-ADD images/iscsi-attach.sh /home/armada-storage
-ADD images/iscsi-block-volume.conf /home/armada-storage
-ADD images/ibmc-block-attacher.service /home/armada-storage
-ADD images/run.sh /home/armada-storage
-RUN chmod 775 /home/armada-storage/systemutil
-RUN chmod 775 /home/armada-storage/run.sh
-RUN chmod 775 /home/armada-storage/iscsi-attach.sh
-
-ADD block-storage-attacher /home/armada-storage
-RUN chmod +x /home/armada-storage/block-storage-attacher
 
 CMD ./home/armada-storage/run.sh
 #ENTRYPOINT ["/home/armada-storage/block-storage-attacher"]
