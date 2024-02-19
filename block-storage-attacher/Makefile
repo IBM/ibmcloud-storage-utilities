@@ -56,15 +56,15 @@ gosec:
 
 .PHONY: buildgo
 buildgo:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ${GOTAGS}
+	GOOS=linux GOARCH=amd64 go build ${GOTAGS}
 
 .PHONY: buildbsa
 buildbsa:
-	set -ex; CGO_ENABLED=0 go build ${GOTAGS} -v github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
+	set -ex; go build ${GOTAGS} -v github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
 
 .PHONY: buildsu
 buildsu:
-	set -ex; CC=$(which gcc) go build ${GOTAGS} -o /go/bin/systemutil --ldflags '-w -linkmode external -extldflags "-static"' utils/systemutil.go
+	set -ex; go build ${GOTAGS} -o /go/bin/systemutil utils/systemutil.go
 	chmod 755 /go/bin/systemutil
 
 .PHONY: test
@@ -74,7 +74,6 @@ test:
 .PHONY: coverage
 coverage:
 	go tool cover -html=cover.out -o=cover.html
-
 
 .PHONY: buildimage
 buildimage: login-registry deps
@@ -96,8 +95,22 @@ buildimage: login-registry deps
 			--build-arg BUILDER=$$BUILDER \
 			--build-arg GOOS="linux" \
 			--build-arg GOARCH="amd64" \
-			-t $(IMAGE):$(TRAVIS_COMMIT) -f Dockerfile.fix .
+			-t $(IMAGE):$(TRAVIS_COMMIT) -f Dockerfile.fips .
 	set +a
+
+.PHONY: build-systemutil
+build-systemutil:
+	#Build executables like block-attacher and system util GO binaries
+	#go mod download
+	#go run github.ibm.com/alchemy-containers/go-build-tools/cmd/goproxy -docker-build -- \
+	docker build \
+	    --build-arg PROXY_IMAGE_URL_DOCKERHUB=${PROXY_IMAGE_URL_DOCKERHUB} \
+	-t common-lib-builder --pull -f Dockerfile.builder .
+	docker run common-lib-builder /bin/true
+	docker cp `docker ps -q -n=1`:/go/bin/systemutil ./systemutil
+	docker cp `docker ps -q -n=1`:/go/bin/block-storage-attacher ./block-storage-attacher
+	chmod 755 ./systemutil
+	mv systemutil images/
 
 .PHONY: oss
 oss:

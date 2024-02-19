@@ -25,18 +25,18 @@ RUN extend-image /usr/bin/mount* \
      /usr/lib64/libgcrypt* \
      /usr/bin/bash /usr/bin/ls /usr/bin/curl /usr/bin/jq /usr/bin/nc /usr/bin/mkdir
 
-RUN mkdir -p /home/armada-storage/
-RUN mkdir -p /host
-ADD /go/bin/systemutil /home/armada-storage
-ADD images/iscsi-attach.sh /home/armada-storage
-ADD images/iscsi-block-volume.conf /home/armada-storage
-ADD images/ibmc-block-attacher.service /home/armada-storage
-ADD images/run.sh /home/armada-storage
-RUN chmod 775 /home/armada-storage/systemutil
-RUN chmod 775 /home/armada-storage/run.sh
-RUN chmod 775 /home/armada-storage/iscsi-attach.sh
-ADD /go/bin/block-storage-attacher /home/armada-storage
-RUN chmod +x /home/armada-storage/block-storage-attacher
+RUN mkdir -p /image/home/armada-storage/
+RUN mkdir -p /image/host && \
+     cp /go/bin/systemutil /image/home/armada-storage && \
+     cp block-storage-attacher /image/home/armada-storage
+ADD images/iscsi-attach.sh /image/home/armada-storage
+ADD images/iscsi-block-volume.conf /image/home/armada-storage
+ADD images/ibmc-block-attacher.service /image/home/armada-storage
+ADD images/run.sh /image/home/armada-storage
+RUN chmod 775 /image/home/armada-storage/systemutil
+RUN chmod 775 /image/home/armada-storage/run.sh
+RUN chmod 775 /image/home/armada-storage/iscsi-attach.sh
+RUN chmod +x /image/home/armada-storage/block-storage-attacher
 
 FROM scratch
 # Default values
