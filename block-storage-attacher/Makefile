@@ -25,13 +25,13 @@ PROXY_IMAGE_URL_DOCKERHUB="docker-na.artifactory.swg-devops.com/wcp-alchemy-cont
 endif
 
 .PHONY: all
-all: deps gosec fmt vet buildgo test buildimage
+all: deps gosec fmt vet buildgo test buildimage-fips
 
 install-bt: ## Install 'bt' via git clone + installer script. Set BT_VERSION to install a custom version.
 @V=$${BT_VERSION:-master} C=~/.cache/bt/repo && if ! git -C "$$C" status >/dev/null; then mkdir -p "$$C" && rm -rf "$$C" && git clone https://github.ibm.com/alchemy-containers/go-build-tools.git "$$C"; fi && pushd "$$C" && git fetch && { git reset --hard "$$V" || git reset --hard origin/"$$V"; } && popd && "$$C"/scripts/install.sh "$$V"
 
 .PHONY: driver
-driver: deps gosec buildimage
+driver: deps gosec buildimage-fips
 
 .PHONY: deps
 deps: install-bt
@@ -75,8 +75,8 @@ test:
 coverage:
 	go tool cover -html=cover.out -o=cover.html
 
-.PHONY: buildimage
-buildimage: login-registry deps
+.PHONY: buildimage-fips
+buildimage-fips: login-registry deps
 	@ set -x; \
 	ASSETURL="$$(curl -X GET -H "Authorization: token ${GHE_TOKEN}" "https://github.ibm.com/api/v3/repos/alchemy-registry/base/releases/latest" | jq -r '.assets[0].url')"; \
 	curl -H "Authorization: token ${GHE_TOKEN}" -H "Accept: application/octet-stream" -L $$ASSETURL > base.image
@@ -97,6 +97,18 @@ buildimage: login-registry deps
 			--build-arg GOARCH="amd64" \
 			-t $(IMAGE):$(TRAVIS_COMMIT) -f Dockerfile.fips .
 	set +a
+
+.PHONY: buildimage
+buildimage: build-systemutil
+	#go run github.ibm.com/alchemy-containers/go-build-tools/cmd/goproxy -docker-build --
+		docker build \
+			--build-arg git_commit_id=${GIT_COMMIT_SHA} \
+			--build-arg git_remote_url=${GIT_REMOTE_URL} \
+			--build-arg build_date=${BUILD_DATE} \
+			--build-arg travis_build_number=${TRAVIS_BUILD_NUMBER} \
+			--build-arg REPO_SOURCE_URL=${REPO_SOURCE_URL} \
+			--build-arg BUILD_URL=${BUILD_URL} \
+			-t $(IMAGE):$(VERSION) -f Dockerfile .
 
 .PHONY: build-systemutil
 build-systemutil:
