@@ -25,13 +25,13 @@ PROXY_IMAGE_URL_DOCKERHUB="docker-na.artifactory.swg-devops.com/wcp-alchemy-cont
 endif
 
 .PHONY: all
-all: deps gosec fmt vet buildgo test buildimage
+all: deps gosec fmt vet buildgo test buildimage-fips
 
 install-bt: ## Install 'bt' via git clone + installer script. Set BT_VERSION to install a custom version.
 @V=$${BT_VERSION:-master} C=~/.cache/bt/repo && if ! git -C "$$C" status >/dev/null; then mkdir -p "$$C" && rm -rf "$$C" && git clone https://github.ibm.com/alchemy-containers/go-build-tools.git "$$C"; fi && pushd "$$C" && git fetch && { git reset --hard "$$V" || git reset --hard origin/"$$V"; } && popd && "$$C"/scripts/install.sh "$$V"
 
 .PHONY: driver
-driver: deps gosec buildimage
+driver: deps gosec buildimage-fips
 
 .PHONY: deps
 deps: install-bt
@@ -56,7 +56,16 @@ gosec:
 
 .PHONY: buildgo
 buildgo:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
+	GOOS=linux GOARCH=amd64 go build ${GOTAGS}
+
+.PHONY: buildbsa
+buildbsa:
+	set -ex; go build ${GOTAGS} -v github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
+
+.PHONY: buildsu
+buildsu:
+	set -ex; go build ${GOTAGS} -o /go/bin/systemutil utils/systemutil.go
+	chmod 755 /go/bin/systemutil
 
 .PHONY: test
 test:
@@ -66,6 +75,28 @@ test:
 coverage:
 	go tool cover -html=cover.out -o=cover.html
 
+.PHONY: buildimage-fips
+buildimage-fips: login-registry deps
+	@ set -x; \
+	ASSETURL="$$(curl -X GET -H "Authorization: token ${GHE_TOKEN}" "https://github.ibm.com/api/v3/repos/alchemy-registry/base/releases/latest" | jq -r '.assets[0].url')"; \
+	curl -H "Authorization: token ${GHE_TOKEN}" -H "Accept: application/octet-stream" -L $$ASSETURL > base.image
+	set -a
+	source base.image && \
+	IMAGE_TAG="$$(echo $$COMMON_ARMADA_golang_builder | cut -d':' -f2)" && \
+	BUILDER="${PROXY_IMAGE_URL}/armada-master/ibm-storage-golang:$$IMAGE_TAG" && \
+	bt build image -goproxy -- docker build --rm \
+			--build-arg git_commit_id=${GIT_COMMIT_SHA} \
+        	--build-arg git_remote_url=${GIT_REMOTE_URL} \
+			--build-arg build_date=${BUILD_DATE} \
+        	--build-arg travis_build_number=${TRAVIS_BUILD_NUMBER} \
+			--build-arg REPO_SOURCE_URL=${REPO_SOURCE_URL} \
+			--build-arg BUILD_URL="${BUILD_URL}" \
+			--build-arg IMAGE_TAG=$$IMAGE_TAG \
+			--build-arg BUILDER=$$BUILDER \
+			--build-arg GOOS="linux" \
+			--build-arg GOARCH="amd64" \
+			-t $(IMAGE):$(TRAVIS_COMMIT) -f Dockerfile.fips .
+	set +a
 
 .PHONY: buildimage
 buildimage: build-systemutil
@@ -78,7 +109,6 @@ buildimage: build-systemutil
 			--build-arg REPO_SOURCE_URL=${REPO_SOURCE_URL} \
 			--build-arg BUILD_URL=${BUILD_URL} \
 			-t $(IMAGE):$(VERSION) -f Dockerfile .
-
 
 .PHONY: build-systemutil
 build-systemutil:
@@ -118,3 +148,7 @@ oss:
 	bt lint golangci --version="v${LINT_VERSION}" -- --fix
 	bt lint opensource -generate ${OSS_FILES}
 	bt lint copyright -generate
+
+.PHONY: login-registry
+login-registry: install-bt
+	bt build login-registry -artifactory-username "${ARTIFACTORY_USER}" -all-artifactory -iam-key "${registry_iam_api_key}" -all-icr
