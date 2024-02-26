@@ -34,13 +34,18 @@ install-bt: ## Install 'bt' via git clone + installer script. Set BT_VERSION to 
 driver: deps gosec buildimage-fips
 
 .PHONY: deps
-deps: install-bt
+deps:
 	echo "Installing dependencies ..."
 #	glide install --strip-vendor
 	go get github.com/pierrre/gotestcover
 	go install github.com/pierrre/gotestcover
 	go get -v github.com/securego/gosec/cmd/gosec
 	go install -v github.com/securego/gosec/cmd/gosec
+	@if ! which golangci-lint >/dev/null || [[ "$$(golangci-lint --version)" != *${LINT_VERSION}* ]]; then \
+		curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v${LINT_VERSION}; \
+    fi
+    # Install 'bt' via git clone + installer script. Set BT_VERSION to install a custom version.
+	@V=$${BT_VERSION:-master} C=~/.cache/bt/repo && if ! git -C "$$C" status >/dev/null; then mkdir -p "$$C" && rm -rf "$$C" && git clone https://github.ibm.com/alchemy-containers/go-build-tools.git "$$C"; fi && pushd "$$C" && git fetch && { git reset --hard "$$V" || git reset --hard origin/"$$V"; } && popd && "$$C"/scripts/install.sh "$$V"
 
 .PHONY: fmt
 fmt:
