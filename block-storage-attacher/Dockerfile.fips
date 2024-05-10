@@ -60,7 +60,7 @@ LABEL travis_build_number=${travis_build_number}
 
 COPY --from=builder --chown=2000 /image /
 
-WORKDIR /home/armada-storage/
+WORKDIR /image/
 
 USER 2000:2000
 
