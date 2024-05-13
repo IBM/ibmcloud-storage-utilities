@@ -12,7 +12,7 @@ BUILD_DATE="$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")"
 # Jenkins vars. Set to `unknown` if the variable is not yet defined
 BUILD_NUMBER?=unknown
 TRAVIS_BUILD_NUMBER ?= unknown
-OSS_FILES := Dockerfile go.mod
+OSS_FILES := Dockerfile.fips go.mod
 
 LINT_VERSION=1.55.2
 GOSEC_VERSION="v2.14.0"
