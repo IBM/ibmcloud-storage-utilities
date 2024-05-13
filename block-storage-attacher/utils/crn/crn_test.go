@@ -2,7 +2,7 @@
  * IBM Confidential
  * OCO Source Materials
  * IBM Cloud Kubernetes Service, 5737-D43
- * (C) Copyright IBM Corp. 2022 All Rights Reserved.
+ * (C) Copyright IBM Corp. 2022, 2024 All Rights Reserved.
  * The source code for this program is not published or otherwise divested of
  * its trade secrets, irrespective of what has been deposited with
  * the U.S. Copyright Office.
@@ -12,7 +12,6 @@ package crn
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -68,7 +67,7 @@ func TestGetServiceCRNError(t *testing.T) {
 	fullPath := testPathDirectory + "/" + CRNCnameProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray := []byte(CRNCnameProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
+	os.WriteFile(fullPath, valueAsByteArray, 0000)
 	testCM, err := GetServiceCRN()
 	assert.Nil(t, err)
 	assert.Equal(t, testCM, expectedCRNString)
@@ -103,7 +102,7 @@ func TestGetCRNValueFromConfigMapMount(t *testing.T) {
 	// make sure this file isn't already hanging out
 	os.Remove(testFile)
 	cnameValue := []byte(testValue)
-	err := ioutil.WriteFile(testFile, cnameValue, 0644)
+	err := os.WriteFile(testFile, cnameValue, 0644)
 	assert.Nil(t, err, "Error writing config map volume file.")
 	expected := testValue
 	defaultValue := "testDefault"
@@ -163,7 +162,7 @@ func TestGetServiceCRNStructCNameError(t *testing.T) {
 	fullPath := testPathDirectory + "/" + CRNCnameProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray := []byte(CRNCnameProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
+	os.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err := GetServiceCRNStruct(testPathDirectory)
 	assert.Error(t, err)
 	cleanupConfigMapMount(fullPath)
@@ -173,14 +172,14 @@ func TestGetServiceCRNStructCVersionError(t *testing.T) {
 	fullPath := testPathDirectory + "/" + CRNCnameProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray := []byte(CRNCnameProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err := GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNVersionProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNVersionProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
+	os.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Error(t, err)
 	cleanupConfigMapMount(fullPath)
@@ -190,21 +189,21 @@ func TestGetServiceCRNStructCTypeError(t *testing.T) {
 	fullPath := testPathDirectory + "/" + CRNCnameProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray := []byte(CRNCnameProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err := GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNVersionProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNVersionProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNCtypeProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNCtypeProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
+	os.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Error(t, err)
 	cleanupConfigMapMount(fullPath)
@@ -215,7 +214,7 @@ func TestGetServiceCRNStructVersionError(t *testing.T) {
 	fullPath := testPathDirectory + "/" + CRNCnameProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray := []byte(CRNCnameProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
+	os.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err := GetServiceCRNStruct(testPathDirectory)
 	assert.Error(t, err)
 }
@@ -224,28 +223,28 @@ func TestGetServiceCRNStructCRegionError(t *testing.T) {
 	fullPath := testPathDirectory + "/" + CRNCnameProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray := []byte(CRNCnameProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err := GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNVersionProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNVersionProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNCtypeProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNCtypeProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNRegionProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNRegionProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
+	os.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Error(t, err)
 	cleanupConfigMapMount(fullPath)
@@ -255,42 +254,42 @@ func TestGetServiceCRNStructCServiceNameError(t *testing.T) {
 	fullPath := testPathDirectory + "/" + CRNCnameProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray := []byte(CRNCnameProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err := GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNVersionProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNVersionProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNCtypeProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNCtypeProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNRegionProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNRegionProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNClusterIDProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNClusterIDProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0777)
+	os.WriteFile(fullPath, valueAsByteArray, 0777)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Nil(t, err)
 
 	fullPath = testPathDirectory + "/" + CRNServiceNameProp
 	cleanupConfigMapMount(fullPath)
 	valueAsByteArray = []byte(CRNServiceNameProp)
-	ioutil.WriteFile(fullPath, valueAsByteArray, 0000)
+	os.WriteFile(fullPath, valueAsByteArray, 0000)
 	_, err = GetServiceCRNStruct(testPathDirectory)
 	assert.Error(t, err)
 	cleanupConfigMapMount(fullPath)
@@ -299,7 +298,7 @@ func TestGetServiceCRNStructCServiceNameError(t *testing.T) {
 func prepConfigMapMount(fileName string, value string) error {
 	cleanupConfigMapMount(fileName)
 	valueAsByteArray := []byte(value)
-	return ioutil.WriteFile(fileName, valueAsByteArray, 0644)
+	return os.WriteFile(fileName, valueAsByteArray, 0644)
 }
 
 func cleanupConfigMapMount(filename string) {

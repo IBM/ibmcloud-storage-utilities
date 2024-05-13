@@ -32,6 +32,44 @@ linters-settings:
   goconst:
     min-len: 2
     min-occurrences: 2
+  depguard:
+    rules:
+      main:
+        list-mode: lax # allow unless explicitely denied
+        files:
+          - $all
+          - "!$test"
+        allow:
+          - $gostd
+          - github.ibm.com
+          - k8s.io
+          - github.com/BurntSushi/toml
+          - github.com/rook/rook
+          - github.com/red-hat-storage/ocs-operator
+          - github.com/pkg/errors
+          - github.com/IBM/secret-common-lib
+          - github.com/IBM/secret-utils-lib
+          - github.com/kelseyhightower/envconfig
+          - github.com/gofrs/uuid  
+          - github.ibm.com/alchemy-containers/armada-slclient-lib/
+          - github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/
+          - github.com/IBM/
+          - github.com/coreos/go-systemd/v22/dbus
+          - k8s.io/api/core/v1
+          - k8s.io/
+          - k8s.io/client-go/kubernetes
+          - k8s.io/client-go/rest
+          - k8s.io/client-go/tools/clientcmd
+          - k8s.io/apimachinery/pkg/apis/meta/v1
+          - k8s.io/apimachinery/pkg/runtime
+          - k8s.io/apimachinery/pkg/
+          - k8s.io/apimachinery/pkg/apis/meta/v1
+          - k8s.io/apimachinery/pkg/util/wait
+          - k8s.io/apimachinery/pkg/watch
+          - k8s.io/client-go/tools/cache
+          - k8s.io/client-go/util/workqueue
+          - io/ioutil
+
 issues:
   include: [EXC01, EXC02]
   exclude-use-default: false
