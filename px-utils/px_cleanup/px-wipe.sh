@@ -18,7 +18,7 @@ JOB_NAME=talisman
 KUBECTL_EXTRA_OPTS=""
 WIPER_IMAGE=portworx/px-node-wiper
 WIPER_TAG=2.5.0
-
+ret=$?
 usage()
 {
 	echo "
@@ -118,7 +118,7 @@ if [ $? -eq 0 ]; then
     echo "Detected OpenShift system. Adding talisman-account user to privileged scc"
     oc adm policy add-scc-to-user privileged system:serviceaccount:kube-system:talisman-account
     if [ $? -ne 0 ]; then
-      fatal "failed to add talisman-account to privileged scc. exit code: $?"
+      fatal "failed to add talisman-account to privileged scc. exit code: $ret"
     fi
   else
     echo "oc binary found but oc version command failed. Not using OpenShift mode."
