@@ -18,19 +18,19 @@ package common
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"strings"
 	"time"
 
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/tests/e2e/framework"
-	"k8s.io/api/core/v1"
+	"github.com/opencontainers/selinux/go-selinux"
 	"k8s.io/api/storage/v1beta1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilyaml "k8s.io/apimachinery/pkg/util/yaml"
+	v1 "k8s.io/client-go/1.5/pkg/api/v1"
 	clientset "k8s.io/client-go/kubernetes"
 	extensions "k8s.io/client-go/kubernetes/typed/extensions/v1beta1"
 
@@ -313,7 +313,7 @@ func StartProvisionerDeployment(c clientset.Interface, ns string) (*v1.Service, 
 
 	deployment := DeployFromManifest(path.Join(gopath, DeploymentGOFilePATH))
 
-	tmpDir, err := ioutil.TempDir("", ProvisionerPodName+"-deployment")
+	tmpDir, err := os.TempDir("", ProvisionerPodName+"-deployment")
 	Expect(err).NotTo(HaveOccurred())
 	if selinux.GetEnabled() {
 		//fcon, err := selinux.Getfilecon(tmpDir)
@@ -347,10 +347,10 @@ func StartProvisionerDeployment(c clientset.Interface, ns string) (*v1.Service, 
 // SvcFromManifest reads a .json/yaml file and returns the json of the desired
 func SvcFromManifest(fileName string) *v1.Service {
 	var service v1.Service
-	data, err := ioutil.ReadFile(fileName) //#nosec G304 test file
+	data, err := os.ReadFile(fileName) //#nosec G304 test file
 	Expect(err).NotTo(HaveOccurred())
 
-	r := ioutil.NopCloser(bytes.NewReader(data))
+	r := os.NopCloser(bytes.NewReader(data))
 	decoder := utilyaml.NewDocumentDecoder(r)
 	var chunk []byte
 	for {
@@ -373,10 +373,10 @@ func SvcFromManifest(fileName string) *v1.Service {
 // deployFromManifest reads a .json/yaml file and returns the json of the desired
 func DeployFromManifest(fileName string) *extensions.Deployment {
 	var deployment extensions.Deployment
-	data, err := ioutil.ReadFile(fileName) //#nosec G304 test file
+	data, err := os.ReadFile(fileName) //#nosec G304 test file
 	Expect(err).NotTo(HaveOccurred())
 
-	r := ioutil.NopCloser(bytes.NewReader(data))
+	r := os.NopCloser(bytes.NewReader(data))
 	decoder := utilyaml.NewDocumentDecoder(r)
 	var chunk []byte
 	for {

@@ -14,7 +14,6 @@ package watcher
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strconv"
@@ -210,7 +209,7 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 	}
 	var input []byte
 	var err error
-	if input, err = ioutil.ReadFile(BLOCK_CONF); err != nil {
+	if input, err = os.ReadFile(BLOCK_CONF); err != nil {
 		lgr.Error("Could not read iscsi-block-volume.conf file")
 		return false, fmt.Errorf("could not read iscsi-block-volume.conf file. Error: %v", err)
 	}
@@ -236,7 +235,7 @@ func ModifyAttachConfig(pv *v1.PersistentVolume) (bool, error) {
 	modifiedlines := []string{}
 	modifiedlines = append(modifiedlines, lines...)
 	output := strings.Join(modifiedlines, "\n")
-	if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0600); err != nil {
+	if err = os.WriteFile(BLOCK_CONF, []byte(output), 0600); err != nil {
 		lgr.Error("Could not write to iscsi-block-volume.conf file")
 		return false, fmt.Errorf("could not write to iscsi-block-volume.conf file. Error: %v", err)
 	}
@@ -325,7 +324,7 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 		3600a09803830445455244c4a38752d30 10:0:0:15 XXXXXXXXX. 18/20 --> The last part of hcil is lun id
 		3600a09803830445455244c4a38752d30 11:0:0:15 XXXX...... 9/20
 		*/
-		if input, err = ioutil.ReadFile(pathsFile); err != nil {
+		if input, err = os.ReadFile(pathsFile); err != nil {
 			lgr.Error("Could not read " + pathsFile + " file")
 		} else {
 			lines := strings.Split(string(input), "\n")
@@ -361,7 +360,7 @@ func UpdatePersistentVolume(volume config.Volume, pv *v1.PersistentVolume) (bool
 		name                              sysfs uuid
 		3600a09803830445455244c4a38752d30 dm-0  3600a09803830445455244c4a38752d30
 		*/
-		if input, err = ioutil.ReadFile(mpathsFile); err != nil {
+		if input, err = os.ReadFile(mpathsFile); err != nil {
 			lgr.Error("Could not read " + mpathsFile + " file")
 		} else {
 			lines := strings.Split(string(input), "\n")
@@ -558,7 +557,7 @@ func ModifyDetachConfig(pv *v1.PersistentVolume) {
 	devPath := strings.Split(pv.Annotations[DMPATH], "/")
 	var input []byte
 	var err error
-	if input, err = ioutil.ReadFile(BLOCK_CONF); err != nil {
+	if input, err = os.ReadFile(BLOCK_CONF); err != nil {
 		lgr.Error("Could not read iscsi-block-volume.conf file")
 		return
 	}
@@ -576,7 +575,7 @@ func ModifyDetachConfig(pv *v1.PersistentVolume) {
 	modifiedlines := []string{}
 	modifiedlines = append(modifiedlines, lines...)
 	output := strings.Join(modifiedlines, "\n")
-	if err = ioutil.WriteFile(BLOCK_CONF, []byte(output), 0600); err != nil {
+	if err = os.WriteFile(BLOCK_CONF, []byte(output), 0600); err != nil {
 		lgr.Error("Could not write to iscsi-block-volume.conf file")
 		return
 	}

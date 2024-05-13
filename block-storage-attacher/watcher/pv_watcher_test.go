@@ -11,7 +11,6 @@
 package watcher
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -20,16 +19,18 @@ import (
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/config"
 	"github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher/utils/logger"
 	"go.uber.org/zap"
+
 	//"k8s.io/apimachinery/pkg/util/wait"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+
 	//"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/apimachinery/pkg/api/resource"
 	//"k8s.io/client-go/kubernetes"
 	//types "k8s.io/apimachinery/pkg/types"
 	//"k8s.io/client-go/pkg/api/v1"
 	"github.com/stretchr/testify/assert"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/fake"
 	//"k8s.io/client-go/tools/cache"
 )
@@ -232,7 +233,7 @@ func createOutPathsFile() {
 	data := []byte("3600a09803830445455244c4a38752d30 10:0:0:2")
 	out_paths := serviceDir + "/out_paths"
 	os.Create(out_paths)
-	ioutil.WriteFile(out_paths, data, 0666)
+	os.WriteFile(out_paths, data, 0666)
 }
 func createMultiPathsFile() {
 	serviceDir := "/tmp/host/lib/ibmc-block-attacher"
@@ -242,7 +243,7 @@ func createMultiPathsFile() {
 	data := []byte("3600a09803830445455244c4a38752d30 dm-0  3600a09803830445455244c4a38752d30")
 	out_multipaths := serviceDir + "/out_multipaths"
 	os.Create(out_multipaths)
-	ioutil.WriteFile(out_multipaths, data, 0666)
+	os.WriteFile(out_multipaths, data, 0666)
 }
 func createConfigFile() {
 	os.Mkdir("/host", 0777)
@@ -250,7 +251,7 @@ func createConfigFile() {
 
 	data := []byte("iqn=iqn.2018-04.com.ibm:ibm02su1186049-i71967875\nusername=testusername\npassword=testpassword\ntarget_ip=1.1.1.2\nlunid=2\nnode_ip=9.2.3.4\nop=detach\ndm=dm-0\nmpath=/host/lib/ibmc-block-attacher/out_multipaths")
 	os.Create("/host/etc/iscsi-block-volume.conf")
-	ioutil.WriteFile("/host/etc/iscsi-block-volume.conf", data, 0666)
+	os.WriteFile("/host/etc/iscsi-block-volume.conf", data, 0666)
 }
 func createConfigFileWithError() {
 	os.Mkdir("/host", 0644)
