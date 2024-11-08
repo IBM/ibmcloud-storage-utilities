@@ -15,7 +15,7 @@ TRAVIS_BUILD_NUMBER ?= unknown
 OSS_FILES := Dockerfile.fips go.mod
 
 LINT_VERSION=1.55.2
-GOSEC_VERSION="v2.14.0"
+GOSEC_VERSION="v2.19.0"
 NANCY_VERSION := 1.0.42
 PROXY_IMAGE_URL=docker-na.artifactory.swg-devops.com/wcp-alchemy-containers-team-icr-docker-remote
 PROXY_IMAGE_URL_DOCKERHUB:="docker.io"
