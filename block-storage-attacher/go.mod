@@ -1,4 +1,4 @@
-module github.ibm.com/alchemy-containers/ibmcloud-storage-utilities/block-storage-attacher
+module github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
 
 go 1.22.9
 
