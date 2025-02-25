@@ -92,7 +92,7 @@ buildimage-fips: login-registry deps
 			--build-arg REPO_SOURCE_URL=${REPO_SOURCE_URL} \
 			--build-arg BUILD_URL="${BUILD_URL}" \
 			--build-arg IMAGE_TAG=$$IMAGE_TAG \
-			--build-arg BUILDER=$$BUILDER \
+			--build-arg BUILDER=$$COMMON_ARMADA_golang_builder \
 			--build-arg GOOS="linux" \
 			--build-arg GOARCH="amd64" \
 			-t $(IMAGE):$(TRAVIS_COMMIT) -f Dockerfile.fips .
