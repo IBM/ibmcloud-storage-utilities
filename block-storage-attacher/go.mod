@@ -1,6 +1,6 @@
 module github.com/IBM/ibmcloud-storage-utilities/block-storage-attacher
 
-go 1.22.9
+go 1.22.11
 
 replace (
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.1.0
