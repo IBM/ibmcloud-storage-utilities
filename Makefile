@@ -2,6 +2,7 @@
 .PHONY: block-storage-attacher/deps
 block-storage-attacher/deps:
 	cd block-storage-attacher; \
+	echo "test" \
 	make deps
 
 .PHONY: block-storage-attacher
